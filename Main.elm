@@ -3,6 +3,7 @@ module Main exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
+import Html.App
 
 
 view model =
@@ -32,5 +33,12 @@ model =
     }
 
 
+update msg model =
+    if msg.operation == "SELECT_PHOTO" then
+        { model | selectedUrl = msg.data }
+    else
+        model
+
+
 main =
-    view model
+    Html.App.beginnerProgram { model = model, view = view, update = update }
