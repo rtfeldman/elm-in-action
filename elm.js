@@ -8027,60 +8027,78 @@ var _evancz$elm_http$Http$post = F3(
 	});
 
 var _user$project$Main$initialTask = _evancz$elm_http$Http$getString('http://elm-in-action.com/list-photos');
-var _user$project$Main$handleLoadFailure = function (_p0) {
-	return {operation: 'REPORT_ERROR', data: 'HTTP error! (Have you tried turning it off and on again?)'};
-};
-var _user$project$Main$handleLoadSuccess = function (data) {
-	return {operation: 'LOAD_PHOTOS', data: data};
-};
-var _user$project$Main$initialCmd = A3(_elm_lang$core$Task$perform, _user$project$Main$handleLoadFailure, _user$project$Main$handleLoadSuccess, _user$project$Main$initialTask);
-var _user$project$Main$selectFirst = function (urls) {
-	var _p1 = _elm_lang$core$List$head(urls);
-	if (_p1.ctor === 'Nothing') {
-		return '';
+var _user$project$Main$selectFirst = function (photos) {
+	var _p0 = _elm_lang$core$List$head(photos);
+	if (_p0.ctor === 'Nothing') {
+		return -1;
 	} else {
-		return _p1._0;
+		return _p0._0.id;
 	}
 };
 var _user$project$Main$update = F2(
 	function (msg, model) {
-		if (_elm_lang$core$Native_Utils.eq(msg.operation, 'SELECT_PHOTO')) {
-			return {
-				ctor: '_Tuple2',
-				_0: _elm_lang$core$Native_Utils.update(
-					model,
-					{selectedUrl: msg.data}),
-				_1: _elm_lang$core$Platform_Cmd$none
-			};
-		} else {
-			if (_elm_lang$core$Native_Utils.eq(msg.operation, 'LOAD_PHOTOS')) {
-				var urls = A2(_elm_lang$core$String$split, '\n', msg.data);
-				var photos = A2(
-					_elm_lang$core$List$map,
-					function (url) {
-						return {url: url};
-					},
-					urls);
-				var selectedUrl = _user$project$Main$selectFirst(urls);
+		var _p1 = msg;
+		switch (_p1.ctor) {
+			case 'SelectPhoto':
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{photos: photos, selectedUrl: selectedUrl}),
+						{selectedId: _p1._0}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
-			} else {
-				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
-			}
+			case 'LoadPhotos':
+				var urls = A2(_elm_lang$core$String$split, '\n', _p1._0);
+				var photos = A2(
+					_elm_lang$core$List$indexedMap,
+					F2(
+						function (id, url) {
+							return {id: id, url: url};
+						}),
+					urls);
+				var selectedId = _user$project$Main$selectFirst(photos);
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{photos: photos, selectedId: selectedId}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			default:
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{status: _p1._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
 		}
 	});
 var _user$project$Main$model = {
 	photos: _elm_lang$core$Native_List.fromArray(
 		[]),
-	selectedUrl: ''
+	selectedId: -1,
+	status: ''
+};
+var _user$project$Main$Photo = F2(
+	function (a, b) {
+		return {id: a, url: b};
+	});
+var _user$project$Main$Model = F3(
+	function (a, b, c) {
+		return {photos: a, selectedId: b, status: c};
+	});
+var _user$project$Main$ReportError = function (a) {
+	return {ctor: 'ReportError', _0: a};
+};
+var _user$project$Main$handleLoadFailure = function (_p2) {
+	return _user$project$Main$ReportError('HTTP error! (Have you tried turning it off and on again?)');
+};
+var _user$project$Main$SelectPhoto = function (a) {
+	return {ctor: 'SelectPhoto', _0: a};
 };
 var _user$project$Main$viewThumbnail = F2(
-	function (selectedUrl, thumbnail) {
+	function (selectedId, thumbnail) {
 		return A2(
 			_elm_lang$html$Html$img,
 			_elm_lang$core$Native_List.fromArray(
@@ -8092,11 +8110,11 @@ var _user$project$Main$viewThumbnail = F2(
 							{
 							ctor: '_Tuple2',
 							_0: 'selected',
-							_1: _elm_lang$core$Native_Utils.eq(selectedUrl, thumbnail.url)
+							_1: _elm_lang$core$Native_Utils.eq(selectedId, thumbnail.id)
 						}
 						])),
 					_elm_lang$html$Html_Events$onClick(
-					{operation: 'SELECT_PHOTO', data: thumbnail.url})
+					_user$project$Main$SelectPhoto(thumbnail.id))
 				]),
 			_elm_lang$core$Native_List.fromArray(
 				[]));
@@ -8126,25 +8144,33 @@ var _user$project$Main$view = function (model) {
 					]),
 				A2(
 					_elm_lang$core$List$map,
-					_user$project$Main$viewThumbnail(model.selectedUrl),
-					model.photos))
+					_user$project$Main$viewThumbnail(model.selectedId),
+					model.photos)),
+				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text(model.status)
+					]))
 			]));
 };
+var _user$project$Main$LoadPhotos = function (a) {
+	return {ctor: 'LoadPhotos', _0: a};
+};
+var _user$project$Main$initialCmd = A3(_elm_lang$core$Task$perform, _user$project$Main$handleLoadFailure, _user$project$Main$LoadPhotos, _user$project$Main$initialTask);
 var _user$project$Main$main = {
 	main: _elm_lang$html$Html_App$program(
 		{
 			view: _user$project$Main$view,
 			update: _user$project$Main$update,
-			subscriptions: function (_p2) {
+			subscriptions: function (_p3) {
 				return _elm_lang$core$Platform_Sub$none;
 			},
 			init: {ctor: '_Tuple2', _0: _user$project$Main$model, _1: _user$project$Main$initialCmd}
 		})
 };
-var _user$project$Main$Msg = F2(
-	function (a, b) {
-		return {operation: a, data: b};
-	});
 
 var Elm = {};
 Elm['Main'] = Elm['Main'] || {};
