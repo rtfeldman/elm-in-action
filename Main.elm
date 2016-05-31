@@ -4,6 +4,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
 import Html.App
+import String
 
 
 view model =
@@ -35,10 +36,24 @@ model =
 
 update msg model =
     if msg.operation == "SELECT_PHOTO" then
-        { model | selectedUrl = msg.data }
+        ( { model | selectedUrl = msg.data }, Cmd.none )
+    else if msg.operation == "LOAD_PHOTOS" then
+        let
+            urls =
+                String.split "\n" msg.data
+
+            photos =
+                List.map (\url -> { url = url }) urls
+        in
+            ( { model | photos = photos }, Cmd.none )
     else
-        model
+        ( model, Cmd.none )
 
 
 main =
-    Html.App.beginnerProgram { model = model, view = view, update = update }
+    Html.App.program
+        { view = view
+        , update = update
+        , init = ( model, Cmd.none )
+        , subscriptions = \_ -> Sub.none
+        }

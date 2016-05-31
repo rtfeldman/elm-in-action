@@ -7221,9 +7221,34 @@ var _elm_lang$html$Html_Events$Options = F2(
 
 var _user$project$Main$update = F2(
 	function (msg, model) {
-		return _elm_lang$core$Native_Utils.eq(msg.operation, 'SELECT_PHOTO') ? _elm_lang$core$Native_Utils.update(
-			model,
-			{selectedUrl: msg.data}) : model;
+		if (_elm_lang$core$Native_Utils.eq(msg.operation, 'SELECT_PHOTO')) {
+			return {
+				ctor: '_Tuple2',
+				_0: _elm_lang$core$Native_Utils.update(
+					model,
+					{selectedUrl: msg.data}),
+				_1: _elm_lang$core$Platform_Cmd$none
+			};
+		} else {
+			if (_elm_lang$core$Native_Utils.eq(msg.operation, 'LOAD_PHOTOS')) {
+				var urls = A2(_elm_lang$core$String$split, '\n', msg.data);
+				var photos = A2(
+					_elm_lang$core$List$map,
+					function (url) {
+						return {url: url};
+					},
+					urls);
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{photos: photos}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			} else {
+				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+			}
+		}
 	});
 var _user$project$Main$model = {
 	photos: _elm_lang$core$Native_List.fromArray(
@@ -7286,8 +7311,15 @@ var _user$project$Main$view = function (model) {
 			]));
 };
 var _user$project$Main$main = {
-	main: _elm_lang$html$Html_App$beginnerProgram(
-		{model: _user$project$Main$model, view: _user$project$Main$view, update: _user$project$Main$update})
+	main: _elm_lang$html$Html_App$program(
+		{
+			view: _user$project$Main$view,
+			update: _user$project$Main$update,
+			init: {ctor: '_Tuple2', _0: _user$project$Main$model, _1: _elm_lang$core$Platform_Cmd$none},
+			subscriptions: function (_p0) {
+				return _elm_lang$core$Platform_Sub$none;
+			}
+		})
 };
 
 var Elm = {};
