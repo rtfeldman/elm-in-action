@@ -32,6 +32,16 @@ model =
     }
 
 
+selectFirst : List String -> String
+selectFirst urls =
+    case List.head urls of
+        Nothing ->
+            ""
+
+        Just url ->
+            url
+
+
 update msg model =
     if msg.operation == "SELECT_PHOTO" then
         ( { model | selectedUrl = msg.data }, Cmd.none )
@@ -42,8 +52,11 @@ update msg model =
 
             photos =
                 List.map (\url -> { url = url }) urls
+
+            selectedUrl =
+                selectFirst urls
         in
-            ( { model | photos = photos }, Cmd.none )
+            ( { model | photos = photos, selectedUrl = selectedUrl }, Cmd.none )
     else
         ( model, Cmd.none )
 

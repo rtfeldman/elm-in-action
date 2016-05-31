@@ -8034,6 +8034,14 @@ var _user$project$Main$handleLoadSuccess = function (data) {
 	return {operation: 'LOAD_PHOTOS', data: data};
 };
 var _user$project$Main$initialCmd = A3(_elm_lang$core$Task$perform, _user$project$Main$handleLoadFailure, _user$project$Main$handleLoadSuccess, _user$project$Main$initialTask);
+var _user$project$Main$selectFirst = function (urls) {
+	var _p1 = _elm_lang$core$List$head(urls);
+	if (_p1.ctor === 'Nothing') {
+		return '';
+	} else {
+		return _p1._0;
+	}
+};
 var _user$project$Main$update = F2(
 	function (msg, model) {
 		if (_elm_lang$core$Native_Utils.eq(msg.operation, 'SELECT_PHOTO')) {
@@ -8053,11 +8061,12 @@ var _user$project$Main$update = F2(
 						return {url: url};
 					},
 					urls);
+				var selectedUrl = _user$project$Main$selectFirst(urls);
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{photos: photos}),
+						{photos: photos, selectedUrl: selectedUrl}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			} else {
@@ -8126,12 +8135,16 @@ var _user$project$Main$main = {
 		{
 			view: _user$project$Main$view,
 			update: _user$project$Main$update,
-			subscriptions: function (_p1) {
+			subscriptions: function (_p2) {
 				return _elm_lang$core$Platform_Sub$none;
 			},
 			init: {ctor: '_Tuple2', _0: _user$project$Main$model, _1: _user$project$Main$initialCmd}
 		})
 };
+var _user$project$Main$Msg = F2(
+	function (a, b) {
+		return {operation: a, data: b};
+	});
 
 var Elm = {};
 Elm['Main'] = Elm['Main'] || {};
