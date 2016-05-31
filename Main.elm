@@ -48,6 +48,11 @@ update msg model =
         ( model, Cmd.none )
 
 
+type alias Msg =
+    { operation : String, data : String }
+
+
+handleLoadSuccess : String -> Msg
 handleLoadSuccess data =
     { operation = "LOAD_PHOTOS", data = data }
 
