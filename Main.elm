@@ -57,6 +57,7 @@ handleLoadSuccess data =
     { operation = "LOAD_PHOTOS", data = data }
 
 
+handleLoadFailure : Http.Error -> Msg
 handleLoadFailure _ =
     { operation = "REPORT_ERROR"
     , data = "HTTP error! (Have you tried turning it off and on again?)"
