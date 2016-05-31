@@ -2,8 +2,11 @@
 <html>
     <head>
         <style>
-            img { margin: 5px; }
-            .selected { margin: 0; border: 5px solid #60b5cc; }
+            body { background-color: rgb(44, 44, 44); }
+            img { border: 1px solid white; margin: 5px; }
+            .selected { margin: 0; border: 6px solid #60b5cc; }
+            .content { margin: 40px auto; width: 960px; }
+            h1 { font-family: Verdana; color: #60b5cc; }
         </style>
     </head>
 
@@ -12,7 +15,7 @@
 
         <script src="elm.js"></script>
         <script>
-            Elm.Main.embed(document.getElementById("elm-area"));  //#C
+            Elm.Main.embed(document.getElementById("elm-area"));
         </script>
     </body>
 </html>

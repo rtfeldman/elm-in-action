@@ -5,6 +5,8 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
 import Html.App
 import String
+import Task
+import Http
 
 
 view model =
@@ -25,12 +27,8 @@ viewThumbnail selectedUrl thumbnail =
 
 
 model =
-    { photos =
-        [ { url = "http://elm-in-action.com/1.jpeg" }
-        , { url = "http://elm-in-action.com/2.jpeg" }
-        , { url = "http://elm-in-action.com/3.jpeg" }
-        ]
-    , selectedUrl = "http://elm-in-action.com/1.jpeg"
+    { photos = []
+    , selectedUrl = ""
     }
 
 
@@ -50,10 +48,32 @@ update msg model =
         ( model, Cmd.none )
 
 
+handleLoadSuccess data =
+    { operation = "LOAD_PHOTOS", data = data }
+
+
+handleLoadFailure _ =
+    { operation = "REPORT_ERROR"
+    , data = "HTTP error! (Have you tried turning it off and on again?)"
+    }
+
+
+photoListUrl =
+    "http://elm-in-action.com/list-photos"
+
+
+initialTask =
+    Http.getString photoListUrl
+
+
+initialCmd =
+    Task.perform handleLoadFailure handleLoadSuccess initialTask
+
+
 main =
     Html.App.program
         { view = view
         , update = update
-        , init = ( model, Cmd.none )
         , subscriptions = \_ -> Sub.none
+        , init = ( model, initialCmd )
         }
