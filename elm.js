@@ -7181,6 +7181,37 @@ var _elm_lang$html$Html_Events$Options = F2(
 		return {stopPropagation: a, preventDefault: b};
 	});
 
+var _user$project$Main$model = {
+	photos: _elm_lang$core$Native_List.fromArray(
+		[
+			{url: 'http://elm-in-action.com/1.jpeg'},
+			{url: 'http://elm-in-action.com/2.jpeg'},
+			{url: 'http://elm-in-action.com/3.jpeg'}
+		]),
+	selectedUrl: 'http://elm-in-action.com/1.jpeg'
+};
+var _user$project$Main$viewThumbnail = F2(
+	function (selectedUrl, thumbnail) {
+		return A2(
+			_elm_lang$html$Html$img,
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$html$Html_Attributes$src(thumbnail.url),
+					_elm_lang$html$Html_Attributes$classList(
+					_elm_lang$core$Native_List.fromArray(
+						[
+							{
+							ctor: '_Tuple2',
+							_0: 'selected',
+							_1: _elm_lang$core$Native_Utils.eq(selectedUrl, thumbnail.url)
+						}
+						])),
+					_elm_lang$html$Html_Events$onClick(
+					{operation: 'SELECT_PHOTO', data: thumbnail.url})
+				]),
+			_elm_lang$core$Native_List.fromArray(
+				[]));
+	});
 var _user$project$Main$view = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
@@ -7204,37 +7235,16 @@ var _user$project$Main$view = function (model) {
 					[
 						_elm_lang$html$Html_Attributes$id('thumbnails')
 					]),
-				_elm_lang$core$Native_List.fromArray(
-					[
-						A2(
-						_elm_lang$html$Html$img,
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_elm_lang$html$Html_Attributes$src('http://elm-in-action.com/1.jpeg')
-							]),
-						_elm_lang$core$Native_List.fromArray(
-							[])),
-						A2(
-						_elm_lang$html$Html$img,
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_elm_lang$html$Html_Attributes$src('http://elm-in-action.com/2.jpeg')
-							]),
-						_elm_lang$core$Native_List.fromArray(
-							[])),
-						A2(
-						_elm_lang$html$Html$img,
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_elm_lang$html$Html_Attributes$src('http://elm-in-action.com/3.jpeg')
-							]),
-						_elm_lang$core$Native_List.fromArray(
-							[]))
-					]))
+				A2(
+					_elm_lang$core$List$map,
+					function (photo) {
+						return A2(_user$project$Main$viewThumbnail, model.selectedUrl, photo);
+					},
+					model.photos))
 			]));
 };
 var _user$project$Main$main = {
-	main: _user$project$Main$view('no model to speak of yet')
+	main: _user$project$Main$view(_user$project$Main$model)
 };
 
 var Elm = {};

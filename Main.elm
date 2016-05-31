@@ -9,12 +9,28 @@ view model =
     div [ class "content" ]
         [ h1 [] [ text "Photo Groove" ]
         , div [ id "thumbnails" ]
-            [ img [ src "http://elm-in-action.com/1.jpeg" ] []
-            , img [ src "http://elm-in-action.com/2.jpeg" ] []
-            , img [ src "http://elm-in-action.com/3.jpeg" ] []
-            ]
+            (List.map (viewThumbnail model.selectedUrl) model.photos)
         ]
 
 
+viewThumbnail selectedUrl thumbnail =
+    img
+        [ src thumbnail.url
+        , classList [ ( "selected", selectedUrl == thumbnail.url ) ]
+        , onClick { operation = "SELECT_PHOTO", data = thumbnail.url }
+        ]
+        []
+
+
+model =
+    { photos =
+        [ { url = "http://elm-in-action.com/1.jpeg" }
+        , { url = "http://elm-in-action.com/2.jpeg" }
+        , { url = "http://elm-in-action.com/3.jpeg" }
+        ]
+    , selectedUrl = "http://elm-in-action.com/1.jpeg"
+    }
+
+
 main =
-    view "no model to speak of yet"
+    view model
