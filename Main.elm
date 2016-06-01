@@ -9,6 +9,11 @@ import Task
 import Http
 
 
+type alias Msg =
+    { operation : String, data : String }
+
+
+view : Model -> Html Msg
 view model =
     div [ class "content" ]
         [ h1 [] [ text "Photo Groove" ]
@@ -47,6 +52,7 @@ update msg model =
         ( model, Cmd.none )
 
 
+handleLoadSuccess : String -> Msg
 handleLoadSuccess data =
     { operation = "LOAD_PHOTOS", data = data }
 
