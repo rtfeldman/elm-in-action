@@ -58,6 +58,7 @@ handleLoadFailure _ =
     }
 
 
+photoListUrl : String
 photoListUrl =
     "http://elm-in-action.com/list-photos"
 
