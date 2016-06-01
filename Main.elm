@@ -9,12 +9,8 @@ import Task
 import Http
 
 
-type alias Msg =
-    { operation : String, data : String }
-
-
 type alias Model =
-    { photos : List { url : String }, selectedId : Int }
+    { photos : List Photo, selectedId : Int, status : String }
 
 
 view : Model -> Html Msg
@@ -22,16 +18,17 @@ view model =
     div [ class "content" ]
         [ h1 [] [ text "Photo Groove" ]
         , div [ id "thumbnails" ]
-            (List.map (viewThumbnail model.selectedUrl) model.photos)
+            (List.map (viewThumbnail model.selectedId) model.photos)
+        , div [] [ text model.status ]
         ]
 
 
-viewThumbnail : String -> Photo -> Html Msg
-viewThumbnail selectedUrl thumbnail =
+viewThumbnail : PhotoId -> Photo -> Html Msg
+viewThumbnail selectedId thumbnail =
     img
         [ src thumbnail.url
-        , classList [ ( "selected", selectedUrl == thumbnail.url ) ]
-        , onClick { operation = "SELECT_PHOTO", data = thumbnail.url }
+        , classList [ ( "selected", selectedId == thumbnail.id ) ]
+        , onClick (SelectPhoto thumbnail.id)
         ]
         []
 
@@ -46,25 +43,43 @@ type alias Photo =
     }
 
 
-model : { photos : List { url : String }, selectedUrl : String }
+model : Model
 model =
-    { photos = [], selectedUrl = "" }
+    { photos = [], selectedId = -1, status = "" }
 
 
+type Msg
+    = LoadPhotos String
+    | SelectPhoto PhotoId
+    | ReportError String
+
+
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    if msg.operation == "SELECT_PHOTO" then
-        ( { model | selectedUrl = msg.data }, Cmd.none )
-    else if msg.operation == "LOAD_PHOTOS" then
-        let
-            urls =
-                String.split "\n" msg.data
+    case msg of
+        SelectPhoto photoId ->
+            ( { model | selectedId = photoId }, Cmd.none )
 
-            photos =
-                List.map (\url -> { url = url }) urls
-        in
-            ( { model | photos = photos }, Cmd.none )
-    else
-        ( model, Cmd.none )
+        LoadPhotos str ->
+            let
+                urls : List String
+                urls =
+                    String.split "\n" str
+
+                photos : List Photo
+                photos =
+                    List.indexedMap (\id url -> { id = id, url = url }) urls
+
+                selectedId : PhotoId
+                selectedId =
+                    selectFirstId photos
+            in
+                ( { model | photos = photos, selectedId = selectedId }
+                , Cmd.none
+                )
+
+        ReportError err ->
+            ( { model | status = err }, Cmd.none )
 
 
 selectFirstId : List Photo -> PhotoId
@@ -77,15 +92,9 @@ selectFirstId photos =
             -1
 
 
-handleLoadSuccess : String -> Msg
-handleLoadSuccess data =
-    { operation = "LOAD_PHOTOS", data = data }
-
-
+handleLoadFailure : Http.Error -> Msg
 handleLoadFailure _ =
-    { operation = "REPORT_ERROR"
-    , data = "HTTP error! (Have you tried turning it off and on again?)"
-    }
+    ReportError "HTTP error! (Have you tried turning it off and on again?)"
 
 
 photoListUrl : String
@@ -98,7 +107,7 @@ initialTask =
 
 
 initialCmd =
-    Task.perform handleLoadFailure handleLoadSuccess initialTask
+    Task.perform handleLoadFailure LoadPhotos initialTask
 
 
 main =
