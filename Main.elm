@@ -13,6 +13,10 @@ type alias Msg =
     { operation : String, data : String }
 
 
+type alias Model =
+    { photos : List { url : String }, selectedId : Int }
+
+
 view : Model -> Html Msg
 view model =
     div [ class "content" ]
@@ -29,6 +33,16 @@ viewThumbnail selectedUrl thumbnail =
         , onClick { operation = "SELECT_PHOTO", data = thumbnail.url }
         ]
         []
+
+
+type alias PhotoId =
+    Int
+
+
+type alias Photo =
+    { id : PhotoId
+    , url : String
+    }
 
 
 model : { photos : List { url : String }, selectedUrl : String }
