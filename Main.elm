@@ -67,6 +67,16 @@ update msg model =
         ( model, Cmd.none )
 
 
+selectFirstId : List Photo -> PhotoId
+selectFirstId photos =
+    case List.head photos of
+        Just photo ->
+            photo.id
+
+        Nothing ->
+            -1
+
+
 handleLoadSuccess : String -> Msg
 handleLoadSuccess data =
     { operation = "LOAD_PHOTOS", data = data }
