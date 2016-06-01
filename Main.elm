@@ -26,10 +26,9 @@ viewThumbnail selectedUrl thumbnail =
         []
 
 
+model : { photos : List { url : String }, selectedUrl : String }
 model =
-    { photos = []
-    , selectedUrl = ""
-    }
+    { photos = [], selectedUrl = "" }
 
 
 update msg model =
