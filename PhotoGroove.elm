@@ -4,6 +4,10 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 
 
+urlPrefix =
+    "http://elm-in-action.com/"
+
+
 view model =
     div [ class "content" ]
         [ h1 [] [ text "Photo Groove" ]
@@ -11,7 +15,7 @@ view model =
             (List.map (viewThumbnail model.selectedUrl) model.photos)
         , img
             [ class "large"
-            , src ("http://elm-in-action.com/large/" ++ model.selectedUrl)
+            , src (urlPrefix ++ "large/" ++ model.selectedUrl)
             ]
             []
         ]
@@ -19,7 +23,7 @@ view model =
 
 viewThumbnail selectedUrl thumbnail =
     img
-        [ src ("http://elm-in-action.com/" ++ thumbnail.url)
+        [ src (urlPrefix ++ thumbnail.url)
         , classList [ ( "selected", selectedUrl == thumbnail.url ) ]
         ]
         []
