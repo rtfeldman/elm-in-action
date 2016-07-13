@@ -50,4 +50,8 @@ update msg model =
 
 
 main =
-    Html.App.beginnerProgram { model = initialModel, view = view, update = update }
+    Html.App.beginnerProgram
+        { model = initialModel
+        , view = view
+        , update = update
+        }
