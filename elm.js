@@ -7514,7 +7514,7 @@ var _elm_lang$html$Html_Attributes$classList = function (list) {
 };
 var _elm_lang$html$Html_Attributes$style = _elm_lang$virtual_dom$VirtualDom$style;
 
-var _user$project$PhotoGroove$model = {
+var _user$project$PhotoGroove$initialModel = {
 	photos: _elm_lang$core$Native_List.fromArray(
 		[
 			{url: '1.jpeg'},
@@ -7523,6 +7523,7 @@ var _user$project$PhotoGroove$model = {
 		]),
 	selectedUrl: '1.jpeg'
 };
+var _user$project$PhotoGroove$urlPrefix = 'http://elm-in-action.com/';
 var _user$project$PhotoGroove$viewThumbnail = F2(
 	function (selectedUrl, thumbnail) {
 		return A2(
@@ -7530,7 +7531,7 @@ var _user$project$PhotoGroove$viewThumbnail = F2(
 			_elm_lang$core$Native_List.fromArray(
 				[
 					_elm_lang$html$Html_Attributes$src(
-					A2(_elm_lang$core$Basics_ops['++'], 'http://elm-in-action.com/', thumbnail.url)),
+					A2(_elm_lang$core$Basics_ops['++'], _user$project$PhotoGroove$urlPrefix, thumbnail.url)),
 					_elm_lang$html$Html_Attributes$classList(
 					_elm_lang$core$Native_List.fromArray(
 						[
@@ -7577,14 +7578,17 @@ var _user$project$PhotoGroove$view = function (model) {
 					[
 						_elm_lang$html$Html_Attributes$class('large'),
 						_elm_lang$html$Html_Attributes$src(
-						A2(_elm_lang$core$Basics_ops['++'], 'http://elm-in-action.com/large/', model.selectedUrl))
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							_user$project$PhotoGroove$urlPrefix,
+							A2(_elm_lang$core$Basics_ops['++'], 'large/', model.selectedUrl)))
 					]),
 				_elm_lang$core$Native_List.fromArray(
 					[]))
 			]));
 };
 var _user$project$PhotoGroove$main = {
-	main: _user$project$PhotoGroove$view(_user$project$PhotoGroove$model)
+	main: _user$project$PhotoGroove$view(_user$project$PhotoGroove$initialModel)
 };
 
 var Elm = {};
