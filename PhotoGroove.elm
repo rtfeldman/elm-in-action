@@ -29,7 +29,7 @@ viewThumbnail selectedUrl thumbnail =
         []
 
 
-model =
+initialModel =
     { photos =
         [ { url = "1.jpeg" }
         , { url = "2.jpeg" }
@@ -40,4 +40,4 @@ model =
 
 
 main =
-    view model
+    view initialModel
