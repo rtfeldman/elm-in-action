@@ -12,6 +12,11 @@ urlPrefix =
     "http://elm-in-action.com/"
 
 
+type alias Msg =
+    { operation : String, data : String }
+
+
+view : Model -> Html Msg
 view model =
     div [ class "content" ]
         [ h1 [] [ text "Photo Groove" ]
