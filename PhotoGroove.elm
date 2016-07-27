@@ -34,7 +34,11 @@ viewThumbnail selectedUrl thumbnail =
         []
 
 
-initialModel : { photos : List { url : String }, selectedUrl : String }
+type alias Photo =
+    { url : String }
+
+
+initialModel : { photos : List Photo, selectedUrl : String }
 initialModel =
     { photos =
         [ { url = "1.jpeg" }
@@ -45,7 +49,7 @@ initialModel =
     }
 
 
-photoArray : Array { url : String }
+photoArray : Array Photo
 photoArray =
     Array.fromList initialModel.photos
 
