@@ -5,6 +5,7 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
 import Html.App
 import Array exposing (Array)
+import Random
 
 
 urlPrefix : String
@@ -109,13 +110,22 @@ getPhotoUrl index =
 
 type Msg
     = SelectByUrl String
+    | SelectByIndex Int
     | SurpriseMe
     | SetSize ThumbnailSize
+
+
+randomPhotoPicker : Random.Generator Int
+randomPhotoPicker =
+    Random.int 0 (Array.length photoArray - 1)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        SelectByIndex index ->
+            ( { model | selectedUrl = getPhotoUrl index }, Cmd.none )
+
         SelectByUrl url ->
             ( { model | selectedUrl = url }, Cmd.none )
 
