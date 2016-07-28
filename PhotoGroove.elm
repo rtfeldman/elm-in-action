@@ -130,7 +130,7 @@ update msg model =
             ( { model | selectedUrl = url }, Cmd.none )
 
         SurpriseMe ->
-            ( { model | selectedUrl = "2.jpeg" }, Cmd.none )
+            ( model, Random.generate SelectByIndex randomPhotoPicker )
 
         SetSize size ->
             ( { model | chosenSize = size }, Cmd.none )

@@ -8766,46 +8766,6 @@ var _user$project$PhotoGroove$getPhotoUrl = function (index) {
 		return '';
 	}
 };
-var _user$project$PhotoGroove$update = F2(
-	function (msg, model) {
-		var _p2 = msg;
-		switch (_p2.ctor) {
-			case 'SelectByIndex':
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{
-							selectedUrl: _user$project$PhotoGroove$getPhotoUrl(_p2._0)
-						}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
-			case 'SelectByUrl':
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{selectedUrl: _p2._0}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
-			case 'SurpriseMe':
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{selectedUrl: '2.jpeg'}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
-			default:
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{chosenSize: _p2._0}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
-		}
-	});
 var _user$project$PhotoGroove$randomPhotoPicker = A2(
 	_elm_lang$core$Random$int,
 	0,
@@ -8840,6 +8800,44 @@ var _user$project$PhotoGroove$SurpriseMe = {ctor: 'SurpriseMe'};
 var _user$project$PhotoGroove$SelectByIndex = function (a) {
 	return {ctor: 'SelectByIndex', _0: a};
 };
+var _user$project$PhotoGroove$update = F2(
+	function (msg, model) {
+		var _p2 = msg;
+		switch (_p2.ctor) {
+			case 'SelectByIndex':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							selectedUrl: _user$project$PhotoGroove$getPhotoUrl(_p2._0)
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'SelectByUrl':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{selectedUrl: _p2._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'SurpriseMe':
+				return {
+					ctor: '_Tuple2',
+					_0: model,
+					_1: A2(_elm_lang$core$Random$generate, _user$project$PhotoGroove$SelectByIndex, _user$project$PhotoGroove$randomPhotoPicker)
+				};
+			default:
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{chosenSize: _p2._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+		}
+	});
 var _user$project$PhotoGroove$SelectByUrl = function (a) {
 	return {ctor: 'SelectByUrl', _0: a};
 };
