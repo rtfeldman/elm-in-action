@@ -7902,17 +7902,31 @@ var _user$project$PhotoGroove$update = F2(
 		var _p0 = msg;
 		switch (_p0.ctor) {
 			case 'SelectByUrl':
-				return _elm_lang$core$Native_Utils.update(
-					model,
-					{selectedUrl: _p0._0});
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{selectedUrl: _p0._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
 			case 'SurpriseMe':
-				return _elm_lang$core$Native_Utils.update(
-					model,
-					{selectedUrl: '2.jpeg'});
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{selectedUrl: '2.jpeg'}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
 			default:
-				return _elm_lang$core$Native_Utils.update(
-					model,
-					{chosenSize: _p0._0});
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							chosenSize: A2(_elm_lang$core$Debug$log, 'size', _p0._0)
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
 		}
 	});
 var _user$project$PhotoGroove$sizeToString = function (size) {
@@ -8082,8 +8096,15 @@ var _user$project$PhotoGroove$view = function (model) {
 			]));
 };
 var _user$project$PhotoGroove$main = {
-	main: _elm_lang$html$Html_App$beginnerProgram(
-		{model: _user$project$PhotoGroove$initialModel, view: _user$project$PhotoGroove$view, update: _user$project$PhotoGroove$update})
+	main: _elm_lang$html$Html_App$program(
+		{
+			init: {ctor: '_Tuple2', _0: _user$project$PhotoGroove$initialModel, _1: _elm_lang$core$Platform_Cmd$none},
+			view: _user$project$PhotoGroove$view,
+			update: _user$project$PhotoGroove$update,
+			subscriptions: function (model) {
+				return _elm_lang$core$Platform_Sub$none;
+			}
+		})
 };
 
 var Elm = {};

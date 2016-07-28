@@ -113,22 +113,23 @@ type Msg
     | SetSize ThumbnailSize
 
 
-update : Msg -> Model -> Model
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         SelectByUrl url ->
-            { model | selectedUrl = url }
+            ( { model | selectedUrl = url }, Cmd.none )
 
         SurpriseMe ->
-            { model | selectedUrl = "2.jpeg" }
+            ( { model | selectedUrl = "2.jpeg" }, Cmd.none )
 
         SetSize size ->
-            { model | chosenSize = size }
+            ( { model | chosenSize = size }, Cmd.none )
 
 
 main =
-    Html.App.beginnerProgram
-        { model = initialModel
+    Html.App.program
+        { init = ( initialModel, Cmd.none )
         , view = view
         , update = update
+        , subscriptions = (\model -> Sub.none)
         }
