@@ -7984,6 +7984,14 @@ var _user$project$PhotoGroove$initialModel = {
 	chosenSize: _user$project$PhotoGroove$Medium
 };
 var _user$project$PhotoGroove$photoArray = _elm_lang$core$Array$fromList(_user$project$PhotoGroove$initialModel.photos);
+var _user$project$PhotoGroove$getPhotoUrl = function (index) {
+	var _p1 = A2(_elm_lang$core$Array$get, index, _user$project$PhotoGroove$photoArray);
+	if (_p1.ctor === 'Just') {
+		return _p1._0.url;
+	} else {
+		return '';
+	}
+};
 var _user$project$PhotoGroove$Small = {ctor: 'Small'};
 var _user$project$PhotoGroove$view = function (model) {
 	return A2(

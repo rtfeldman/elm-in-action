@@ -101,6 +101,16 @@ photoArray =
     Array.fromList initialModel.photos
 
 
+getPhotoUrl : Int -> String
+getPhotoUrl index =
+    case Array.get index photoArray of
+        Just photo ->
+            photo.url
+
+        Nothing ->
+            ""
+
+
 update : Msg -> Model -> Model
 update msg model =
     if msg.operation == "SELECT_PHOTO" then
