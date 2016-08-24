@@ -136,6 +136,7 @@ update msg model =
             ( { model | chosenSize = size }, Cmd.none )
 
 
+main : Program Never
 main =
     Html.App.program
         { init = ( initialModel, Cmd.none )
