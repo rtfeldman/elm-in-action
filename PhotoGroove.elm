@@ -118,11 +118,6 @@ type Msg
     | SetSize ThumbnailSize
 
 
-randomPhotoPicker : Random.Generator Int
-randomPhotoPicker =
-    Random.int 0 (Array.length photoArray - 1)
-
-
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
@@ -133,7 +128,11 @@ update msg model =
             ( { model | selectedUrl = Just url }, Cmd.none )
 
         SurpriseMe ->
-            ( model, Random.generate SelectByIndex randomPhotoPicker )
+            let
+                randomPhotoPicker =
+                    Random.int 0 (List.length model.photos - 1)
+            in
+                ( model, Random.generate SelectByIndex randomPhotoPicker )
 
         SetSize size ->
             ( { model | chosenSize = size }, Cmd.none )
