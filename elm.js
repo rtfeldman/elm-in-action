@@ -8738,33 +8738,50 @@ var _user$project$PhotoGroove$sizeToString = function (size) {
 	}
 };
 var _user$project$PhotoGroove$urlPrefix = 'http://elm-in-action.com/';
+var _user$project$PhotoGroove$viewLarge = function (maybeUrl) {
+	var _p1 = maybeUrl;
+	if (_p1.ctor === 'Nothing') {
+		return _elm_lang$html$Html$text('');
+	} else {
+		return A2(
+			_elm_lang$html$Html$img,
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$html$Html_Attributes$class('large'),
+					_elm_lang$html$Html_Attributes$src(
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						_user$project$PhotoGroove$urlPrefix,
+						A2(_elm_lang$core$Basics_ops['++'], 'large/', _p1._0)))
+				]),
+			_elm_lang$core$Native_List.fromArray(
+				[]));
+	}
+};
 var _user$project$PhotoGroove$Photo = function (a) {
 	return {url: a};
 };
-var _user$project$PhotoGroove$Model = F3(
-	function (a, b, c) {
-		return {photos: a, selectedUrl: b, chosenSize: c};
+var _user$project$PhotoGroove$Model = F4(
+	function (a, b, c, d) {
+		return {photos: a, selectedUrl: b, loadingError: c, chosenSize: d};
 	});
 var _user$project$PhotoGroove$Large = {ctor: 'Large'};
 var _user$project$PhotoGroove$Medium = {ctor: 'Medium'};
 var _user$project$PhotoGroove$initialModel = {
 	photos: _elm_lang$core$Native_List.fromArray(
-		[
-			{url: '1.jpeg'},
-			{url: '2.jpeg'},
-			{url: '3.jpeg'}
-		]),
-	selectedUrl: '1.jpeg',
+		[]),
+	selectedUrl: _elm_lang$core$Maybe$Nothing,
+	loadingError: _elm_lang$core$Maybe$Nothing,
 	chosenSize: _user$project$PhotoGroove$Medium
 };
 var _user$project$PhotoGroove$photoArray = _elm_lang$core$Array$fromList(_user$project$PhotoGroove$initialModel.photos);
 var _user$project$PhotoGroove$getPhotoUrl = function (index) {
-	var _p1 = A2(_elm_lang$core$Array$get, index, _user$project$PhotoGroove$photoArray);
-	if (_p1.ctor === 'Just') {
-		return _p1._0.url;
-	} else {
-		return '';
-	}
+	return A2(
+		_elm_lang$core$Maybe$map,
+		function (_) {
+			return _.url;
+		},
+		A2(_elm_lang$core$Array$get, index, _user$project$PhotoGroove$photoArray));
 };
 var _user$project$PhotoGroove$randomPhotoPicker = A2(
 	_elm_lang$core$Random$int,
@@ -8819,7 +8836,9 @@ var _user$project$PhotoGroove$update = F2(
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{selectedUrl: _p2._0}),
+						{
+							selectedUrl: _elm_lang$core$Maybe$Just(_p2._0)
+						}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'SurpriseMe':
@@ -8855,7 +8874,9 @@ var _user$project$PhotoGroove$viewThumbnail = F2(
 							{
 							ctor: '_Tuple2',
 							_0: 'selected',
-							_1: _elm_lang$core$Native_Utils.eq(selectedUrl, thumbnail.url)
+							_1: _elm_lang$core$Native_Utils.eq(
+								selectedUrl,
+								_elm_lang$core$Maybe$Just(thumbnail.url))
 						}
 						])),
 					_elm_lang$html$Html_Events$onClick(
@@ -8922,19 +8943,7 @@ var _user$project$PhotoGroove$view = function (model) {
 					_elm_lang$core$List$map,
 					_user$project$PhotoGroove$viewThumbnail(model.selectedUrl),
 					model.photos)),
-				A2(
-				_elm_lang$html$Html$img,
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html_Attributes$class('large'),
-						_elm_lang$html$Html_Attributes$src(
-						A2(
-							_elm_lang$core$Basics_ops['++'],
-							_user$project$PhotoGroove$urlPrefix,
-							A2(_elm_lang$core$Basics_ops['++'], 'large/', model.selectedUrl)))
-					]),
-				_elm_lang$core$Native_List.fromArray(
-					[]))
+				_user$project$PhotoGroove$viewLarge(model.selectedUrl)
 			]));
 };
 var _user$project$PhotoGroove$main = {
