@@ -109,6 +109,23 @@ type Msg
     | SelectByIndex Int
     | SurpriseMe
     | SetSize ThumbnailSize
+    | ReportError String
+    | LoadPhotos (List String)
+
+
+handleLoadSuccess : String -> Msg
+handleLoadSuccess str =
+    LoadPhotos (String.split "\n" str)
+
+
+handleLoadFailure : Http.Error -> Msg
+handleLoadFailure _ =
+    ReportError "HTTP error! (Have you tried turning it off and on again?)"
+
+
+initialCmd : Cmd Msg
+initialCmd =
+    Task.perform handleLoadFailure handleLoadSuccess initialTask
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
