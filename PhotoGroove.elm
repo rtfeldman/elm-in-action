@@ -6,6 +6,9 @@ import Html.Events exposing (onClick)
 import Html.App
 import Array exposing (Array)
 import Random
+import Task exposing (Task)
+import Http
+import String
 
 
 urlPrefix : String
@@ -133,6 +136,11 @@ update msg model =
 
         SetSize size ->
             ( { model | chosenSize = size }, Cmd.none )
+
+
+initialTask : Task Http.Error String
+initialTask =
+    Http.getString "http://elm-in-action.com/photos/list"
 
 
 main : Program Never
