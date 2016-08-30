@@ -125,7 +125,7 @@ handleLoadFailure _ =
 
 initialCmd : Cmd Msg
 initialCmd =
-    "http://elm-in-action.com/photos/list"
+    "http://elm-in-action.com/breakfast-burritos/list"
         |> Http.getString
         |> Task.perform handleLoadFailure handleLoadSuccess
 
@@ -159,12 +159,28 @@ update msg model =
         LoadPhotos urls ->
             ( { model | photos = List.map Photo urls }, Cmd.none )
 
+        ReportError error ->
+            ( { model | loadingError = Just error }, Cmd.none )
+
+
+viewOrError : Model -> Html Msg
+viewOrError model =
+    case model.loadingError of
+        Nothing ->
+            view model
+
+        Just errorMessage ->
+            div [ class "error-message" ]
+                [ h1 [] [ text "Photo Groove" ]
+                , p [] [ text errorMessage ]
+                ]
+
 
 main : Program Never
 main =
     Html.App.program
         { init = ( initialModel, initialCmd )
-        , view = view
+        , view = viewOrError
         , update = update
         , subscriptions = (\_ -> Sub.none)
         }
