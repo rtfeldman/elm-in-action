@@ -125,7 +125,9 @@ handleLoadFailure _ =
 
 initialCmd : Cmd Msg
 initialCmd =
-    Task.perform handleLoadFailure handleLoadSuccess initialTask
+    "http://elm-in-action.com/photos/list"
+        |> Http.getString
+        |> Task.perform handleLoadFailure handleLoadSuccess
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -153,11 +155,6 @@ update msg model =
 
         SetSize size ->
             ( { model | chosenSize = size }, Cmd.none )
-
-
-initialTask : Task Http.Error String
-initialTask =
-    Http.getString "http://elm-in-action.com/photos/list"
 
 
 main : Program Never
