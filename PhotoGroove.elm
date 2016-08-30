@@ -156,6 +156,9 @@ update msg model =
         SetSize size ->
             ( { model | chosenSize = size }, Cmd.none )
 
+        LoadPhotos urls ->
+            ( { model | photos = List.map (\url -> { url = url }) urls }, Cmd.none )
+
 
 main : Program Never
 main =
