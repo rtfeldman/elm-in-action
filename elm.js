@@ -8774,19 +8774,6 @@ var _user$project$PhotoGroove$initialModel = {
 	loadingError: _elm_lang$core$Maybe$Nothing,
 	chosenSize: _user$project$PhotoGroove$Medium
 };
-var _user$project$PhotoGroove$photoArray = _elm_lang$core$Array$fromList(_user$project$PhotoGroove$initialModel.photos);
-var _user$project$PhotoGroove$getPhotoUrl = function (index) {
-	return A2(
-		_elm_lang$core$Maybe$map,
-		function (_) {
-			return _.url;
-		},
-		A2(_elm_lang$core$Array$get, index, _user$project$PhotoGroove$photoArray));
-};
-var _user$project$PhotoGroove$randomPhotoPicker = A2(
-	_elm_lang$core$Random$int,
-	0,
-	_elm_lang$core$Array$length(_user$project$PhotoGroove$photoArray) - 1);
 var _user$project$PhotoGroove$Small = {ctor: 'Small'};
 var _user$project$PhotoGroove$SetSize = function (a) {
 	return {ctor: 'SetSize', _0: a};
@@ -8822,13 +8809,20 @@ var _user$project$PhotoGroove$update = F2(
 		var _p2 = msg;
 		switch (_p2.ctor) {
 			case 'SelectByIndex':
+				var newSelectedUrl = A2(
+					_elm_lang$core$Maybe$map,
+					function (_) {
+						return _.url;
+					},
+					A2(
+						_elm_lang$core$Array$get,
+						_p2._0,
+						_elm_lang$core$Array$fromList(model.photos)));
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{
-							selectedUrl: _user$project$PhotoGroove$getPhotoUrl(_p2._0)
-						}),
+						{selectedUrl: newSelectedUrl}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'SelectByUrl':
@@ -8842,10 +8836,14 @@ var _user$project$PhotoGroove$update = F2(
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'SurpriseMe':
+				var randomPhotoPicker = A2(
+					_elm_lang$core$Random$int,
+					0,
+					_elm_lang$core$List$length(model.photos) - 1);
 				return {
 					ctor: '_Tuple2',
 					_0: model,
-					_1: A2(_elm_lang$core$Random$generate, _user$project$PhotoGroove$SelectByIndex, _user$project$PhotoGroove$randomPhotoPicker)
+					_1: A2(_elm_lang$core$Random$generate, _user$project$PhotoGroove$SelectByIndex, randomPhotoPicker)
 				};
 			default:
 				return {

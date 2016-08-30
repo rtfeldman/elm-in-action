@@ -101,16 +101,6 @@ initialModel =
     }
 
 
-photoArray : Array Photo
-photoArray =
-    Array.fromList initialModel.photos
-
-
-getPhotoUrl : Int -> Maybe String
-getPhotoUrl index =
-    Maybe.map .url (Array.get index photoArray)
-
-
 type Msg
     = SelectByUrl String
     | SelectByIndex Int
@@ -122,7 +112,14 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         SelectByIndex index ->
-            ( { model | selectedUrl = getPhotoUrl index }, Cmd.none )
+            let
+                newSelectedUrl =
+                    model.photos
+                        |> Array.fromList
+                        |> Array.get index
+                        |> Maybe.map .url
+            in
+                ( { model | selectedUrl = newSelectedUrl }, Cmd.none )
 
         SelectByUrl url ->
             ( { model | selectedUrl = Just url }, Cmd.none )
