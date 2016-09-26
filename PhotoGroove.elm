@@ -1,14 +1,23 @@
 module PhotoGroove exposing (..)
 
 import Html exposing (..)
-import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
 import Html.App
 import Array exposing (Array)
 import Random
 import Task exposing (Task)
 import Http
-import String
+import Html.Attributes exposing (id, class, classList, src, name, type', title)
+import Json.Decode exposing (string, int, list, Decoder)
+import Json.Decode.Pipeline exposing (decode, required, optional)
+
+
+photoDecoder : Decoder Photo
+photoDecoder =
+    decode Photo
+        |> required "url" string
+        |> required "size" int
+        |> optional "title" string "(untitled)"
 
 
 urlPrefix : String
@@ -56,6 +65,7 @@ viewThumbnail : Maybe String -> Photo -> Html Msg
 viewThumbnail selectedUrl thumbnail =
     img
         [ src (urlPrefix ++ thumbnail.url)
+        , title (thumbnail.title ++ " [" ++ toString thumbnail.size ++ " KB]")
         , classList [ ( "selected", selectedUrl == Just thumbnail.url ) ]
         , onClick (SelectByUrl thumbnail.url)
         ]
@@ -84,7 +94,10 @@ sizeToString size =
 
 
 type alias Photo =
-    { url : String }
+    { url : String
+    , size : Int
+    , title : String
+    }
 
 
 type alias Model =
@@ -110,12 +123,7 @@ type Msg
     | SurpriseMe
     | SetSize ThumbnailSize
     | ReportError String
-    | LoadPhotos (List String)
-
-
-handleLoadSuccess : String -> Msg
-handleLoadSuccess str =
-    LoadPhotos (String.split "," str)
+    | LoadPhotos (List Photo)
 
 
 handleLoadFailure : Http.Error -> Msg
@@ -125,9 +133,9 @@ handleLoadFailure _ =
 
 initialCmd : Cmd Msg
 initialCmd =
-    "http://elm-in-action.com/photos/list"
-        |> Http.getString
-        |> Task.perform handleLoadFailure handleLoadSuccess
+    "http://elm-in-action.com/photos/list.json"
+        |> Http.get (list photoDecoder)
+        |> Task.perform handleLoadFailure LoadPhotos
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -156,10 +164,10 @@ update msg model =
         SetSize size ->
             ( { model | chosenSize = size }, Cmd.none )
 
-        LoadPhotos urls ->
+        LoadPhotos photos ->
             ( { model
-                | photos = List.map Photo urls
-                , selectedUrl = List.head urls
+                | photos = photos
+                , selectedUrl = Maybe.map .url (List.head photos)
               }
             , Cmd.none
             )
