@@ -115,7 +115,7 @@ type Msg
 
 handleLoadSuccess : String -> Msg
 handleLoadSuccess str =
-    LoadPhotos (String.split "\n" str)
+    LoadPhotos (String.split "," str)
 
 
 handleLoadFailure : Http.Error -> Msg
@@ -157,14 +157,35 @@ update msg model =
             ( { model | chosenSize = size }, Cmd.none )
 
         LoadPhotos urls ->
-            ( { model | photos = List.map Photo urls }, Cmd.none )
+            ( { model
+                | photos = List.map Photo urls
+                , selectedUrl = List.head urls
+              }
+            , Cmd.none
+            )
+
+        ReportError error ->
+            ( { model | loadingError = Just error }, Cmd.none )
+
+
+viewOrError : Model -> Html Msg
+viewOrError model =
+    case model.loadingError of
+        Nothing ->
+            view model
+
+        Just errorMessage ->
+            div [ class "error-message" ]
+                [ h1 [] [ text "Photo Groove" ]
+                , p [] [ text errorMessage ]
+                ]
 
 
 main : Program Never
 main =
     Html.App.program
         { init = ( initialModel, initialCmd )
-        , view = view
+        , view = viewOrError
         , update = update
         , subscriptions = (\_ -> Sub.none)
         }
