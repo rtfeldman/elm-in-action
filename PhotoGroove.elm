@@ -1,15 +1,21 @@
-module PhotoGroove exposing (..)
+port module PhotoGroove exposing (..)
 
 import Html exposing (..)
 import Html.Events exposing (onClick)
-import Html.App
 import Array exposing (Array)
 import Random
-import Task exposing (Task)
 import Http
-import Html.Attributes exposing (id, class, classList, src, name, type', title)
+import Html.Attributes exposing (id, class, classList, src, name, type_, title, attribute, style, width, height)
 import Json.Decode exposing (string, int, list, Decoder)
 import Json.Decode.Pipeline exposing (decode, required, optional)
+
+
+port activateGroove : { url : String, filter : String } -> Cmd msg
+
+
+applyFilter : String -> Cmd msg
+applyFilter url =
+    activateGroove { url = url, filter = "sineripple" }
 
 
 photoDecoder : Decoder Photo
@@ -47,18 +53,14 @@ view model =
         ]
 
 
-viewLarge : Maybe String -> Html Msg
-viewLarge maybeUrl =
-    case maybeUrl of
+viewLarge : Maybe a -> Html msg
+viewLarge url =
+    case url of
+        Just _ ->
+            canvas [ id "main-canvas" ] []
+
         Nothing ->
             text ""
-
-        Just url ->
-            img
-                [ class "large"
-                , src (urlPrefix ++ "large/" ++ url)
-                ]
-                []
 
 
 viewThumbnail : Maybe String -> Photo -> Html Msg
@@ -75,7 +77,7 @@ viewThumbnail selectedUrl thumbnail =
 viewSizeChooser : ThumbnailSize -> Html Msg
 viewSizeChooser size =
     label []
-        [ input [ type' "radio", name "size", onClick (SetSize size) ] []
+        [ input [ type_ "radio", name "size", onClick (SetSize size) ] []
         , text (sizeToString size)
         ]
 
@@ -119,29 +121,37 @@ initialModel =
 
 type Msg
     = SelectByUrl String
-    | SelectByIndex Int
+    | SelectAndFilter ( Int, Int )
     | SurpriseMe
     | SetSize ThumbnailSize
-    | ReportError String
-    | LoadPhotos (List Photo)
-
-
-handleLoadFailure : Http.Error -> Msg
-handleLoadFailure _ =
-    ReportError "HTTP error! (Have you tried turning it off and on again?)"
+    | LoadPhotos (Result Http.Error (List Photo))
 
 
 initialCmd : Cmd Msg
 initialCmd =
-    "http://elm-in-action.com/photos/list.json"
-        |> Http.get (list photoDecoder)
-        |> Task.perform handleLoadFailure LoadPhotos
+    (list photoDecoder)
+        |> Http.get "http://elm-in-action.com/photos/list.json"
+        |> Http.send LoadPhotos
+
+
+selectPhoto : Model -> Maybe String -> ( Model, Cmd Msg )
+selectPhoto model maybeUrl =
+    let
+        cmd =
+            case maybeUrl of
+                Nothing ->
+                    Cmd.none
+
+                Just url ->
+                    applyFilter (urlPrefix ++ "large/" ++ url)
+    in
+        ( { model | selectedUrl = maybeUrl }, cmd )
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        SelectByIndex index ->
+        SelectAndFilter ( index, filter ) ->
             let
                 newSelectedUrl =
                     model.photos
@@ -149,31 +159,41 @@ update msg model =
                         |> Array.get index
                         |> Maybe.map .url
             in
-                ( { model | selectedUrl = newSelectedUrl }, Cmd.none )
+                selectPhoto model newSelectedUrl
 
         SelectByUrl url ->
-            ( { model | selectedUrl = Just url }, Cmd.none )
+            selectPhoto model (Just url)
 
         SurpriseMe ->
             let
                 randomPhotoPicker =
-                    Random.int 0 (List.length model.photos - 1)
+                    Random.map2 (,)
+                        (Random.int 0 (List.length model.photos - 1))
+                        (Random.int 0 5)
             in
-                ( model, Random.generate SelectByIndex randomPhotoPicker )
+                ( model, Random.generate SelectAndFilter randomPhotoPicker )
 
         SetSize size ->
             ( { model | chosenSize = size }, Cmd.none )
 
-        LoadPhotos photos ->
-            ( { model
-                | photos = photos
-                , selectedUrl = Maybe.map .url (List.head photos)
-              }
-            , Cmd.none
-            )
+        LoadPhotos result ->
+            case result of
+                Ok photos ->
+                    ( { model
+                        | photos = photos
+                        , selectedUrl = Maybe.map .url (List.head photos)
+                      }
+                    , let
+                        url =
+                            List.head photos
+                                |> Maybe.map .url
+                                |> Maybe.withDefault ""
+                      in
+                        applyFilter (urlPrefix ++ "large/" ++ url)
+                    )
 
-        ReportError error ->
-            ( { model | loadingError = Just error }, Cmd.none )
+                Err error ->
+                    ( { model | loadingError = Just "Error loading photos. Have you tried turning it off and on again?" }, Cmd.none )
 
 
 viewOrError : Model -> Html Msg
@@ -189,9 +209,9 @@ viewOrError model =
                 ]
 
 
-main : Program Never
+main : Program Never Model Msg
 main =
-    Html.App.program
+    Html.program
         { init = ( initialModel, initialCmd )
         , view = viewOrError
         , update = update
