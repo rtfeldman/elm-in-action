@@ -1,11 +1,11 @@
 port module PhotoGroove exposing (..)
 
 import Html exposing (..)
-import Html.Events exposing (onClick)
+import Html.Events exposing (..)
 import Array exposing (Array)
 import Random
 import Http
-import Html.Attributes exposing (id, class, classList, src, name, type_, title, attribute, style, width, height)
+import Html.Attributes exposing (id, class, classList, src, name, type_, title, attribute, style, width, height, checked)
 import Json.Decode exposing (string, int, list, Decoder)
 import Json.Decode.Pipeline exposing (decode, required, optional)
 
@@ -13,9 +13,14 @@ import Json.Decode.Pipeline exposing (decode, required, optional)
 port activateGroove : { url : String, filters : List String } -> Cmd msg
 
 
-applyFilter : String -> Cmd msg
-applyFilter url =
-    activateGroove { url = url, filters = [ "edge", "noise" ] }
+applyFilter : Maybe String -> Cmd msg
+applyFilter maybeUrl =
+    case maybeUrl of
+        Just url ->
+            activateGroove { url = (urlPrefix ++ "large/" ++ url), filters = [ "edge", "sharpen" ] }
+
+        Nothing ->
+            Cmd.none
 
 
 photoDecoder : Decoder Photo
@@ -44,20 +49,32 @@ view model =
         , button
             [ onClick SurpriseMe ]
             [ text "Surprise Me!" ]
+        , label [ id "activate-groove" ]
+            [ input
+                [ type_ "checkbox"
+                , checked model.activateGroove
+                , onCheck SetActivateGroove
+                ]
+                []
+            , text "Activate Groove "
+            ]
         , h3 [] [ text "Thumbnail Size:" ]
         , div [ id "choose-size" ]
             (List.map viewSizeChooser [ Small, Medium, Large ])
         , div [ id "thumbnails", class (sizeToString model.chosenSize) ]
             (List.map (viewThumbnail model.selectedUrl) model.photos)
-        , viewLarge model.selectedUrl
+        , viewLarge model
         ]
 
 
-viewLarge : Maybe a -> Html msg
-viewLarge url =
-    case url of
-        Just _ ->
-            canvas [ id "main-canvas", class "large" ] []
+viewLarge : Model -> Html msg
+viewLarge model =
+    case model.selectedUrl of
+        Just url ->
+            if model.activateGroove then
+                canvas [ id "main-canvas", class "large" ] []
+            else
+                img [ class "large", src (urlPrefix ++ "large/" ++ url) ] []
 
         Nothing ->
             text ""
@@ -107,6 +124,7 @@ type alias Model =
     , selectedUrl : Maybe String
     , loadingError : Maybe String
     , chosenSize : ThumbnailSize
+    , activateGroove : Bool
     }
 
 
@@ -116,6 +134,7 @@ initialModel =
     , selectedUrl = Nothing
     , loadingError = Nothing
     , chosenSize = Medium
+    , activateGroove = False
     }
 
 
@@ -125,6 +144,7 @@ type Msg
     | SurpriseMe
     | SetSize ThumbnailSize
     | LoadPhotos (Result Http.Error (List Photo))
+    | SetActivateGroove Bool
 
 
 initialCmd : Cmd Msg
@@ -136,16 +156,7 @@ initialCmd =
 
 selectPhoto : Model -> Maybe String -> ( Model, Cmd Msg )
 selectPhoto model maybeUrl =
-    let
-        cmd =
-            case maybeUrl of
-                Nothing ->
-                    Cmd.none
-
-                Just url ->
-                    applyFilter (urlPrefix ++ "large/" ++ url)
-    in
-        ( { model | selectedUrl = maybeUrl }, cmd )
+    ( { model | selectedUrl = maybeUrl }, applyFilter maybeUrl )
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -179,21 +190,19 @@ update msg model =
         LoadPhotos result ->
             case result of
                 Ok photos ->
-                    ( { model
-                        | photos = photos
-                        , selectedUrl = Maybe.map .url (List.head photos)
-                      }
-                    , let
-                        url =
-                            List.head photos
-                                |> Maybe.map .url
-                                |> Maybe.withDefault ""
-                      in
-                        applyFilter (urlPrefix ++ "large/" ++ url)
-                    )
+                    let
+                        selectedUrl =
+                            Maybe.map .url (List.head photos)
+                    in
+                        ( { model | photos = photos, selectedUrl = selectedUrl }
+                        , applyFilter selectedUrl
+                        )
 
                 Err error ->
                     ( { model | loadingError = Just "Error loading photos. Have you tried turning it off and on again?" }, Cmd.none )
+
+        SetActivateGroove activateGroove ->
+            ( { model | activateGroove = activateGroove }, applyFilter model.selectedUrl )
 
 
 viewOrError : Model -> Html Msg
