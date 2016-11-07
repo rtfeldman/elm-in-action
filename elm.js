@@ -9491,7 +9491,11 @@ var _user$project$PhotoGroove$viewLarge = function (url) {
 			{
 				ctor: '::',
 				_0: _elm_lang$html$Html_Attributes$id('main-canvas'),
-				_1: {ctor: '[]'}
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('large'),
+					_1: {ctor: '[]'}
+				}
 			},
 			{ctor: '[]'});
 	} else {
@@ -9502,11 +9506,28 @@ var _user$project$PhotoGroove$urlPrefix = 'http://elm-in-action.com/';
 var _user$project$PhotoGroove$activateGroove = _elm_lang$core$Native_Platform.outgoingPort(
 	'activateGroove',
 	function (v) {
-		return {url: v.url, filter: v.filter};
+		return {
+			url: v.url,
+			filters: _elm_lang$core$Native_List.toArray(v.filters).map(
+				function (v) {
+					return v;
+				})
+		};
 	});
 var _user$project$PhotoGroove$applyFilter = function (url) {
 	return _user$project$PhotoGroove$activateGroove(
-		{url: url, filter: 'sineripple'});
+		{
+			url: url,
+			filters: {
+				ctor: '::',
+				_0: 'edge',
+				_1: {
+					ctor: '::',
+					_0: 'noise',
+					_1: {ctor: '[]'}
+				}
+			}
+		});
 };
 var _user$project$PhotoGroove$selectPhoto = F2(
 	function (model, maybeUrl) {

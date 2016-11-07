@@ -10,12 +10,12 @@ import Json.Decode exposing (string, int, list, Decoder)
 import Json.Decode.Pipeline exposing (decode, required, optional)
 
 
-port activateGroove : { url : String, filter : String } -> Cmd msg
+port activateGroove : { url : String, filters : List String } -> Cmd msg
 
 
 applyFilter : String -> Cmd msg
 applyFilter url =
-    activateGroove { url = url, filter = "sineripple" }
+    activateGroove { url = url, filters = [ "edge", "noise" ] }
 
 
 photoDecoder : Decoder Photo
@@ -57,7 +57,7 @@ viewLarge : Maybe a -> Html msg
 viewLarge url =
     case url of
         Just _ ->
-            canvas [ id "main-canvas" ] []
+            canvas [ id "main-canvas", class "large" ] []
 
         Nothing ->
             text ""
