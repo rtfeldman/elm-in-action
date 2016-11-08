@@ -9487,7 +9487,7 @@ var _user$project$PhotoGroove$urlPrefix = 'http://elm-in-action.com/';
 var _user$project$PhotoGroove$viewLarge = function (model) {
 	var _p1 = model.selectedUrl;
 	if (_p1.ctor === 'Just') {
-		return model.activateGroove ? A2(
+		return model.useFilters ? A2(
 			_elm_lang$html$Html$canvas,
 			{
 				ctor: '::',
@@ -9518,8 +9518,8 @@ var _user$project$PhotoGroove$viewLarge = function (model) {
 		return _elm_lang$html$Html$text('');
 	}
 };
-var _user$project$PhotoGroove$activateGroove = _elm_lang$core$Native_Platform.outgoingPort(
-	'activateGroove',
+var _user$project$PhotoGroove$activateFilters = _elm_lang$core$Native_Platform.outgoingPort(
+	'activateFilters',
 	function (v) {
 		return {
 			url: v.url,
@@ -9529,10 +9529,10 @@ var _user$project$PhotoGroove$activateGroove = _elm_lang$core$Native_Platform.ou
 				})
 		};
 	});
-var _user$project$PhotoGroove$applyFilter = function (maybeUrl) {
+var _user$project$PhotoGroove$applyFilters = function (maybeUrl) {
 	var _p2 = maybeUrl;
 	if (_p2.ctor === 'Just') {
-		return _user$project$PhotoGroove$activateGroove(
+		return _user$project$PhotoGroove$activateFilters(
 			{
 				url: A2(
 					_elm_lang$core$Basics_ops['++'],
@@ -9543,7 +9543,7 @@ var _user$project$PhotoGroove$applyFilter = function (maybeUrl) {
 					_0: 'edge',
 					_1: {
 						ctor: '::',
-						_0: 'sharpen',
+						_0: 'sineripple',
 						_1: {ctor: '[]'}
 					}
 				}
@@ -9559,7 +9559,7 @@ var _user$project$PhotoGroove$selectPhoto = F2(
 			_0: _elm_lang$core$Native_Utils.update(
 				model,
 				{selectedUrl: maybeUrl}),
-			_1: _user$project$PhotoGroove$applyFilter(maybeUrl)
+			_1: _user$project$PhotoGroove$applyFilters(maybeUrl)
 		};
 	});
 var _user$project$PhotoGroove$Photo = F3(
@@ -9582,7 +9582,7 @@ var _user$project$PhotoGroove$photoDecoder = A4(
 			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$PhotoGroove$Photo))));
 var _user$project$PhotoGroove$Model = F5(
 	function (a, b, c, d, e) {
-		return {photos: a, selectedUrl: b, loadingError: c, chosenSize: d, activateGroove: e};
+		return {photos: a, useFilters: b, selectedUrl: c, loadingError: d, chosenSize: e};
 	});
 var _user$project$PhotoGroove$Large = {ctor: 'Large'};
 var _user$project$PhotoGroove$Medium = {ctor: 'Medium'};
@@ -9591,12 +9591,9 @@ var _user$project$PhotoGroove$initialModel = {
 	selectedUrl: _elm_lang$core$Maybe$Nothing,
 	loadingError: _elm_lang$core$Maybe$Nothing,
 	chosenSize: _user$project$PhotoGroove$Medium,
-	activateGroove: false
+	useFilters: false
 };
 var _user$project$PhotoGroove$Small = {ctor: 'Small'};
-var _user$project$PhotoGroove$SetActivateGroove = function (a) {
-	return {ctor: 'SetActivateGroove', _0: a};
-};
 var _user$project$PhotoGroove$LoadPhotos = function (a) {
 	return {ctor: 'LoadPhotos', _0: a};
 };
@@ -9705,7 +9702,7 @@ var _user$project$PhotoGroove$update = F2(
 						_0: _elm_lang$core$Native_Utils.update(
 							model,
 							{photos: _p5, selectedUrl: selectedUrl}),
-						_1: _user$project$PhotoGroove$applyFilter(selectedUrl)
+						_1: _user$project$PhotoGroove$applyFilters(selectedUrl)
 					};
 				} else {
 					return {
@@ -9723,11 +9720,14 @@ var _user$project$PhotoGroove$update = F2(
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{activateGroove: _p3._0}),
-					_1: _user$project$PhotoGroove$applyFilter(model.selectedUrl)
+						{useFilters: _p3._0}),
+					_1: _user$project$PhotoGroove$applyFilters(model.selectedUrl)
 				};
 		}
 	});
+var _user$project$PhotoGroove$SetUseFilters = function (a) {
+	return {ctor: 'SetUseFilters', _0: a};
+};
 var _user$project$PhotoGroove$SelectByUrl = function (a) {
 	return {ctor: 'SelectByUrl', _0: a};
 };
@@ -9827,10 +9827,10 @@ var _user$project$PhotoGroove$view = function (model) {
 									_0: _elm_lang$html$Html_Attributes$type_('checkbox'),
 									_1: {
 										ctor: '::',
-										_0: _elm_lang$html$Html_Attributes$checked(model.activateGroove),
+										_0: _elm_lang$html$Html_Attributes$checked(model.useFilters),
 										_1: {
 											ctor: '::',
-											_0: _elm_lang$html$Html_Events$onCheck(_user$project$PhotoGroove$SetActivateGroove),
+											_0: _elm_lang$html$Html_Events$onCheck(_user$project$PhotoGroove$SetUseFilters),
 											_1: {ctor: '[]'}
 										}
 									}
@@ -9838,7 +9838,7 @@ var _user$project$PhotoGroove$view = function (model) {
 								{ctor: '[]'}),
 							_1: {
 								ctor: '::',
-								_0: _elm_lang$html$Html$text('Activate Groove '),
+								_0: _elm_lang$html$Html$text('Activate Groove'),
 								_1: {ctor: '[]'}
 							}
 						}),
