@@ -155,17 +155,29 @@ update msg model =
                 photos =
                     List.map (\url -> { url = url }) urls
             in
-                ( { model | photos = photos }, Cmd.none )
+                ( { model
+                    | photos = photos
+                    , selectedUrl = List.head urls
+                  }
+                , Cmd.none
+                )
 
         LoadPhotos (Err _) ->
             ( model, Cmd.none )
 
 
+initialCmd : Cmd Msg
+initialCmd =
+    "http://elm-in-action.com/photos/list"
+        |> Http.getString
+        |> Http.send LoadPhotos
+
+
 main : Program Never Model Msg
 main =
     Html.program
-        { init = ( initialModel, Cmd.none )
+        { init = ( initialModel, initialCmd )
         , view = view
         , update = update
-        , subscriptions = (\model -> Sub.none)
+        , subscriptions = (\_ -> Sub.none)
         }
