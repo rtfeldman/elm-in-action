@@ -168,7 +168,11 @@ update msg model =
                 )
 
         LoadPhotos (Err _) ->
-            ( model, Cmd.none )
+            ( { model
+                | loadingError = Just "Error! (Try turning it off and on again?)"
+              }
+            , Cmd.none
+            )
 
 
 initialCmd : Cmd Msg
@@ -178,11 +182,24 @@ initialCmd =
         |> Http.send LoadPhotos
 
 
+viewOrError : Model -> Html Msg
+viewOrError model =
+    case model.loadingError of
+        Nothing ->
+            view model
+
+        Just errorMessage ->
+            div [ class "error-message" ]
+                [ h1 [] [ text "Photo Groove" ]
+                , p [] [ text errorMessage ]
+                ]
+
+
 main : Program Never Model Msg
 main =
     Html.program
         { init = ( initialModel, initialCmd )
-        , view = view
+        , view = viewOrError
         , update = update
         , subscriptions = (\_ -> Sub.none)
         }

@@ -9585,7 +9585,15 @@ var _user$project$PhotoGroove$update = F2(
 						_1: _elm_lang$core$Platform_Cmd$none
 					};
 				} else {
-					return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{
+								loadingError: _elm_lang$core$Maybe$Just('Error! (Try turning it off and on again?)')
+							}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
 				}
 		}
 	});
@@ -9720,12 +9728,49 @@ var _user$project$PhotoGroove$view = function (model) {
 			}
 		});
 };
+var _user$project$PhotoGroove$viewOrError = function (model) {
+	var _p4 = model.loadingError;
+	if (_p4.ctor === 'Nothing') {
+		return _user$project$PhotoGroove$view(model);
+	} else {
+		return A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class('error-message'),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$h1,
+					{ctor: '[]'},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text('Photo Groove'),
+						_1: {ctor: '[]'}
+					}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$p,
+						{ctor: '[]'},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text(_p4._0),
+							_1: {ctor: '[]'}
+						}),
+					_1: {ctor: '[]'}
+				}
+			});
+	}
+};
 var _user$project$PhotoGroove$main = _elm_lang$html$Html$program(
 	{
 		init: {ctor: '_Tuple2', _0: _user$project$PhotoGroove$initialModel, _1: _user$project$PhotoGroove$initialCmd},
-		view: _user$project$PhotoGroove$view,
+		view: _user$project$PhotoGroove$viewOrError,
 		update: _user$project$PhotoGroove$update,
-		subscriptions: function (_p4) {
+		subscriptions: function (_p5) {
 			return _elm_lang$core$Platform_Sub$none;
 		}
 	})();
