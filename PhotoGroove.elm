@@ -30,19 +30,25 @@ view model =
             (List.map viewSizeChooser [ Small, Medium, Large ])
         , div [ id "thumbnails", class (sizeToString model.chosenSize) ]
             (List.map (viewThumbnail model.selectedUrl) model.photos)
-        , img
-            [ class "large"
-            , src (urlPrefix ++ "large/" ++ model.selectedUrl)
-            ]
-            []
+        , viewLarge model.selectedUrl
         ]
 
 
-viewThumbnail : String -> Photo -> Html Msg
+viewLarge : Maybe String -> Html Msg
+viewLarge maybeUrl =
+    case maybeUrl of
+        Nothing ->
+            text ""
+
+        Just url ->
+            img [ class "large", src (urlPrefix ++ "large/" ++ url) ] []
+
+
+viewThumbnail : Maybe String -> Photo -> Html Msg
 viewThumbnail selectedUrl thumbnail =
     img
         [ src (urlPrefix ++ thumbnail.url)
-        , classList [ ( "selected", selectedUrl == thumbnail.url ) ]
+        , classList [ ( "selected", selectedUrl == Just thumbnail.url ) ]
         , onClick (SelectByUrl thumbnail.url)
         ]
         []
@@ -75,19 +81,17 @@ type alias Photo =
 
 type alias Model =
     { photos : List Photo
-    , selectedUrl : String
+    , selectedUrl : Maybe String
+    , loadingError : Maybe String
     , chosenSize : ThumbnailSize
     }
 
 
 initialModel : Model
 initialModel =
-    { photos =
-        [ { url = "1.jpeg" }
-        , { url = "2.jpeg" }
-        , { url = "3.jpeg" }
-        ]
-    , selectedUrl = "1.jpeg"
+    { photos = []
+    , selectedUrl = Nothing
+    , loadingError = Nothing
     , chosenSize = Medium
     }
 
@@ -97,14 +101,14 @@ photoArray =
     Array.fromList initialModel.photos
 
 
-getPhotoUrl : Int -> String
+getPhotoUrl : Int -> Maybe String
 getPhotoUrl index =
     case Array.get index photoArray of
         Just photo ->
-            photo.url
+            Just photo.url
 
         Nothing ->
-            ""
+            Nothing
 
 
 type Msg
@@ -126,7 +130,7 @@ update msg model =
             ( { model | selectedUrl = getPhotoUrl index }, Cmd.none )
 
         SelectByUrl url ->
-            ( { model | selectedUrl = url }, Cmd.none )
+            ( { model | selectedUrl = Just url }, Cmd.none )
 
         SurpriseMe ->
             ( model, Random.generate SelectByIndex randomPhotoPicker )
