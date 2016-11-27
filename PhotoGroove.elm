@@ -42,6 +42,11 @@ type ThumbnailSize
     | Large
 
 
+paperSlider : List (Attribute msg) -> List (Html msg) -> Html msg
+paperSlider =
+    node "paper-slider"
+
+
 view : Model -> Html Msg
 view model =
     div [ class "content" ]
@@ -50,7 +55,8 @@ view model =
             [ onClick SurpriseMe ]
             [ text "Surprise Me!" ]
         , label [ id "activate-groove" ]
-            [ input [ type_ "checkbox", checked model.useFilters, onCheck SetUseFilters ] []
+            [ paperSlider [] []
+              --input [ type_ "checkbox", checked model.useFilters, onCheck SetUseFilters ] []
             , text "Activate Groove"
             ]
         , h3 [] [ text "Thumbnail Size:" ]
