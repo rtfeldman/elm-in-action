@@ -20,9 +20,9 @@ applyFilters maybeUrl =
             activateFilters
                 { url = (urlPrefix ++ "large/" ++ url)
                 , filters =
-                    [ { name = "hue", value = 0.75 }
-                    , { name = "sineripple", value = 0.3 }
-                    , { name = "noise", value = 0.2 }
+                    [ { name = "Hue", value = 0.75 }
+                    , { name = "Ripple", value = 0.3 }
+                    , { name = "Noise", value = 0.2 }
                     ]
                 }
 

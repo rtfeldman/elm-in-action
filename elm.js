@@ -9557,13 +9557,13 @@ var _user$project$PhotoGroove$applyFilters = function (maybeUrl) {
 					A2(_elm_lang$core$Basics_ops['++'], 'large/', _p2._0)),
 				filters: {
 					ctor: '::',
-					_0: {name: 'hue', value: 0.75},
+					_0: {name: 'Hue', value: 1},
 					_1: {
 						ctor: '::',
-						_0: {name: 'sineripple', value: 0.3},
+						_0: {name: 'Ripple', value: 0.3},
 						_1: {
 							ctor: '::',
-							_0: {name: 'noise', value: 0.2},
+							_0: {name: 'Noise', value: 0.2},
 							_1: {ctor: '[]'}
 						}
 					}
