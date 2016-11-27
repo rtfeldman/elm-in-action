@@ -10,14 +10,21 @@ import Json.Decode exposing (string, int, list, Decoder)
 import Json.Decode.Pipeline exposing (decode, required, optional)
 
 
-port activateFilters : { url : String, filters : List String } -> Cmd msg
+port activateFilters : { url : String, filters : List { name : String, value : Float } } -> Cmd msg
 
 
 applyFilters : Maybe String -> Cmd msg
 applyFilters maybeUrl =
     case maybeUrl of
         Just url ->
-            activateFilters { url = (urlPrefix ++ "large/" ++ url), filters = [ "edge", "sineripple" ] }
+            activateFilters
+                { url = (urlPrefix ++ "large/" ++ url)
+                , filters =
+                    [ { name = "hue", value = 0.75 }
+                    , { name = "sineripple", value = 0.3 }
+                    , { name = "noise", value = 0.2 }
+                    ]
+                }
 
         Nothing ->
             Cmd.none
@@ -135,7 +142,7 @@ initialModel =
     , selectedUrl = Nothing
     , loadingError = Nothing
     , chosenSize = Medium
-    , useFilters = False
+    , useFilters = True
     }
 
 

@@ -9542,7 +9542,7 @@ var _user$project$PhotoGroove$activateFilters = _elm_lang$core$Native_Platform.o
 			url: v.url,
 			filters: _elm_lang$core$Native_List.toArray(v.filters).map(
 				function (v) {
-					return v;
+					return {name: v.name, value: v.value};
 				})
 		};
 	});
@@ -9557,11 +9557,15 @@ var _user$project$PhotoGroove$applyFilters = function (maybeUrl) {
 					A2(_elm_lang$core$Basics_ops['++'], 'large/', _p2._0)),
 				filters: {
 					ctor: '::',
-					_0: 'edge',
+					_0: {name: 'hue', value: 0.75},
 					_1: {
 						ctor: '::',
-						_0: 'sineripple',
-						_1: {ctor: '[]'}
+						_0: {name: 'sineripple', value: 0.3},
+						_1: {
+							ctor: '::',
+							_0: {name: 'noise', value: 0.2},
+							_1: {ctor: '[]'}
+						}
 					}
 				}
 			});
@@ -9608,7 +9612,7 @@ var _user$project$PhotoGroove$initialModel = {
 	selectedUrl: _elm_lang$core$Maybe$Nothing,
 	loadingError: _elm_lang$core$Maybe$Nothing,
 	chosenSize: _user$project$PhotoGroove$Medium,
-	useFilters: false
+	useFilters: true
 };
 var _user$project$PhotoGroove$Small = {ctor: 'Small'};
 var _user$project$PhotoGroove$LoadPhotos = function (a) {
