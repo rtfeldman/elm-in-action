@@ -9661,6 +9661,7 @@ var _user$project$PhotoGroove$applyFilters = function (model) {
 		return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 	}
 };
+var _user$project$PhotoGroove$statusChanges = _elm_lang$core$Native_Platform.incomingPort('statusChanges', _elm_lang$core$Json_Decode$string);
 var _user$project$PhotoGroove$FilterOptions = F2(
 	function (a, b) {
 		return {url: a, filters: b};
@@ -9669,14 +9670,15 @@ var _user$project$PhotoGroove$Photo = F3(
 	function (a, b, c) {
 		return {url: a, size: b, title: c};
 	});
-var _user$project$PhotoGroove$Model = F7(
-	function (a, b, c, d, e, f, g) {
-		return {photos: a, selectedUrl: b, loadingError: c, chosenSize: d, hue: e, ripple: f, noise: g};
+var _user$project$PhotoGroove$Model = F8(
+	function (a, b, c, d, e, f, g, h) {
+		return {photos: a, status: b, selectedUrl: c, loadingError: d, chosenSize: e, hue: f, ripple: g, noise: h};
 	});
 var _user$project$PhotoGroove$Large = {ctor: 'Large'};
 var _user$project$PhotoGroove$Medium = {ctor: 'Medium'};
 var _user$project$PhotoGroove$initialModel = {
 	photos: {ctor: '[]'},
+	status: '',
 	selectedUrl: _elm_lang$core$Maybe$Nothing,
 	loadingError: _elm_lang$core$Maybe$Nothing,
 	chosenSize: _user$project$PhotoGroove$Medium,
@@ -9752,6 +9754,9 @@ var _user$project$PhotoGroove$viewSizeChooser = function (size) {
 		});
 };
 var _user$project$PhotoGroove$SurpriseMe = {ctor: 'SurpriseMe'};
+var _user$project$PhotoGroove$SetStatus = function (a) {
+	return {ctor: 'SetStatus', _0: a};
+};
 var _user$project$PhotoGroove$SelectByIndex = function (a) {
 	return {ctor: 'SelectByIndex', _0: a};
 };
@@ -9759,6 +9764,14 @@ var _user$project$PhotoGroove$update = F2(
 	function (msg, model) {
 		var _p4 = msg;
 		switch (_p4.ctor) {
+			case 'SetStatus':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{status: _p4._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
 			case 'SetHue':
 				return _user$project$PhotoGroove$applyFilters(
 					_elm_lang$core$Native_Utils.update(
@@ -9928,79 +9941,94 @@ var _user$project$PhotoGroove$view = function (model) {
 						_elm_lang$html$Html$div,
 						{
 							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$class('filters'),
+							_0: _elm_lang$html$Html_Attributes$class('status'),
 							_1: {ctor: '[]'}
 						},
 						{
 							ctor: '::',
-							_0: A3(_user$project$PhotoGroove$viewFilter, 'Hue', _user$project$PhotoGroove$SetHue, model.hue),
-							_1: {
-								ctor: '::',
-								_0: A3(_user$project$PhotoGroove$viewFilter, 'Ripple', _user$project$PhotoGroove$SetRipple, model.ripple),
-								_1: {
-									ctor: '::',
-									_0: A3(_user$project$PhotoGroove$viewFilter, 'Noise', _user$project$PhotoGroove$SetNoise, model.noise),
-									_1: {ctor: '[]'}
-								}
-							}
+							_0: _elm_lang$html$Html$text(model.status),
+							_1: {ctor: '[]'}
 						}),
 					_1: {
 						ctor: '::',
 						_0: A2(
-							_elm_lang$html$Html$h3,
-							{ctor: '[]'},
+							_elm_lang$html$Html$div,
 							{
 								ctor: '::',
-								_0: _elm_lang$html$Html$text('Thumbnail Size:'),
+								_0: _elm_lang$html$Html_Attributes$class('filters'),
 								_1: {ctor: '[]'}
+							},
+							{
+								ctor: '::',
+								_0: A3(_user$project$PhotoGroove$viewFilter, 'Hue', _user$project$PhotoGroove$SetHue, model.hue),
+								_1: {
+									ctor: '::',
+									_0: A3(_user$project$PhotoGroove$viewFilter, 'Ripple', _user$project$PhotoGroove$SetRipple, model.ripple),
+									_1: {
+										ctor: '::',
+										_0: A3(_user$project$PhotoGroove$viewFilter, 'Noise', _user$project$PhotoGroove$SetNoise, model.noise),
+										_1: {ctor: '[]'}
+									}
+								}
 							}),
 						_1: {
 							ctor: '::',
 							_0: A2(
-								_elm_lang$html$Html$div,
+								_elm_lang$html$Html$h3,
+								{ctor: '[]'},
 								{
 									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$id('choose-size'),
+									_0: _elm_lang$html$Html$text('Thumbnail Size:'),
 									_1: {ctor: '[]'}
-								},
-								A2(
-									_elm_lang$core$List$map,
-									_user$project$PhotoGroove$viewSizeChooser,
-									{
-										ctor: '::',
-										_0: _user$project$PhotoGroove$Small,
-										_1: {
-											ctor: '::',
-											_0: _user$project$PhotoGroove$Medium,
-											_1: {
-												ctor: '::',
-												_0: _user$project$PhotoGroove$Large,
-												_1: {ctor: '[]'}
-											}
-										}
-									})),
+								}),
 							_1: {
 								ctor: '::',
 								_0: A2(
 									_elm_lang$html$Html$div,
 									{
 										ctor: '::',
-										_0: _elm_lang$html$Html_Attributes$id('thumbnails'),
-										_1: {
-											ctor: '::',
-											_0: _elm_lang$html$Html_Attributes$class(
-												_user$project$PhotoGroove$sizeToString(model.chosenSize)),
-											_1: {ctor: '[]'}
-										}
+										_0: _elm_lang$html$Html_Attributes$id('choose-size'),
+										_1: {ctor: '[]'}
 									},
 									A2(
 										_elm_lang$core$List$map,
-										_user$project$PhotoGroove$viewThumbnail(model.selectedUrl),
-										model.photos)),
+										_user$project$PhotoGroove$viewSizeChooser,
+										{
+											ctor: '::',
+											_0: _user$project$PhotoGroove$Small,
+											_1: {
+												ctor: '::',
+												_0: _user$project$PhotoGroove$Medium,
+												_1: {
+													ctor: '::',
+													_0: _user$project$PhotoGroove$Large,
+													_1: {ctor: '[]'}
+												}
+											}
+										})),
 								_1: {
 									ctor: '::',
-									_0: _user$project$PhotoGroove$viewLarge(model.selectedUrl),
-									_1: {ctor: '[]'}
+									_0: A2(
+										_elm_lang$html$Html$div,
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html_Attributes$id('thumbnails'),
+											_1: {
+												ctor: '::',
+												_0: _elm_lang$html$Html_Attributes$class(
+													_user$project$PhotoGroove$sizeToString(model.chosenSize)),
+												_1: {ctor: '[]'}
+											}
+										},
+										A2(
+											_elm_lang$core$List$map,
+											_user$project$PhotoGroove$viewThumbnail(model.selectedUrl),
+											model.photos)),
+									_1: {
+										ctor: '::',
+										_0: _user$project$PhotoGroove$viewLarge(model.selectedUrl),
+										_1: {ctor: '[]'}
+									}
 								}
 							}
 						}
@@ -10052,7 +10080,7 @@ var _user$project$PhotoGroove$main = _elm_lang$html$Html$program(
 		view: _user$project$PhotoGroove$viewOrError,
 		update: _user$project$PhotoGroove$update,
 		subscriptions: function (_p7) {
-			return _elm_lang$core$Platform_Sub$none;
+			return _user$project$PhotoGroove$statusChanges(_user$project$PhotoGroove$SetStatus);
 		}
 	})();
 
