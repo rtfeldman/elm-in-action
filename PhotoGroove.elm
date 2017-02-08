@@ -42,9 +42,9 @@ view model =
             [ onClick SurpriseMe ]
             [ text "Surprise Me!" ]
         , div [ class "filters" ]
-            [ viewFilter "Hue" 0
-            , viewFilter "Ripple" 0
-            , viewFilter "Noise" 0
+            [ viewFilter "Hue" SetHue model.hue
+            , viewFilter "Ripple" SetRipple model.ripple
+            , viewFilter "Noise" SetNoise model.noise
             ]
         , h3 [] [ text "Thumbnail Size:" ]
         , div [ id "choose-size" ]
@@ -118,6 +118,9 @@ type alias Model =
     , selectedUrl : Maybe String
     , loadingError : Maybe String
     , chosenSize : ThumbnailSize
+    , hue : Int
+    , ripple : Int
+    , noise : Int
     }
 
 
@@ -127,6 +130,9 @@ initialModel =
     , selectedUrl = Nothing
     , loadingError = Nothing
     , chosenSize = Medium
+    , hue = 0
+    , ripple = 0
+    , noise = 0
     }
 
 
@@ -151,6 +157,9 @@ type Msg
     | SurpriseMe
     | SetSize ThumbnailSize
     | LoadPhotos (Result Http.Error (List Photo))
+    | SetHue Int
+    | SetRipple Int
+    | SetNoise Int
 
 
 randomPhotoPicker : Random.Generator Int
@@ -161,6 +170,21 @@ randomPhotoPicker =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        SetHue hue ->
+            ( { model | hue = hue }
+            , Cmd.none
+            )
+
+        SetRipple ripple ->
+            ( { model | ripple = ripple }
+            , Cmd.none
+            )
+
+        SetNoise noise ->
+            ( { model | noise = noise }
+            , Cmd.none
+            )
+
         SelectByIndex index ->
             let
                 newSelectedUrl : Maybe String
