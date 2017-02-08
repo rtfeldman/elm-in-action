@@ -9615,6 +9615,51 @@ var _user$project$PhotoGroove$photoDecoder = A4(
 			'url',
 			_elm_lang$core$Json_Decode$string,
 			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$PhotoGroove$buildPhoto))));
+var _user$project$PhotoGroove$setFilters = _elm_lang$core$Native_Platform.outgoingPort(
+	'setFilters',
+	function (v) {
+		return {
+			url: v.url,
+			filters: _elm_lang$core$Native_List.toArray(v.filters).map(
+				function (v) {
+					return {name: v.name, amount: v.amount};
+				})
+		};
+	});
+var _user$project$PhotoGroove$applyFilters = function (model) {
+	var _p2 = model.selectedUrl;
+	if (_p2.ctor === 'Just') {
+		var url = A2(
+			_elm_lang$core$Basics_ops['++'],
+			_user$project$PhotoGroove$urlPrefix,
+			A2(_elm_lang$core$Basics_ops['++'], 'large/', _p2._0));
+		var filters = {
+			ctor: '::',
+			_0: {name: 'Hue', amount: model.hue},
+			_1: {
+				ctor: '::',
+				_0: {name: 'Ripple', amount: model.ripple},
+				_1: {
+					ctor: '::',
+					_0: {name: 'Noise', amount: model.noise},
+					_1: {ctor: '[]'}
+				}
+			}
+		};
+		return {
+			ctor: '_Tuple2',
+			_0: model,
+			_1: _user$project$PhotoGroove$setFilters(
+				{url: url, filters: filters})
+		};
+	} else {
+		return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+	}
+};
+var _user$project$PhotoGroove$FilterOptions = F2(
+	function (a, b) {
+		return {url: a, filters: b};
+	});
 var _user$project$PhotoGroove$Photo = F3(
 	function (a, b, c) {
 		return {url: a, size: b, title: c};
@@ -9636,9 +9681,9 @@ var _user$project$PhotoGroove$initialModel = {
 };
 var _user$project$PhotoGroove$photoArray = _elm_lang$core$Array$fromList(_user$project$PhotoGroove$initialModel.photos);
 var _user$project$PhotoGroove$getPhotoUrl = function (index) {
-	var _p2 = A2(_elm_lang$core$Array$get, index, _user$project$PhotoGroove$photoArray);
-	if (_p2.ctor === 'Just') {
-		return _elm_lang$core$Maybe$Just(_p2._0.url);
+	var _p3 = A2(_elm_lang$core$Array$get, index, _user$project$PhotoGroove$photoArray);
+	if (_p3.ctor === 'Just') {
+		return _elm_lang$core$Maybe$Just(_p3._0.url);
 	} else {
 		return _elm_lang$core$Maybe$Nothing;
 	}
@@ -9707,14 +9752,14 @@ var _user$project$PhotoGroove$SelectByIndex = function (a) {
 };
 var _user$project$PhotoGroove$update = F2(
 	function (msg, model) {
-		var _p3 = msg;
-		switch (_p3.ctor) {
+		var _p4 = msg;
+		switch (_p4.ctor) {
 			case 'SetHue':
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{hue: _p3._0}),
+						{hue: _p4._0}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'SetRipple':
@@ -9722,7 +9767,7 @@ var _user$project$PhotoGroove$update = F2(
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{ripple: _p3._0}),
+						{ripple: _p4._0}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'SetNoise':
@@ -9730,7 +9775,7 @@ var _user$project$PhotoGroove$update = F2(
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{noise: _p3._0}),
+						{noise: _p4._0}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'SelectByIndex':
@@ -9741,25 +9786,19 @@ var _user$project$PhotoGroove$update = F2(
 					},
 					A2(
 						_elm_lang$core$Array$get,
-						_p3._0,
+						_p4._0,
 						_elm_lang$core$Array$fromList(model.photos)));
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
+				return _user$project$PhotoGroove$applyFilters(
+					_elm_lang$core$Native_Utils.update(
 						model,
-						{selectedUrl: newSelectedUrl}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
+						{selectedUrl: newSelectedUrl}));
 			case 'SelectByUrl':
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
+				return _user$project$PhotoGroove$applyFilters(
+					_elm_lang$core$Native_Utils.update(
 						model,
 						{
-							selectedUrl: _elm_lang$core$Maybe$Just(_p3._0)
-						}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
+							selectedUrl: _elm_lang$core$Maybe$Just(_p4._0)
+						}));
 			case 'SurpriseMe':
 				var randomPhotoPicker = A2(
 					_elm_lang$core$Random$int,
@@ -9775,24 +9814,24 @@ var _user$project$PhotoGroove$update = F2(
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{chosenSize: _p3._0}),
+						{chosenSize: _p4._0}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			default:
-				if (_p3._0.ctor === 'Ok') {
-					var _p4 = _p3._0._0;
+				if (_p4._0.ctor === 'Ok') {
+					var _p5 = _p4._0._0;
 					return {
 						ctor: '_Tuple2',
 						_0: _elm_lang$core$Native_Utils.update(
 							model,
 							{
-								photos: _p4,
+								photos: _p5,
 								selectedUrl: A2(
 									_elm_lang$core$Maybe$map,
 									function (_) {
 										return _.url;
 									},
-									_elm_lang$core$List$head(_p4))
+									_elm_lang$core$List$head(_p5))
 							}),
 						_1: _elm_lang$core$Platform_Cmd$none
 					};
@@ -9978,8 +10017,8 @@ var _user$project$PhotoGroove$view = function (model) {
 		});
 };
 var _user$project$PhotoGroove$viewOrError = function (model) {
-	var _p5 = model.loadingError;
-	if (_p5.ctor === 'Nothing') {
+	var _p6 = model.loadingError;
+	if (_p6.ctor === 'Nothing') {
 		return _user$project$PhotoGroove$view(model);
 	} else {
 		return A2(
@@ -10006,7 +10045,7 @@ var _user$project$PhotoGroove$viewOrError = function (model) {
 						{ctor: '[]'},
 						{
 							ctor: '::',
-							_0: _elm_lang$html$Html$text(_p5._0),
+							_0: _elm_lang$html$Html$text(_p6._0),
 							_1: {ctor: '[]'}
 						}),
 					_1: {ctor: '[]'}
@@ -10019,7 +10058,7 @@ var _user$project$PhotoGroove$main = _elm_lang$html$Html$program(
 		init: {ctor: '_Tuple2', _0: _user$project$PhotoGroove$initialModel, _1: _user$project$PhotoGroove$initialCmd},
 		view: _user$project$PhotoGroove$viewOrError,
 		update: _user$project$PhotoGroove$update,
-		subscriptions: function (_p6) {
+		subscriptions: function (_p7) {
 			return _elm_lang$core$Platform_Sub$none;
 		}
 	})();
