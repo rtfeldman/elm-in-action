@@ -9524,6 +9524,25 @@ var _user$project$PhotoGroove$sizeToString = function (size) {
 			return 'large';
 	}
 };
+var _user$project$PhotoGroove$viewLarge = function (maybeUrl) {
+	var _p1 = maybeUrl;
+	if (_p1.ctor === 'Nothing') {
+		return _elm_lang$html$Html$text('');
+	} else {
+		return A2(
+			_elm_lang$html$Html$canvas,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$id('main-canvas'),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('large'),
+					_1: {ctor: '[]'}
+				}
+			},
+			{ctor: '[]'});
+	}
+};
 var _user$project$PhotoGroove$viewFilter = F3(
 	function (name, toMsg, magnitude) {
 		return A2(
@@ -9574,29 +9593,6 @@ var _user$project$PhotoGroove$viewFilter = F3(
 			});
 	});
 var _user$project$PhotoGroove$urlPrefix = 'http://elm-in-action.com/';
-var _user$project$PhotoGroove$viewLarge = function (maybeUrl) {
-	var _p1 = maybeUrl;
-	if (_p1.ctor === 'Nothing') {
-		return _elm_lang$html$Html$text('');
-	} else {
-		return A2(
-			_elm_lang$html$Html$img,
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$class('large'),
-				_1: {
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$src(
-						A2(
-							_elm_lang$core$Basics_ops['++'],
-							_user$project$PhotoGroove$urlPrefix,
-							A2(_elm_lang$core$Basics_ops['++'], 'large/', _p1._0))),
-					_1: {ctor: '[]'}
-				}
-			},
-			{ctor: '[]'});
-	}
-};
 var _user$project$PhotoGroove$buildPhoto = F3(
 	function (url, size, title) {
 		return {url: url, size: size, title: title};
@@ -9635,13 +9631,22 @@ var _user$project$PhotoGroove$applyFilters = function (model) {
 			A2(_elm_lang$core$Basics_ops['++'], 'large/', _p2._0));
 		var filters = {
 			ctor: '::',
-			_0: {name: 'Hue', amount: model.hue},
+			_0: {
+				name: 'Hue',
+				amount: _elm_lang$core$Basics$toFloat(model.hue) / 11
+			},
 			_1: {
 				ctor: '::',
-				_0: {name: 'Ripple', amount: model.ripple},
+				_0: {
+					name: 'Ripple',
+					amount: _elm_lang$core$Basics$toFloat(model.ripple) / 11
+				},
 				_1: {
 					ctor: '::',
-					_0: {name: 'Noise', amount: model.noise},
+					_0: {
+						name: 'Noise',
+						amount: _elm_lang$core$Basics$toFloat(model.noise) / 11
+					},
 					_1: {ctor: '[]'}
 				}
 			}
@@ -9755,29 +9760,20 @@ var _user$project$PhotoGroove$update = F2(
 		var _p4 = msg;
 		switch (_p4.ctor) {
 			case 'SetHue':
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
+				return _user$project$PhotoGroove$applyFilters(
+					_elm_lang$core$Native_Utils.update(
 						model,
-						{hue: _p4._0}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
+						{hue: _p4._0}));
 			case 'SetRipple':
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
+				return _user$project$PhotoGroove$applyFilters(
+					_elm_lang$core$Native_Utils.update(
 						model,
-						{ripple: _p4._0}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
+						{ripple: _p4._0}));
 			case 'SetNoise':
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
+				return _user$project$PhotoGroove$applyFilters(
+					_elm_lang$core$Native_Utils.update(
 						model,
-						{noise: _p4._0}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
+						{noise: _p4._0}));
 			case 'SelectByIndex':
 				var newSelectedUrl = A2(
 					_elm_lang$core$Maybe$map,

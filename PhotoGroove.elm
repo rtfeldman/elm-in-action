@@ -71,7 +71,7 @@ viewLarge maybeUrl =
             text ""
 
         Just url ->
-            img [ class "large", src (urlPrefix ++ "large/" ++ url) ] []
+            canvas [ id "main-canvas", class "large" ] []
 
 
 viewThumbnail : Maybe String -> Photo -> Html Msg
@@ -111,7 +111,7 @@ port setFilters : FilterOptions -> Cmd msg
 
 type alias FilterOptions =
     { url : String
-    , filters : List { name : String, amount : Int }
+    , filters : List { name : String, amount : Float }
     }
 
 
@@ -180,19 +180,13 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         SetHue hue ->
-            ( { model | hue = hue }
-            , Cmd.none
-            )
+            applyFilters { model | hue = hue }
 
         SetRipple ripple ->
-            ( { model | ripple = ripple }
-            , Cmd.none
-            )
+            applyFilters { model | ripple = ripple }
 
         SetNoise noise ->
-            ( { model | noise = noise }
-            , Cmd.none
-            )
+            applyFilters { model | noise = noise }
 
         SelectByIndex index ->
             let
@@ -240,9 +234,9 @@ applyFilters model =
         Just selectedUrl ->
             let
                 filters =
-                    [ { name = "Hue", amount = model.hue }
-                    , { name = "Ripple", amount = model.ripple }
-                    , { name = "Noise", amount = model.noise }
+                    [ { name = "Hue", amount = toFloat model.hue / 11 }
+                    , { name = "Ripple", amount = toFloat model.ripple / 11 }
+                    , { name = "Noise", amount = toFloat model.noise / 11 }
                     ]
 
                 url =
