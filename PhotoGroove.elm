@@ -213,12 +213,11 @@ update msg model =
             ( { model | chosenSize = size }, Cmd.none )
 
         LoadPhotos (Ok photos) ->
-            ( { model
-                | photos = photos
-                , selectedUrl = Maybe.map .url (List.head photos)
-              }
-            , Cmd.none
-            )
+            applyFilters
+                { model
+                    | photos = photos
+                    , selectedUrl = Maybe.map .url (List.head photos)
+                }
 
         LoadPhotos (Err _) ->
             ( { model

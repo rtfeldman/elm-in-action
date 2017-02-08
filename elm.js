@@ -9816,9 +9816,8 @@ var _user$project$PhotoGroove$update = F2(
 			default:
 				if (_p4._0.ctor === 'Ok') {
 					var _p5 = _p4._0._0;
-					return {
-						ctor: '_Tuple2',
-						_0: _elm_lang$core$Native_Utils.update(
+					return _user$project$PhotoGroove$applyFilters(
+						_elm_lang$core$Native_Utils.update(
 							model,
 							{
 								photos: _p5,
@@ -9828,9 +9827,7 @@ var _user$project$PhotoGroove$update = F2(
 										return _.url;
 									},
 									_elm_lang$core$List$head(_p5))
-							}),
-						_1: _elm_lang$core$Platform_Cmd$none
-					};
+							}));
 				} else {
 					return {
 						ctor: '_Tuple2',
