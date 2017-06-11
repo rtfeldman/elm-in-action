@@ -13,4 +13,5 @@ decoderTest =
         \_ ->
             """{"url": "foo.com", "size": 5}"""
                 |> decodeString photoDecoder
-                |> Expect.equal (Ok { url = "foo.com", size = 5, title = "(untitled)" })
+                |> Result.map .title
+                |> Expect.equal (Ok "(untitled)")
