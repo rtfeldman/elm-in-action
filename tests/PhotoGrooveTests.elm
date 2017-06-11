@@ -3,8 +3,14 @@ module PhotoGrooveTests exposing (..)
 import Expect exposing (Expectation)
 import Fuzz exposing (Fuzzer, list, int, string)
 import Test exposing (..)
+import PhotoGroove exposing (..)
+import Json.Decode exposing (decodeString)
 
 
-suite : Test
-suite =
-    todo "Implement our first test. See http://package.elm-lang.org/packages/elm-community/elm-test/latest for how to do this!"
+decoderTest : Test
+decoderTest =
+    test "title defaults to (untitled)" <|
+        \_ ->
+            """{"url": "foo.com", "size": 5}"""
+                |> decodeString photoDecoder
+                |> Expect.equal (Ok { url = "foo.com", size = 5, title = "(untitled)" })
