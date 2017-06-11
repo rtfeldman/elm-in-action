@@ -6,6 +6,8 @@ import Test exposing (..)
 import PhotoGroove exposing (..)
 import Json.Decode exposing (decodeValue)
 import Json.Encode as Encode
+import Test.Html.Query as Query
+import Test.Html.Selector exposing (text, tag, attribute)
 
 
 decoderTest : Test
@@ -48,3 +50,14 @@ stateTransitions =
 photoFromUrl : String -> Photo
 photoFromUrl url =
     { url = url, size = 0, title = "" }
+
+
+noPhotosNoThumbnails : Test
+noPhotosNoThumbnails =
+    test "No thumbnails render when there are no photos to render." <|
+        \_ ->
+            PhotoGroove.initialModel
+                |> PhotoGroove.view
+                |> Query.fromHtml
+                |> Query.findAll [ tag "img" ]
+                |> Query.count (Expect.equal 0)
