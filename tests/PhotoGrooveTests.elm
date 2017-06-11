@@ -8,6 +8,7 @@ import Json.Decode exposing (decodeValue)
 import Json.Encode as Encode
 import Test.Html.Query as Query
 import Test.Html.Selector exposing (text, tag, attribute)
+import Test.Html.Event as Event
 
 
 decoderTest : Test
@@ -72,14 +73,9 @@ thumbnailRendered url query =
 
 thumbnailsWork : Test
 thumbnailsWork =
-    fuzz (Fuzz.intRange 1 5) "URLs render as thumbnails" <|
-        \urlCount ->
+    fuzz urlFuzzer "URLs render as thumbnails" <|
+        \urls ->
             let
-                urls : List String
-                urls =
-                    List.range 1 urlCount
-                        |> List.map (\num -> toString num ++ ".png")
-
                 thumbnailChecks : List (Query.Single msg -> Expectation)
                 thumbnailChecks =
                     List.map thumbnailRendered urls
@@ -88,3 +84,38 @@ thumbnailsWork =
                     |> PhotoGroove.view
                     |> Query.fromHtml
                     |> Expect.all thumbnailChecks
+
+
+urlFuzzer : Fuzzer (List String)
+urlFuzzer =
+    Fuzz.intRange 1 5
+        |> Fuzz.map urlsFromCount
+
+
+urlsFromCount : Int -> List String
+urlsFromCount urlCount =
+    List.range 1 urlCount
+        |> List.map (\num -> toString num ++ ".png")
+
+
+clickThumbnail : Test
+clickThumbnail =
+    fuzz3 urlFuzzer string urlFuzzer "clicking a thumbnail selects it" <|
+        \urlsBefore urlToSelect urlsAfter ->
+            let
+                url =
+                    urlToSelect ++ ".jpeg"
+
+                photos =
+                    (urlsBefore ++ url :: urlsAfter)
+                        |> List.map photoFromUrl
+
+                srcToClick =
+                    urlPrefix ++ url
+            in
+                { initialModel | photos = photos }
+                    |> PhotoGroove.view
+                    |> Query.fromHtml
+                    |> Query.find [ tag "img", attribute "src" srcToClick ]
+                    |> Event.simulate Event.click
+                    |> Event.expect (SelectByUrl url)
