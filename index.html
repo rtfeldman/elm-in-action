@@ -2,26 +2,66 @@
 <html>
   <head>
       <link rel="stylesheet" href="http://elm-in-action.com/styles.css">
-      <link rel="import" href="http://elm-in-action.com/wc/slider/paper-slider.html">
+      <style>
+          .folder { margin-left: 30px; }
+          .folder > label {
+            background-color: #555;
+            margin: 6px 8px;
+            padding: 6px 8px;
+            display: inline-block;
+            cursor: pointer;
+          }
+
+          .folder > label:hover {
+            background-color: #60b5cc;
+          }
+
+          .folder.expanded label::before {
+            content: "▸";
+            margin-right: 12px;
+          }
+
+          .folder.collapsed label::before {
+            content: "▾";
+            margin-right: 12px;
+          }
+
+          .photo {
+            padding: 6px 8px;
+            margin-left: 30px;
+            cursor: pointer;
+          }
+
+          .photo:hover {
+            background-color: #60b5cc;
+          }
+
+          .folders, .selected-photo {
+            float: left;
+          }
+
+          .folders {
+            width: 360px;
+          }
+
+          .selected-photo {
+            width: 600px;
+          }
+
+          .content::after {
+            content: "";
+            display: table;
+            clear: both;
+          }
+      </style>
   </head>
 
     <body>
         <div id="elm-area"></div>
 
-        <script src="http://elm-in-action.com/pasta.js"></script>
         <script src="elm.js"></script>
         <script>
-          var app = Elm.PhotoGroove.embed(document.getElementById("elm-area"), Pasta.version);
-
-          app.ports.setFilters.subscribe(function(options) {
-            requestAnimationFrame(function() {
-              Pasta.apply(document.getElementById("main-canvas"), options);
-            });
-          });
-
-          Pasta.addStatusListener(function(status) {
-            app.ports.statusChanges.send(status);
-          });
+          var app = Elm.PhotoFolders.embed(document.getElementById("elm-area"));
         </script>
     </body>
 </html>
