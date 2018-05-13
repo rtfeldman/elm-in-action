@@ -57,9 +57,43 @@ modelDecoder =
 
 view : Model -> Html Msg
 view model =
-    h1 [] [ text "TODO: Implement this page!" ]
+    let
+        photoByUrl : PhotoUrl -> Maybe Photo
+        photoByUrl url =
+            Dict.get url model.photos
+
+        selectedPhoto =
+            case Maybe.andThen photoByUrl model.selectedPhotoUrl of
+                Just photo ->
+                    viewSelectedPhoto photo
+                        (List.filterMap photoByUrl photo.related)
+
+                Nothing ->
+                    text ""
+    in
+    div [ class "content" ]
+        [ div [ class "selected-photo" ] [ selectedPhoto ] ]
 
 
 main : Program Never Model Msg
 main =
     Html.program { init = init, view = view, update = update, subscriptions = \_ -> Sub.none }
+
+
+viewSelectedPhoto : Photo -> List Photo -> Html Msg
+viewSelectedPhoto photo related =
+    div
+        [ class "selected-photo" ]
+        [ h2 [] [ text photo.title ]
+        , img [ title photo.title, src photo.url ] []
+        , h3 [] [ text "Related" ]
+        , ul [ class "related-photos" ] (List.map viewRelatedPhoto related)
+        ]
+
+
+viewRelatedPhoto : Photo -> Html Msg
+viewRelatedPhoto photo =
+    li [ class "related-photo", onClick (SelectPhoto photo.url) ]
+        [ div [] [ text photo.title ]
+        , img [ class "related-photo", title photo.title, src photo.url ] []
+        ]
