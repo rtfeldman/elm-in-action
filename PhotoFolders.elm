@@ -9,9 +9,14 @@ import Json.Decode exposing (Decoder)
 import Photo exposing (Photo, PhotoUrl)
 
 
+type Folder
+    = Folder { name : String, photoUrls : List PhotoUrl, subfolders : List Folder }
+
+
 type alias Model =
     { photos : Dict PhotoUrl Photo
     , selectedPhotoUrl : Maybe PhotoUrl
+    , root : Folder
     }
 
 
@@ -35,11 +40,19 @@ update msg model =
 
 init : ( Model, Cmd Msg )
 init =
-    ( { photos = Dict.empty, selectedPhotoUrl = Nothing }
+    ( initialModel
     , modelDecoder
         |> Http.get "http://elm-in-action.com/folders/list"
         |> Http.send LoadPage
     )
+
+
+initialModel : Model
+initialModel =
+    { photos = Dict.empty
+    , selectedPhotoUrl = Nothing
+    , root = Folder { name = "Loading", photoUrls = [], subfolders = [] }
+    }
 
 
 modelDecoder : Decoder Model
@@ -52,6 +65,7 @@ modelDecoder =
                 , ( "fresco.jpg", { title = "Fresco", related = [ "trevi.jpg" ], size = 231, url = "fresco.jpg" } )
                 , ( "coli.jpg", { title = "Coliseum", related = [ "trevi.jpg" ], size = 149, url = "coli.jpg" } )
                 ]
+        , root = initialRoot
         }
 
 
@@ -97,3 +111,29 @@ viewRelatedPhoto photo =
         [ div [] [ text photo.title ]
         , img [ class "related-photo", title photo.title, src photo.url ] []
         ]
+
+
+initialRoot : Folder
+initialRoot =
+    Folder
+        { name = "Photos"
+        , photoUrls = []
+        , subfolders =
+            [ Folder
+                { name = "2016"
+                , photoUrls = []
+                , subfolders =
+                    [ Folder { name = "outdoors", photoUrls = [], subfolders = [] }
+                    , Folder { name = "indoors", photoUrls = [], subfolders = [] }
+                    ]
+                }
+            , Folder
+                { name = "2017"
+                , photoUrls = []
+                , subfolders =
+                    [ Folder { name = "outdoors", photoUrls = [], subfolders = [] }
+                    , Folder { name = "indoors", photoUrls = [], subfolders = [] }
+                    ]
+                }
+            ]
+        }
