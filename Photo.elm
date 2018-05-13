@@ -1,4 +1,4 @@
-module Photo exposing (Photo, PhotoUrl)
+module Photo exposing (Photo, PhotoUrl, url)
 
 
 type alias PhotoUrl =
@@ -11,3 +11,8 @@ type alias Photo =
     , size : Int
     , url : PhotoUrl
     }
+
+
+url : String -> PhotoUrl
+url suffix =
+    "http://elm-in-action.com/" ++ suffix

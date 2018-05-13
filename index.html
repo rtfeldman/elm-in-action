@@ -40,6 +40,16 @@
             float: left;
           }
 
+          .selected-photo h3 {
+            margin-top: 60px;
+            margin-bottom: 20px;
+            color: #60b5cc;
+          }
+
+          .selected-photo img {
+            display: block;
+          }
+
           .folders {
             width: 360px;
           }
@@ -52,6 +62,30 @@
             content: "";
             display: table;
             clear: both;
+          }
+
+          .related-photos {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            clear: both;
+          }
+
+          .related-photo {
+            float: left;
+          }
+
+          .related-photo img:hover {
+            float: left;
+            border-color: #60b5cc;
+          }
+
+          .related-photo img {
+            cursor: pointer;
+          }
+
+          .related-photo div {
+            margin: 0 5px;
           }
       </style>
   </head>
