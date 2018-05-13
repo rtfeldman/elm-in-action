@@ -5757,85 +5757,417 @@ var _elm_lang$core$Platform$Task = {ctor: 'Task'};
 var _elm_lang$core$Platform$ProcessId = {ctor: 'ProcessId'};
 var _elm_lang$core$Platform$Router = {ctor: 'Router'};
 
-var _NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode = _elm_lang$core$Json_Decode$succeed;
-var _NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$resolve = _elm_lang$core$Json_Decode$andThen(_elm_lang$core$Basics$identity);
-var _NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$custom = _elm_lang$core$Json_Decode$map2(
-	F2(
-		function (x, y) {
-			return y(x);
-		}));
-var _NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$hardcoded = function (_p0) {
-	return _NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$custom(
-		_elm_lang$core$Json_Decode$succeed(_p0));
+var _elm_lang$core$Task$onError = _elm_lang$core$Native_Scheduler.onError;
+var _elm_lang$core$Task$andThen = _elm_lang$core$Native_Scheduler.andThen;
+var _elm_lang$core$Task$spawnCmd = F2(
+	function (router, _p0) {
+		var _p1 = _p0;
+		return _elm_lang$core$Native_Scheduler.spawn(
+			A2(
+				_elm_lang$core$Task$andThen,
+				_elm_lang$core$Platform$sendToApp(router),
+				_p1._0));
+	});
+var _elm_lang$core$Task$fail = _elm_lang$core$Native_Scheduler.fail;
+var _elm_lang$core$Task$mapError = F2(
+	function (convert, task) {
+		return A2(
+			_elm_lang$core$Task$onError,
+			function (_p2) {
+				return _elm_lang$core$Task$fail(
+					convert(_p2));
+			},
+			task);
+	});
+var _elm_lang$core$Task$succeed = _elm_lang$core$Native_Scheduler.succeed;
+var _elm_lang$core$Task$map = F2(
+	function (func, taskA) {
+		return A2(
+			_elm_lang$core$Task$andThen,
+			function (a) {
+				return _elm_lang$core$Task$succeed(
+					func(a));
+			},
+			taskA);
+	});
+var _elm_lang$core$Task$map2 = F3(
+	function (func, taskA, taskB) {
+		return A2(
+			_elm_lang$core$Task$andThen,
+			function (a) {
+				return A2(
+					_elm_lang$core$Task$andThen,
+					function (b) {
+						return _elm_lang$core$Task$succeed(
+							A2(func, a, b));
+					},
+					taskB);
+			},
+			taskA);
+	});
+var _elm_lang$core$Task$map3 = F4(
+	function (func, taskA, taskB, taskC) {
+		return A2(
+			_elm_lang$core$Task$andThen,
+			function (a) {
+				return A2(
+					_elm_lang$core$Task$andThen,
+					function (b) {
+						return A2(
+							_elm_lang$core$Task$andThen,
+							function (c) {
+								return _elm_lang$core$Task$succeed(
+									A3(func, a, b, c));
+							},
+							taskC);
+					},
+					taskB);
+			},
+			taskA);
+	});
+var _elm_lang$core$Task$map4 = F5(
+	function (func, taskA, taskB, taskC, taskD) {
+		return A2(
+			_elm_lang$core$Task$andThen,
+			function (a) {
+				return A2(
+					_elm_lang$core$Task$andThen,
+					function (b) {
+						return A2(
+							_elm_lang$core$Task$andThen,
+							function (c) {
+								return A2(
+									_elm_lang$core$Task$andThen,
+									function (d) {
+										return _elm_lang$core$Task$succeed(
+											A4(func, a, b, c, d));
+									},
+									taskD);
+							},
+							taskC);
+					},
+					taskB);
+			},
+			taskA);
+	});
+var _elm_lang$core$Task$map5 = F6(
+	function (func, taskA, taskB, taskC, taskD, taskE) {
+		return A2(
+			_elm_lang$core$Task$andThen,
+			function (a) {
+				return A2(
+					_elm_lang$core$Task$andThen,
+					function (b) {
+						return A2(
+							_elm_lang$core$Task$andThen,
+							function (c) {
+								return A2(
+									_elm_lang$core$Task$andThen,
+									function (d) {
+										return A2(
+											_elm_lang$core$Task$andThen,
+											function (e) {
+												return _elm_lang$core$Task$succeed(
+													A5(func, a, b, c, d, e));
+											},
+											taskE);
+									},
+									taskD);
+							},
+							taskC);
+					},
+					taskB);
+			},
+			taskA);
+	});
+var _elm_lang$core$Task$sequence = function (tasks) {
+	var _p3 = tasks;
+	if (_p3.ctor === '[]') {
+		return _elm_lang$core$Task$succeed(
+			{ctor: '[]'});
+	} else {
+		return A3(
+			_elm_lang$core$Task$map2,
+			F2(
+				function (x, y) {
+					return {ctor: '::', _0: x, _1: y};
+				}),
+			_p3._0,
+			_elm_lang$core$Task$sequence(_p3._1));
+	}
 };
-var _NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optionalDecoder = F3(
-	function (pathDecoder, valDecoder, fallback) {
-		var nullOr = function (decoder) {
-			return _elm_lang$core$Json_Decode$oneOf(
+var _elm_lang$core$Task$onEffects = F3(
+	function (router, commands, state) {
+		return A2(
+			_elm_lang$core$Task$map,
+			function (_p4) {
+				return {ctor: '_Tuple0'};
+			},
+			_elm_lang$core$Task$sequence(
+				A2(
+					_elm_lang$core$List$map,
+					_elm_lang$core$Task$spawnCmd(router),
+					commands)));
+	});
+var _elm_lang$core$Task$init = _elm_lang$core$Task$succeed(
+	{ctor: '_Tuple0'});
+var _elm_lang$core$Task$onSelfMsg = F3(
+	function (_p7, _p6, _p5) {
+		return _elm_lang$core$Task$succeed(
+			{ctor: '_Tuple0'});
+	});
+var _elm_lang$core$Task$command = _elm_lang$core$Native_Platform.leaf('Task');
+var _elm_lang$core$Task$Perform = function (a) {
+	return {ctor: 'Perform', _0: a};
+};
+var _elm_lang$core$Task$perform = F2(
+	function (toMessage, task) {
+		return _elm_lang$core$Task$command(
+			_elm_lang$core$Task$Perform(
+				A2(_elm_lang$core$Task$map, toMessage, task)));
+	});
+var _elm_lang$core$Task$attempt = F2(
+	function (resultToMessage, task) {
+		return _elm_lang$core$Task$command(
+			_elm_lang$core$Task$Perform(
+				A2(
+					_elm_lang$core$Task$onError,
+					function (_p8) {
+						return _elm_lang$core$Task$succeed(
+							resultToMessage(
+								_elm_lang$core$Result$Err(_p8)));
+					},
+					A2(
+						_elm_lang$core$Task$andThen,
+						function (_p9) {
+							return _elm_lang$core$Task$succeed(
+								resultToMessage(
+									_elm_lang$core$Result$Ok(_p9)));
+						},
+						task))));
+	});
+var _elm_lang$core$Task$cmdMap = F2(
+	function (tagger, _p10) {
+		var _p11 = _p10;
+		return _elm_lang$core$Task$Perform(
+			A2(_elm_lang$core$Task$map, tagger, _p11._0));
+	});
+_elm_lang$core$Native_Platform.effectManagers['Task'] = {pkg: 'elm-lang/core', init: _elm_lang$core$Task$init, onEffects: _elm_lang$core$Task$onEffects, onSelfMsg: _elm_lang$core$Task$onSelfMsg, tag: 'cmd', cmdMap: _elm_lang$core$Task$cmdMap};
+
+//import Native.Scheduler //
+
+var _elm_lang$core$Native_Time = function() {
+
+var now = _elm_lang$core$Native_Scheduler.nativeBinding(function(callback)
+{
+	callback(_elm_lang$core$Native_Scheduler.succeed(Date.now()));
+});
+
+function setInterval_(interval, task)
+{
+	return _elm_lang$core$Native_Scheduler.nativeBinding(function(callback)
+	{
+		var id = setInterval(function() {
+			_elm_lang$core$Native_Scheduler.rawSpawn(task);
+		}, interval);
+
+		return function() { clearInterval(id); };
+	});
+}
+
+return {
+	now: now,
+	setInterval_: F2(setInterval_)
+};
+
+}();
+var _elm_lang$core$Time$setInterval = _elm_lang$core$Native_Time.setInterval_;
+var _elm_lang$core$Time$spawnHelp = F3(
+	function (router, intervals, processes) {
+		var _p0 = intervals;
+		if (_p0.ctor === '[]') {
+			return _elm_lang$core$Task$succeed(processes);
+		} else {
+			var _p1 = _p0._0;
+			var spawnRest = function (id) {
+				return A3(
+					_elm_lang$core$Time$spawnHelp,
+					router,
+					_p0._1,
+					A3(_elm_lang$core$Dict$insert, _p1, id, processes));
+			};
+			var spawnTimer = _elm_lang$core$Native_Scheduler.spawn(
+				A2(
+					_elm_lang$core$Time$setInterval,
+					_p1,
+					A2(_elm_lang$core$Platform$sendToSelf, router, _p1)));
+			return A2(_elm_lang$core$Task$andThen, spawnRest, spawnTimer);
+		}
+	});
+var _elm_lang$core$Time$addMySub = F2(
+	function (_p2, state) {
+		var _p3 = _p2;
+		var _p6 = _p3._1;
+		var _p5 = _p3._0;
+		var _p4 = A2(_elm_lang$core$Dict$get, _p5, state);
+		if (_p4.ctor === 'Nothing') {
+			return A3(
+				_elm_lang$core$Dict$insert,
+				_p5,
 				{
 					ctor: '::',
-					_0: decoder,
-					_1: {
-						ctor: '::',
-						_0: _elm_lang$core$Json_Decode$null(fallback),
-						_1: {ctor: '[]'}
-					}
-				});
-		};
-		var handleResult = function (input) {
-			var _p1 = A2(_elm_lang$core$Json_Decode$decodeValue, pathDecoder, input);
-			if (_p1.ctor === 'Ok') {
-				var _p2 = A2(
-					_elm_lang$core$Json_Decode$decodeValue,
-					nullOr(valDecoder),
-					_p1._0);
-				if (_p2.ctor === 'Ok') {
-					return _elm_lang$core$Json_Decode$succeed(_p2._0);
-				} else {
-					return _elm_lang$core$Json_Decode$fail(_p2._0);
-				}
-			} else {
-				return _elm_lang$core$Json_Decode$succeed(fallback);
-			}
-		};
-		return A2(_elm_lang$core$Json_Decode$andThen, handleResult, _elm_lang$core$Json_Decode$value);
+					_0: _p6,
+					_1: {ctor: '[]'}
+				},
+				state);
+		} else {
+			return A3(
+				_elm_lang$core$Dict$insert,
+				_p5,
+				{ctor: '::', _0: _p6, _1: _p4._0},
+				state);
+		}
 	});
-var _NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optionalAt = F4(
-	function (path, valDecoder, fallback, decoder) {
+var _elm_lang$core$Time$inMilliseconds = function (t) {
+	return t;
+};
+var _elm_lang$core$Time$millisecond = 1;
+var _elm_lang$core$Time$second = 1000 * _elm_lang$core$Time$millisecond;
+var _elm_lang$core$Time$minute = 60 * _elm_lang$core$Time$second;
+var _elm_lang$core$Time$hour = 60 * _elm_lang$core$Time$minute;
+var _elm_lang$core$Time$inHours = function (t) {
+	return t / _elm_lang$core$Time$hour;
+};
+var _elm_lang$core$Time$inMinutes = function (t) {
+	return t / _elm_lang$core$Time$minute;
+};
+var _elm_lang$core$Time$inSeconds = function (t) {
+	return t / _elm_lang$core$Time$second;
+};
+var _elm_lang$core$Time$now = _elm_lang$core$Native_Time.now;
+var _elm_lang$core$Time$onSelfMsg = F3(
+	function (router, interval, state) {
+		var _p7 = A2(_elm_lang$core$Dict$get, interval, state.taggers);
+		if (_p7.ctor === 'Nothing') {
+			return _elm_lang$core$Task$succeed(state);
+		} else {
+			var tellTaggers = function (time) {
+				return _elm_lang$core$Task$sequence(
+					A2(
+						_elm_lang$core$List$map,
+						function (tagger) {
+							return A2(
+								_elm_lang$core$Platform$sendToApp,
+								router,
+								tagger(time));
+						},
+						_p7._0));
+			};
+			return A2(
+				_elm_lang$core$Task$andThen,
+				function (_p8) {
+					return _elm_lang$core$Task$succeed(state);
+				},
+				A2(_elm_lang$core$Task$andThen, tellTaggers, _elm_lang$core$Time$now));
+		}
+	});
+var _elm_lang$core$Time$subscription = _elm_lang$core$Native_Platform.leaf('Time');
+var _elm_lang$core$Time$State = F2(
+	function (a, b) {
+		return {taggers: a, processes: b};
+	});
+var _elm_lang$core$Time$init = _elm_lang$core$Task$succeed(
+	A2(_elm_lang$core$Time$State, _elm_lang$core$Dict$empty, _elm_lang$core$Dict$empty));
+var _elm_lang$core$Time$onEffects = F3(
+	function (router, subs, _p9) {
+		var _p10 = _p9;
+		var rightStep = F3(
+			function (_p12, id, _p11) {
+				var _p13 = _p11;
+				return {
+					ctor: '_Tuple3',
+					_0: _p13._0,
+					_1: _p13._1,
+					_2: A2(
+						_elm_lang$core$Task$andThen,
+						function (_p14) {
+							return _p13._2;
+						},
+						_elm_lang$core$Native_Scheduler.kill(id))
+				};
+			});
+		var bothStep = F4(
+			function (interval, taggers, id, _p15) {
+				var _p16 = _p15;
+				return {
+					ctor: '_Tuple3',
+					_0: _p16._0,
+					_1: A3(_elm_lang$core$Dict$insert, interval, id, _p16._1),
+					_2: _p16._2
+				};
+			});
+		var leftStep = F3(
+			function (interval, taggers, _p17) {
+				var _p18 = _p17;
+				return {
+					ctor: '_Tuple3',
+					_0: {ctor: '::', _0: interval, _1: _p18._0},
+					_1: _p18._1,
+					_2: _p18._2
+				};
+			});
+		var newTaggers = A3(_elm_lang$core$List$foldl, _elm_lang$core$Time$addMySub, _elm_lang$core$Dict$empty, subs);
+		var _p19 = A6(
+			_elm_lang$core$Dict$merge,
+			leftStep,
+			bothStep,
+			rightStep,
+			newTaggers,
+			_p10.processes,
+			{
+				ctor: '_Tuple3',
+				_0: {ctor: '[]'},
+				_1: _elm_lang$core$Dict$empty,
+				_2: _elm_lang$core$Task$succeed(
+					{ctor: '_Tuple0'})
+			});
+		var spawnList = _p19._0;
+		var existingDict = _p19._1;
+		var killTask = _p19._2;
 		return A2(
-			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$custom,
-			A3(
-				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optionalDecoder,
-				A2(_elm_lang$core$Json_Decode$at, path, _elm_lang$core$Json_Decode$value),
-				valDecoder,
-				fallback),
-			decoder);
+			_elm_lang$core$Task$andThen,
+			function (newProcesses) {
+				return _elm_lang$core$Task$succeed(
+					A2(_elm_lang$core$Time$State, newTaggers, newProcesses));
+			},
+			A2(
+				_elm_lang$core$Task$andThen,
+				function (_p20) {
+					return A3(_elm_lang$core$Time$spawnHelp, router, spawnList, existingDict);
+				},
+				killTask));
 	});
-var _NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional = F4(
-	function (key, valDecoder, fallback, decoder) {
+var _elm_lang$core$Time$Every = F2(
+	function (a, b) {
+		return {ctor: 'Every', _0: a, _1: b};
+	});
+var _elm_lang$core$Time$every = F2(
+	function (interval, tagger) {
+		return _elm_lang$core$Time$subscription(
+			A2(_elm_lang$core$Time$Every, interval, tagger));
+	});
+var _elm_lang$core$Time$subMap = F2(
+	function (f, _p21) {
+		var _p22 = _p21;
 		return A2(
-			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$custom,
-			A3(
-				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optionalDecoder,
-				A2(_elm_lang$core$Json_Decode$field, key, _elm_lang$core$Json_Decode$value),
-				valDecoder,
-				fallback),
-			decoder);
+			_elm_lang$core$Time$Every,
+			_p22._0,
+			function (_p23) {
+				return f(
+					_p22._1(_p23));
+			});
 	});
-var _NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$requiredAt = F3(
-	function (path, valDecoder, decoder) {
-		return A2(
-			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$custom,
-			A2(_elm_lang$core$Json_Decode$at, path, valDecoder),
-			decoder);
-	});
-var _NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required = F3(
-	function (key, valDecoder, decoder) {
-		return A2(
-			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$custom,
-			A2(_elm_lang$core$Json_Decode$field, key, valDecoder),
-			decoder);
-	});
+_elm_lang$core$Native_Platform.effectManagers['Time'] = {pkg: 'elm-lang/core', init: _elm_lang$core$Time$init, onEffects: _elm_lang$core$Time$onEffects, onSelfMsg: _elm_lang$core$Time$onSelfMsg, tag: 'sub', subMap: _elm_lang$core$Time$subMap};
 
 var _elm_lang$virtual_dom$VirtualDom_Debug$wrap;
 var _elm_lang$virtual_dom$VirtualDom_Debug$wrapWithFlags;
@@ -8340,531 +8672,491 @@ var _elm_lang$html$Html_Events$Options = F2(
 		return {stopPropagation: a, preventDefault: b};
 	});
 
-var _user$project$Photo$fromPairs = function (pairs) {
-	return _elm_lang$core$Dict$fromList(
-		A2(
-			_elm_lang$core$List$map,
-			function (_p0) {
-				var _p1 = _p0;
-				var _p2 = _p1._0;
-				return {
-					ctor: '_Tuple2',
-					_0: _p2,
-					_1: _p1._1(_p2)
-				};
-			},
-			pairs));
+var _elm_lang$http$Native_Http = function() {
+
+
+// ENCODING AND DECODING
+
+function encodeUri(string)
+{
+	return encodeURIComponent(string);
+}
+
+function decodeUri(string)
+{
+	try
+	{
+		return _elm_lang$core$Maybe$Just(decodeURIComponent(string));
+	}
+	catch(e)
+	{
+		return _elm_lang$core$Maybe$Nothing;
+	}
+}
+
+
+// SEND REQUEST
+
+function toTask(request, maybeProgress)
+{
+	return _elm_lang$core$Native_Scheduler.nativeBinding(function(callback)
+	{
+		var xhr = new XMLHttpRequest();
+
+		configureProgress(xhr, maybeProgress);
+
+		xhr.addEventListener('error', function() {
+			callback(_elm_lang$core$Native_Scheduler.fail({ ctor: 'NetworkError' }));
+		});
+		xhr.addEventListener('timeout', function() {
+			callback(_elm_lang$core$Native_Scheduler.fail({ ctor: 'Timeout' }));
+		});
+		xhr.addEventListener('load', function() {
+			callback(handleResponse(xhr, request.expect.responseToResult));
+		});
+
+		try
+		{
+			xhr.open(request.method, request.url, true);
+		}
+		catch (e)
+		{
+			return callback(_elm_lang$core$Native_Scheduler.fail({ ctor: 'BadUrl', _0: request.url }));
+		}
+
+		configureRequest(xhr, request);
+		send(xhr, request.body);
+
+		return function() { xhr.abort(); };
+	});
+}
+
+function configureProgress(xhr, maybeProgress)
+{
+	if (maybeProgress.ctor === 'Nothing')
+	{
+		return;
+	}
+
+	xhr.addEventListener('progress', function(event) {
+		if (!event.lengthComputable)
+		{
+			return;
+		}
+		_elm_lang$core$Native_Scheduler.rawSpawn(maybeProgress._0({
+			bytes: event.loaded,
+			bytesExpected: event.total
+		}));
+	});
+}
+
+function configureRequest(xhr, request)
+{
+	function setHeader(pair)
+	{
+		xhr.setRequestHeader(pair._0, pair._1);
+	}
+
+	A2(_elm_lang$core$List$map, setHeader, request.headers);
+	xhr.responseType = request.expect.responseType;
+	xhr.withCredentials = request.withCredentials;
+
+	if (request.timeout.ctor === 'Just')
+	{
+		xhr.timeout = request.timeout._0;
+	}
+}
+
+function send(xhr, body)
+{
+	switch (body.ctor)
+	{
+		case 'EmptyBody':
+			xhr.send();
+			return;
+
+		case 'StringBody':
+			xhr.setRequestHeader('Content-Type', body._0);
+			xhr.send(body._1);
+			return;
+
+		case 'FormDataBody':
+			xhr.send(body._0);
+			return;
+	}
+}
+
+
+// RESPONSES
+
+function handleResponse(xhr, responseToResult)
+{
+	var response = toResponse(xhr);
+
+	if (xhr.status < 200 || 300 <= xhr.status)
+	{
+		response.body = xhr.responseText;
+		return _elm_lang$core$Native_Scheduler.fail({
+			ctor: 'BadStatus',
+			_0: response
+		});
+	}
+
+	var result = responseToResult(response);
+
+	if (result.ctor === 'Ok')
+	{
+		return _elm_lang$core$Native_Scheduler.succeed(result._0);
+	}
+	else
+	{
+		response.body = xhr.responseText;
+		return _elm_lang$core$Native_Scheduler.fail({
+			ctor: 'BadPayload',
+			_0: result._0,
+			_1: response
+		});
+	}
+}
+
+function toResponse(xhr)
+{
+	return {
+		status: { code: xhr.status, message: xhr.statusText },
+		headers: parseHeaders(xhr.getAllResponseHeaders()),
+		url: xhr.responseURL,
+		body: xhr.response
+	};
+}
+
+function parseHeaders(rawHeaders)
+{
+	var headers = _elm_lang$core$Dict$empty;
+
+	if (!rawHeaders)
+	{
+		return headers;
+	}
+
+	var headerPairs = rawHeaders.split('\u000d\u000a');
+	for (var i = headerPairs.length; i--; )
+	{
+		var headerPair = headerPairs[i];
+		var index = headerPair.indexOf('\u003a\u0020');
+		if (index > 0)
+		{
+			var key = headerPair.substring(0, index);
+			var value = headerPair.substring(index + 2);
+
+			headers = A3(_elm_lang$core$Dict$update, key, function(oldValue) {
+				if (oldValue.ctor === 'Just')
+				{
+					return _elm_lang$core$Maybe$Just(value + ', ' + oldValue._0);
+				}
+				return _elm_lang$core$Maybe$Just(value);
+			}, headers);
+		}
+	}
+
+	return headers;
+}
+
+
+// EXPECTORS
+
+function expectStringResponse(responseToResult)
+{
+	return {
+		responseType: 'text',
+		responseToResult: responseToResult
+	};
+}
+
+function mapExpect(func, expect)
+{
+	return {
+		responseType: expect.responseType,
+		responseToResult: function(response) {
+			var convertedResponse = expect.responseToResult(response);
+			return A2(_elm_lang$core$Result$map, func, convertedResponse);
+		}
+	};
+}
+
+
+// BODY
+
+function multipart(parts)
+{
+	var formData = new FormData();
+
+	while (parts.ctor !== '[]')
+	{
+		var part = parts._0;
+		formData.append(part._0, part._1);
+		parts = parts._1;
+	}
+
+	return { ctor: 'FormDataBody', _0: formData };
+}
+
+return {
+	toTask: F2(toTask),
+	expectStringResponse: expectStringResponse,
+	mapExpect: F2(mapExpect),
+	multipart: multipart,
+	encodeUri: encodeUri,
+	decodeUri: decodeUri
 };
+
+}();
+
+var _elm_lang$http$Http_Internal$map = F2(
+	function (func, request) {
+		return _elm_lang$core$Native_Utils.update(
+			request,
+			{
+				expect: A2(_elm_lang$http$Native_Http.mapExpect, func, request.expect)
+			});
+	});
+var _elm_lang$http$Http_Internal$RawRequest = F7(
+	function (a, b, c, d, e, f, g) {
+		return {method: a, headers: b, url: c, body: d, expect: e, timeout: f, withCredentials: g};
+	});
+var _elm_lang$http$Http_Internal$Request = function (a) {
+	return {ctor: 'Request', _0: a};
+};
+var _elm_lang$http$Http_Internal$Expect = {ctor: 'Expect'};
+var _elm_lang$http$Http_Internal$FormDataBody = {ctor: 'FormDataBody'};
+var _elm_lang$http$Http_Internal$StringBody = F2(
+	function (a, b) {
+		return {ctor: 'StringBody', _0: a, _1: b};
+	});
+var _elm_lang$http$Http_Internal$EmptyBody = {ctor: 'EmptyBody'};
+var _elm_lang$http$Http_Internal$Header = F2(
+	function (a, b) {
+		return {ctor: 'Header', _0: a, _1: b};
+	});
+
+var _elm_lang$http$Http$decodeUri = _elm_lang$http$Native_Http.decodeUri;
+var _elm_lang$http$Http$encodeUri = _elm_lang$http$Native_Http.encodeUri;
+var _elm_lang$http$Http$expectStringResponse = _elm_lang$http$Native_Http.expectStringResponse;
+var _elm_lang$http$Http$expectJson = function (decoder) {
+	return _elm_lang$http$Http$expectStringResponse(
+		function (response) {
+			return A2(_elm_lang$core$Json_Decode$decodeString, decoder, response.body);
+		});
+};
+var _elm_lang$http$Http$expectString = _elm_lang$http$Http$expectStringResponse(
+	function (response) {
+		return _elm_lang$core$Result$Ok(response.body);
+	});
+var _elm_lang$http$Http$multipartBody = _elm_lang$http$Native_Http.multipart;
+var _elm_lang$http$Http$stringBody = _elm_lang$http$Http_Internal$StringBody;
+var _elm_lang$http$Http$jsonBody = function (value) {
+	return A2(
+		_elm_lang$http$Http_Internal$StringBody,
+		'application/json',
+		A2(_elm_lang$core$Json_Encode$encode, 0, value));
+};
+var _elm_lang$http$Http$emptyBody = _elm_lang$http$Http_Internal$EmptyBody;
+var _elm_lang$http$Http$header = _elm_lang$http$Http_Internal$Header;
+var _elm_lang$http$Http$request = _elm_lang$http$Http_Internal$Request;
+var _elm_lang$http$Http$post = F3(
+	function (url, body, decoder) {
+		return _elm_lang$http$Http$request(
+			{
+				method: 'POST',
+				headers: {ctor: '[]'},
+				url: url,
+				body: body,
+				expect: _elm_lang$http$Http$expectJson(decoder),
+				timeout: _elm_lang$core$Maybe$Nothing,
+				withCredentials: false
+			});
+	});
+var _elm_lang$http$Http$get = F2(
+	function (url, decoder) {
+		return _elm_lang$http$Http$request(
+			{
+				method: 'GET',
+				headers: {ctor: '[]'},
+				url: url,
+				body: _elm_lang$http$Http$emptyBody,
+				expect: _elm_lang$http$Http$expectJson(decoder),
+				timeout: _elm_lang$core$Maybe$Nothing,
+				withCredentials: false
+			});
+	});
+var _elm_lang$http$Http$getString = function (url) {
+	return _elm_lang$http$Http$request(
+		{
+			method: 'GET',
+			headers: {ctor: '[]'},
+			url: url,
+			body: _elm_lang$http$Http$emptyBody,
+			expect: _elm_lang$http$Http$expectString,
+			timeout: _elm_lang$core$Maybe$Nothing,
+			withCredentials: false
+		});
+};
+var _elm_lang$http$Http$toTask = function (_p0) {
+	var _p1 = _p0;
+	return A2(_elm_lang$http$Native_Http.toTask, _p1._0, _elm_lang$core$Maybe$Nothing);
+};
+var _elm_lang$http$Http$send = F2(
+	function (resultToMessage, request) {
+		return A2(
+			_elm_lang$core$Task$attempt,
+			resultToMessage,
+			_elm_lang$http$Http$toTask(request));
+	});
+var _elm_lang$http$Http$Response = F4(
+	function (a, b, c, d) {
+		return {url: a, status: b, headers: c, body: d};
+	});
+var _elm_lang$http$Http$BadPayload = F2(
+	function (a, b) {
+		return {ctor: 'BadPayload', _0: a, _1: b};
+	});
+var _elm_lang$http$Http$BadStatus = function (a) {
+	return {ctor: 'BadStatus', _0: a};
+};
+var _elm_lang$http$Http$NetworkError = {ctor: 'NetworkError'};
+var _elm_lang$http$Http$Timeout = {ctor: 'Timeout'};
+var _elm_lang$http$Http$BadUrl = function (a) {
+	return {ctor: 'BadUrl', _0: a};
+};
+var _elm_lang$http$Http$StringPart = F2(
+	function (a, b) {
+		return {ctor: 'StringPart', _0: a, _1: b};
+	});
+var _elm_lang$http$Http$stringPart = _elm_lang$http$Http$StringPart;
+
 var _user$project$Photo$Photo = F4(
 	function (a, b, c, d) {
-		return {title: a, size: b, related: c, url: d};
+		return {title: a, related: b, size: c, url: d};
 	});
-var _user$project$Photo$partialDecoder = A3(
-	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-	'related_photos',
-	_elm_lang$core$Json_Decode$list(_elm_lang$core$Json_Decode$string),
-	A3(
-		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-		'size',
-		_elm_lang$core$Json_Decode$int,
-		A3(
-			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-			'title',
-			_elm_lang$core$Json_Decode$string,
-			_elm_lang$core$Json_Decode$succeed(_user$project$Photo$Photo))));
-var _user$project$Photo$decoder = A2(
-	_elm_lang$core$Json_Decode$map,
-	_user$project$Photo$fromPairs,
-	_elm_lang$core$Json_Decode$keyValuePairs(_user$project$Photo$partialDecoder));
 
-var _user$project$Folder$json = '\n      {\n        \"name\": \"Photos\"\n        \"photos\": {},\n        \"subfolders\": [\n            {\n                \"name\": \"2016\",\n                \"photos\": {},\n                \"subfolders\": [\n                    {\n                        \"name\": \"outdoors\",\n                        \"photos\": {},\n                        \"subfolders\": {}\n                    },\n                    {\n                        \"name\": \"indoors\",\n                        \"photos\": {},\n                        \"subfolders\": {}\n                    }\n                }\n            },\n            {\n                \"name\": \"2017\",\n                \"photos\": {},\n                \"subfolders\": [\n                    {\n                        \"name\": \"outdoors\",\n                        \"photos\": {},\n                        \"subfolders\": {}\n                    },\n                    {\n                        \"name\": \"indoors\",\n                        \"photos\": {},\n                        \"subfolders\": {}\n                    }\n                ]\n            }\n        ]\n    }\n    ';
-var _user$project$Folder$Folder = function (a) {
-	return {ctor: 'Folder', _0: a};
+var _user$project$PhotoFolders$view = function (model) {
+	return A2(
+		_elm_lang$html$Html$h1,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html$text('TODO: Implement this page!'),
+			_1: {ctor: '[]'}
+		});
 };
-var _user$project$Folder$toggleExpanded = F2(
-	function (path, _p0) {
-		var _p1 = _p0;
-		var _p3 = _p1._0;
-		var _p2 = path;
-		if (_p2.ctor === 'End') {
-			return _user$project$Folder$Folder(
-				_elm_lang$core$Native_Utils.update(
-					_p3,
-					{expanded: !_p3.expanded}));
-		} else {
-			var transform = F2(
-				function (currentIndex, currentFolder) {
-					return _elm_lang$core$Native_Utils.eq(currentIndex, _p2._0) ? A2(_user$project$Folder$toggleExpanded, _p2._1, currentFolder) : currentFolder;
-				});
-			var subfolders = A2(_elm_lang$core$List$indexedMap, transform, _p3.subfolders);
-			return _user$project$Folder$Folder(
-				_elm_lang$core$Native_Utils.update(
-					_p3,
-					{subfolders: subfolders}));
-		}
-	});
-var _user$project$Folder$assemble = F3(
-	function (folderName, folderPhotos, subfolderPairs) {
-		var _p4 = _elm_lang$core$List$unzip(subfolderPairs);
-		var subfolders = _p4._0;
-		var subfolderPhotos = _p4._1;
-		var folder = _user$project$Folder$Folder(
+var _user$project$PhotoFolders$modelDecoder = _elm_lang$core$Json_Decode$succeed(
+	{
+		selectedPhotoUrl: _elm_lang$core$Maybe$Just('trevi.jpg'),
+		photos: _elm_lang$core$Dict$fromList(
 			{
-				expanded: true,
-				photoUrls: _elm_lang$core$Dict$keys(folderPhotos),
-				subfolders: subfolders,
-				name: folderName
-			});
-		var photos = A3(_elm_lang$core$List$foldr, _elm_lang$core$Dict$union, folderPhotos, subfolderPhotos);
-		return {ctor: '_Tuple2', _0: folder, _1: photos};
-	});
-var _user$project$Folder$folderAndPhotos = A3(
-	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-	'subfolders',
-	_elm_lang$core$Json_Decode$list(
-		_elm_lang$core$Json_Decode$lazy(
-			function (_p5) {
-				var _p6 = _p5;
-				return _user$project$Folder$folderAndPhotos;
-			})),
-	A3(
-		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-		'photos',
-		_user$project$Photo$decoder,
-		A3(
-			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-			'name',
-			_elm_lang$core$Json_Decode$string,
-			_elm_lang$core$Json_Decode$succeed(_user$project$Folder$assemble))));
-var _user$project$Folder$initialRoot = _user$project$Folder$Folder(
-	{
-		name: 'Photos',
-		expanded: true,
-		photoUrls: {ctor: '[]'},
-		subfolders: {
-			ctor: '::',
-			_0: _user$project$Folder$Folder(
-				{
-					name: '2016',
-					photoUrls: {ctor: '[]'},
-					expanded: true,
-					subfolders: {
-						ctor: '::',
-						_0: _user$project$Folder$Folder(
-							{
-								name: 'outdoors',
-								expanded: true,
-								photoUrls: {ctor: '[]'},
-								subfolders: {ctor: '[]'}
-							}),
-						_1: {
-							ctor: '::',
-							_0: _user$project$Folder$Folder(
-								{
-									name: 'indoors',
-									expanded: true,
-									photoUrls: {ctor: '[]'},
-									subfolders: {ctor: '[]'}
-								}),
-							_1: {ctor: '[]'}
-						}
-					}
-				}),
-			_1: {
-				ctor: '::',
-				_0: _user$project$Folder$Folder(
-					{
-						name: '2017',
-						photoUrls: {ctor: '[]'},
-						expanded: true,
-						subfolders: {
-							ctor: '::',
-							_0: _user$project$Folder$Folder(
-								{
-									name: 'outdoors',
-									expanded: true,
-									photoUrls: {ctor: '[]'},
-									subfolders: {ctor: '[]'}
-								}),
-							_1: {
-								ctor: '::',
-								_0: _user$project$Folder$Folder(
-									{
-										name: 'indoors',
-										expanded: true,
-										photoUrls: {ctor: '[]'},
-										subfolders: {ctor: '[]'}
-									}),
-								_1: {ctor: '[]'}
-							}
-						}
-					}),
-				_1: {ctor: '[]'}
-			}
-		}
-	});
-var _user$project$Folder$Subfolder = F2(
-	function (a, b) {
-		return {ctor: 'Subfolder', _0: a, _1: b};
-	});
-var _user$project$Folder$End = {ctor: 'End'};
-
-var _user$project$PhotoFolders$toModel = function (_p0) {
-	var _p1 = _p0;
-	return {photos: _p1._1, root: _p1._0, selectedPhotoUrl: _elm_lang$core$Maybe$Nothing};
-};
-var _user$project$PhotoFolders$modelDecoder = A2(_elm_lang$core$Json_Decode$map, _user$project$PhotoFolders$toModel, _user$project$Folder$folderAndPhotos);
-var _user$project$PhotoFolders$photos = _elm_lang$core$Dict$fromList(
-	{
-		ctor: '::',
-		_0: {
-			ctor: '_Tuple2',
-			_0: 'trevi.png',
-			_1: {
-				title: 'Trevi',
-				related: {
-					ctor: '::',
-					_0: 'coli.png',
-					_1: {
-						ctor: '::',
-						_0: 'fresco.png',
-						_1: {ctor: '[]'}
-					}
-				},
-				size: 174,
-				url: 'trevi.png'
-			}
-		},
-		_1: {
-			ctor: '::',
-			_0: {
-				ctor: '_Tuple2',
-				_0: 'fresco.png',
-				_1: {
-					title: 'Fresco',
-					related: {
-						ctor: '::',
-						_0: 'trevi.png',
-						_1: {ctor: '[]'}
-					},
-					size: 231,
-					url: 'fresco.png'
-				}
-			},
-			_1: {
 				ctor: '::',
 				_0: {
 					ctor: '_Tuple2',
-					_0: 'coli.png',
+					_0: 'trevi.jpg',
 					_1: {
-						title: 'Coliseum',
+						title: 'Trevi',
 						related: {
 							ctor: '::',
-							_0: 'trevi.png',
-							_1: {ctor: '[]'}
-						},
-						size: 149,
-						url: 'coli.png'
-					}
-				},
-				_1: {ctor: '[]'}
-			}
-		}
-	});
-var _user$project$PhotoFolders$init = {
-	ctor: '_Tuple2',
-	_0: {
-		photos: _user$project$PhotoFolders$photos,
-		selectedPhotoUrl: _elm_lang$core$Maybe$Just('trevi.png'),
-		root: _user$project$Folder$initialRoot
-	},
-	_1: _elm_lang$core$Platform_Cmd$none
-};
-var _user$project$PhotoFolders$update = F2(
-	function (msg, model) {
-		var _p2 = msg;
-		if (_p2.ctor === 'SelectPhoto') {
-			return {
-				ctor: '_Tuple2',
-				_0: _elm_lang$core$Native_Utils.update(
-					model,
-					{
-						selectedPhotoUrl: _elm_lang$core$Maybe$Just(_p2._0)
-					}),
-				_1: _elm_lang$core$Platform_Cmd$none
-			};
-		} else {
-			return {
-				ctor: '_Tuple2',
-				_0: _elm_lang$core$Native_Utils.update(
-					model,
-					{
-						root: A2(_user$project$Folder$toggleExpanded, _p2._0, model.root)
-					}),
-				_1: _elm_lang$core$Platform_Cmd$none
-			};
-		}
-	});
-var _user$project$PhotoFolders$Model = F3(
-	function (a, b, c) {
-		return {photos: a, selectedPhotoUrl: b, root: c};
-	});
-var _user$project$PhotoFolders$ToggleExpanded = function (a) {
-	return {ctor: 'ToggleExpanded', _0: a};
-};
-var _user$project$PhotoFolders$SelectPhoto = function (a) {
-	return {ctor: 'SelectPhoto', _0: a};
-};
-var _user$project$PhotoFolders$viewPhoto = function (url) {
-	return A2(
-		_elm_lang$html$Html$div,
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$class('photo'),
-			_1: {
-				ctor: '::',
-				_0: _elm_lang$html$Html_Events$onClick(
-					_user$project$PhotoFolders$SelectPhoto(url)),
-				_1: {ctor: '[]'}
-			}
-		},
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html$text(url),
-			_1: {ctor: '[]'}
-		});
-};
-var _user$project$PhotoFolders$viewFolder = F2(
-	function (path, _p3) {
-		var _p4 = _p3;
-		var _p5 = _p4._0;
-		var folderLabel = A2(
-			_elm_lang$html$Html$label,
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html_Events$onClick(
-					_user$project$PhotoFolders$ToggleExpanded(path)),
-				_1: {ctor: '[]'}
-			},
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html$text(_p5.name),
-				_1: {ctor: '[]'}
-			});
-		var viewSubfolder = F2(
-			function (index, subfolder) {
-				return A2(
-					_user$project$PhotoFolders$viewFolder,
-					A2(_user$project$Folder$Subfolder, index, path),
-					subfolder);
-			});
-		if (_p5.expanded) {
-			var contents = A2(
-				_elm_lang$core$List$append,
-				A2(_elm_lang$core$List$indexedMap, viewSubfolder, _p5.subfolders),
-				A2(_elm_lang$core$List$map, _user$project$PhotoFolders$viewPhoto, _p5.photoUrls));
-			return A2(
-				_elm_lang$html$Html$div,
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$class('folder expanded'),
-					_1: {ctor: '[]'}
-				},
-				{ctor: '::', _0: folderLabel, _1: contents});
-		} else {
-			return A2(
-				_elm_lang$html$Html$div,
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$class('folder collapsed'),
-					_1: {ctor: '[]'}
-				},
-				{
-					ctor: '::',
-					_0: folderLabel,
-					_1: {ctor: '[]'}
-				});
-		}
-	});
-var _user$project$PhotoFolders$viewRelatedPhoto = function (photo) {
-	return A2(
-		_elm_lang$html$Html$li,
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$class('related-photo'),
-			_1: {
-				ctor: '::',
-				_0: _elm_lang$html$Html_Events$onClick(
-					_user$project$PhotoFolders$SelectPhoto(photo.url)),
-				_1: {ctor: '[]'}
-			}
-		},
-		{
-			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$div,
-				{ctor: '[]'},
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html$text(photo.title),
-					_1: {ctor: '[]'}
-				}),
-			_1: {
-				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$img,
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$class('related-photo'),
-						_1: {
-							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$title(photo.title),
+							_0: 'coli.jpg',
 							_1: {
 								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$src(photo.url),
+								_0: 'fresco.jpg',
 								_1: {ctor: '[]'}
 							}
-						}
-					},
-					{ctor: '[]'}),
-				_1: {ctor: '[]'}
-			}
-		});
-};
-var _user$project$PhotoFolders$viewSelectedPhoto = F2(
-	function (photo, related) {
-		return A2(
-			_elm_lang$html$Html$div,
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$class('selected-photo'),
-				_1: {ctor: '[]'}
-			},
-			{
-				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$h2,
-					{ctor: '[]'},
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html$text(photo.title),
-						_1: {ctor: '[]'}
-					}),
+						},
+						size: 174,
+						url: 'trevi.jpg'
+					}
+				},
 				_1: {
 					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$img,
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$title(photo.title),
-							_1: {
+					_0: {
+						ctor: '_Tuple2',
+						_0: 'fresco.jpg',
+						_1: {
+							title: 'Fresco',
+							related: {
 								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$src(photo.url),
+								_0: 'trevi.jpg',
 								_1: {ctor: '[]'}
-							}
-						},
-						{ctor: '[]'}),
+							},
+							size: 231,
+							url: 'fresco.jpg'
+						}
+					},
 					_1: {
 						ctor: '::',
-						_0: A2(
-							_elm_lang$html$Html$h3,
-							{ctor: '[]'},
-							{
-								ctor: '::',
-								_0: _elm_lang$html$Html$text('Related'),
-								_1: {ctor: '[]'}
-							}),
-						_1: {
-							ctor: '::',
-							_0: A2(
-								_elm_lang$html$Html$ul,
-								{
+						_0: {
+							ctor: '_Tuple2',
+							_0: 'coli.jpg',
+							_1: {
+								title: 'Coliseum',
+								related: {
 									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$class('related-photoUrls'),
+									_0: 'trevi.jpg',
 									_1: {ctor: '[]'}
 								},
-								A2(_elm_lang$core$List$map, _user$project$PhotoFolders$viewRelatedPhoto, related)),
-							_1: {ctor: '[]'}
-						}
+								size: 149,
+								url: 'coli.jpg'
+							}
+						},
+						_1: {ctor: '[]'}
 					}
 				}
-			});
+			})
 	});
-var _user$project$PhotoFolders$view = function (model) {
-	var photoByUrl = function (url) {
-		return A2(_elm_lang$core$Dict$get, url, model.photos);
-	};
-	var selectedPhoto = function () {
-		var _p6 = A2(_elm_lang$core$Maybe$andThen, photoByUrl, model.selectedPhotoUrl);
-		if (_p6.ctor === 'Just') {
-			var _p7 = _p6._0;
-			return A2(
-				_user$project$PhotoFolders$viewSelectedPhoto,
-				_p7,
-				A2(_elm_lang$core$List$filterMap, photoByUrl, _p7.related));
-		} else {
-			return _elm_lang$html$Html$text('');
-		}
-	}();
-	return A2(
-		_elm_lang$html$Html$div,
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$class('content'),
-			_1: {ctor: '[]'}
-		},
-		{
-			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$div,
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$class('folders'),
-					_1: {ctor: '[]'}
-				},
-				{
-					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$h1,
-						{ctor: '[]'},
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html$text('Folders'),
-							_1: {ctor: '[]'}
-						}),
-					_1: {
-						ctor: '::',
-						_0: A2(_user$project$PhotoFolders$viewFolder, _user$project$Folder$End, model.root),
-						_1: {ctor: '[]'}
-					}
-				}),
-			_1: {
-				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$div,
+var _user$project$PhotoFolders$update = F2(
+	function (msg, model) {
+		var _p0 = msg;
+		if (_p0.ctor === 'SelectPhoto') {
+			return {
+				ctor: '_Tuple2',
+				_0: _elm_lang$core$Native_Utils.update(
+					model,
 					{
-						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$class('selected-photo'),
-						_1: {ctor: '[]'}
-					},
-					{
-						ctor: '::',
-						_0: selectedPhoto,
-						_1: {ctor: '[]'}
+						selectedPhotoUrl: _elm_lang$core$Maybe$Just(_p0._0)
 					}),
-				_1: {ctor: '[]'}
+				_1: _elm_lang$core$Platform_Cmd$none
+			};
+		} else {
+			if (_p0._0.ctor === 'Ok') {
+				return {ctor: '_Tuple2', _0: _p0._0._0, _1: _elm_lang$core$Platform_Cmd$none};
+			} else {
+				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 			}
-		});
+		}
+	});
+var _user$project$PhotoFolders$Model = F2(
+	function (a, b) {
+		return {photos: a, selectedPhotoUrl: b};
+	});
+var _user$project$PhotoFolders$LoadPage = function (a) {
+	return {ctor: 'LoadPage', _0: a};
+};
+var _user$project$PhotoFolders$init = {
+	ctor: '_Tuple2',
+	_0: {photos: _elm_lang$core$Dict$empty, selectedPhotoUrl: _elm_lang$core$Maybe$Nothing},
+	_1: A2(
+		_elm_lang$http$Http$send,
+		_user$project$PhotoFolders$LoadPage,
+		A2(_elm_lang$http$Http$get, 'http://elm-in-action.com/folders/list', _user$project$PhotoFolders$modelDecoder))
 };
 var _user$project$PhotoFolders$main = _elm_lang$html$Html$program(
 	{
 		init: _user$project$PhotoFolders$init,
 		view: _user$project$PhotoFolders$view,
 		update: _user$project$PhotoFolders$update,
-		subscriptions: function (_p8) {
+		subscriptions: function (_p1) {
 			return _elm_lang$core$Platform_Sub$none;
 		}
 	})();
+var _user$project$PhotoFolders$SelectPhoto = function (a) {
+	return {ctor: 'SelectPhoto', _0: a};
+};
 
 var Elm = {};
 Elm['PhotoFolders'] = Elm['PhotoFolders'] || {};
