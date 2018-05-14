@@ -1,4 +1,4 @@
-module Folder exposing (Folder(..), FolderPath(..), folderAndPhotos, initialRoot, toggleExpanded)
+module Folder exposing (Folder(..), FolderPath(..), folderDecoder, initialRoot, photosDecoder, toggleExpanded)
 
 import Dict exposing (Dict)
 import Json.Decode as Decode exposing (Decoder, int, list, string)
@@ -42,108 +42,35 @@ toggleExpanded path (Folder folder) =
             Folder { folder | subfolders = subfolders }
 
 
-folderAndPhotos : Decoder ( Folder, Photos )
-folderAndPhotos =
-    Decode.succeed assemble
+folderDecoder : Decoder Folder
+folderDecoder =
+    Decode.succeed folderFromJson
         |> required "name" Decode.string
         |> required "photos" Photo.decoder
-        |> required "subfolders" (Decode.list (Decode.lazy (\() -> folderAndPhotos)))
+        |> required "subfolders" (Decode.list (Decode.lazy (\() -> folderDecoder)))
 
 
-assemble :
+folderFromJson :
     String
-    -> Photos
-    -> List ( Folder, Photos )
-    -> ( Folder, Photos )
-assemble folderName folderPhotos subfolderPairs =
-    let
-        ( subfolders, subfolderPhotos ) =
-            List.unzip subfolderPairs
-
-        folder : Folder
-        folder =
-            Folder
-                { expanded = True
-                , photoUrls = Dict.keys folderPhotos
-                , subfolders = subfolders
-                , name = folderName
-                }
-
-        photos : Photos
-        photos =
-            List.foldr Dict.union folderPhotos subfolderPhotos
-    in
-    ( folder, photos )
-
-
-initialRoot : Folder
-initialRoot =
+    -> Dict PhotoUrl Photo
+    -> List Folder
+    -> Folder
+folderFromJson name folderPhotos subfolders =
     Folder
-        { name = "Photos"
+        { name = name
         , expanded = True
-        , photoUrls = []
-        , subfolders =
-            [ Folder
-                { name = "2016"
-                , photoUrls = []
-                , expanded = True
-                , subfolders =
-                    [ Folder { name = "outdoors", expanded = True, photoUrls = [], subfolders = [] }
-                    , Folder { name = "indoors", expanded = True, photoUrls = [], subfolders = [] }
-                    ]
-                }
-            , Folder
-                { name = "2017"
-                , photoUrls = []
-                , expanded = True
-                , subfolders =
-                    [ Folder { name = "outdoors", expanded = True, photoUrls = [], subfolders = [] }
-                    , Folder { name = "indoors", expanded = True, photoUrls = [], subfolders = [] }
-                    ]
-                }
-            ]
+        , photoUrls = Dict.keys folderPhotos
+        , subfolders = subfolders
         }
 
 
-json : String
-json =
-    """
-      {
-        "name": "Photos"
-        "photos": {},
-        "subfolders": [
-            {
-                "name": "2016",
-                "photos": {},
-                "subfolders": [
-                    {
-                        "name": "outdoors",
-                        "photos": {},
-                        "subfolders": {}
-                    },
-                    {
-                        "name": "indoors",
-                        "photos": {},
-                        "subfolders": {}
-                    }
-                }
-            },
-            {
-                "name": "2017",
-                "photos": {},
-                "subfolders": [
-                    {
-                        "name": "outdoors",
-                        "photos": {},
-                        "subfolders": {}
-                    },
-                    {
-                        "name": "indoors",
-                        "photos": {},
-                        "subfolders": {}
-                    }
-                ]
-            }
-        ]
-    }
-    """
+photosDecoder : Decoder (Dict PhotoUrl Photo)
+photosDecoder =
+    Decode.succeed photosFromJson
+        |> required "photos" Photo.decoder
+        |> required "subfolders" (Decode.list (Decode.lazy (\() -> photosDecoder)))
+
+
+photosFromJson : Dict PhotoUrl Photo -> List (Dict PhotoUrl Photo) -> Dict PhotoUrl Photo
+photosFromJson photos subfolderPhotos =
+    List.foldl Dict.union photos subfolderPhotos

@@ -1,6 +1,11 @@
 module Photo exposing (Photo, PhotoUrl, url)
 
 
+urlPrefix : String
+urlPrefix =
+    "http://elm-in-action.com/"
+
+
 type alias PhotoUrl =
     String
 

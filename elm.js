@@ -9041,30 +9041,6 @@ var _user$project$Photo$Photo = F4(
 		return {title: a, related: b, size: c, url: d};
 	});
 
-var _user$project$PhotoFolders$viewFolder = function (_p0) {
-	var _p1 = _p0;
-	var _p2 = _p1._0;
-	var subfolders = A2(_elm_lang$core$List$map, _user$project$PhotoFolders$viewFolder, _p2.subfolders);
-	return A2(
-		_elm_lang$html$Html$div,
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$class('folder'),
-			_1: {ctor: '[]'}
-		},
-		{
-			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$label,
-				{ctor: '[]'},
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html$text(_p2.name),
-					_1: {ctor: '[]'}
-				}),
-			_1: subfolders
-		});
-};
 var _user$project$PhotoFolders$Model = F3(
 	function (a, b, c) {
 		return {photos: a, selectedPhotoUrl: b, root: c};
@@ -9229,38 +9205,38 @@ var _user$project$PhotoFolders$modelDecoder = _elm_lang$core$Json_Decode$succeed
 		root: _user$project$PhotoFolders$initialRoot
 	});
 var _user$project$PhotoFolders$toggleExpanded = F2(
-	function (path, _p3) {
-		var _p4 = _p3;
-		var _p6 = _p4._0;
-		var _p5 = path;
-		if (_p5.ctor === 'End') {
+	function (path, _p0) {
+		var _p1 = _p0;
+		var _p3 = _p1._0;
+		var _p2 = path;
+		if (_p2.ctor === 'End') {
 			return _user$project$PhotoFolders$Folder(
 				_elm_lang$core$Native_Utils.update(
-					_p6,
-					{expanded: !_p6.expanded}));
+					_p3,
+					{expanded: !_p3.expanded}));
 		} else {
 			var transform = F2(
 				function (currentIndex, currentFolder) {
-					return _elm_lang$core$Native_Utils.eq(currentIndex, _p5._0) ? A2(_user$project$PhotoFolders$toggleExpanded, _p5._1, currentFolder) : currentFolder;
+					return _elm_lang$core$Native_Utils.eq(currentIndex, _p2._0) ? A2(_user$project$PhotoFolders$toggleExpanded, _p2._1, currentFolder) : currentFolder;
 				});
-			var subfolders = A2(_elm_lang$core$List$indexedMap, transform, _p6.subfolders);
+			var subfolders = A2(_elm_lang$core$List$indexedMap, transform, _p3.subfolders);
 			return _user$project$PhotoFolders$Folder(
 				_elm_lang$core$Native_Utils.update(
-					_p6,
+					_p3,
 					{subfolders: subfolders}));
 		}
 	});
 var _user$project$PhotoFolders$update = F2(
 	function (msg, model) {
-		var _p7 = msg;
-		switch (_p7.ctor) {
+		var _p4 = msg;
+		switch (_p4.ctor) {
 			case 'ToggleExpanded':
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{
-							root: A2(_user$project$PhotoFolders$toggleExpanded, _p7._0, model.root)
+							root: A2(_user$project$PhotoFolders$toggleExpanded, _p4._0, model.root)
 						}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
@@ -9270,13 +9246,13 @@ var _user$project$PhotoFolders$update = F2(
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{
-							selectedPhotoUrl: _elm_lang$core$Maybe$Just(_p7._0)
+							selectedPhotoUrl: _elm_lang$core$Maybe$Just(_p4._0)
 						}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			default:
-				if (_p7._0.ctor === 'Ok') {
-					return {ctor: '_Tuple2', _0: _p7._0._0, _1: _elm_lang$core$Platform_Cmd$none};
+				if (_p4._0.ctor === 'Ok') {
+					return {ctor: '_Tuple2', _0: _p4._0._0, _1: _elm_lang$core$Platform_Cmd$none};
 				} else {
 					return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 				}
@@ -9290,6 +9266,55 @@ var _user$project$PhotoFolders$End = {ctor: 'End'};
 var _user$project$PhotoFolders$ToggleExpanded = function (a) {
 	return {ctor: 'ToggleExpanded', _0: a};
 };
+var _user$project$PhotoFolders$viewFolder = F2(
+	function (path, _p5) {
+		var _p6 = _p5;
+		var _p7 = _p6._0;
+		var folderLabel = A2(
+			_elm_lang$html$Html$label,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Events$onClick(
+					_user$project$PhotoFolders$ToggleExpanded(path)),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html$text(_p7.name),
+				_1: {ctor: '[]'}
+			});
+		var viewSubfolder = F2(
+			function (index, subfolder) {
+				return A2(
+					_user$project$PhotoFolders$viewFolder,
+					A2(_user$project$PhotoFolders$Descend, index, path),
+					subfolder);
+			});
+		if (_p7.expanded) {
+			var contents = A2(_elm_lang$core$List$indexedMap, viewSubfolder, _p7.subfolders);
+			return A2(
+				_elm_lang$html$Html$div,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('folder expanded'),
+					_1: {ctor: '[]'}
+				},
+				{ctor: '::', _0: folderLabel, _1: contents});
+		} else {
+			return A2(
+				_elm_lang$html$Html$div,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('folder collapsed'),
+					_1: {ctor: '[]'}
+				},
+				{
+					ctor: '::',
+					_0: folderLabel,
+					_1: {ctor: '[]'}
+				});
+		}
+	});
 var _user$project$PhotoFolders$LoadPage = function (a) {
 	return {ctor: 'LoadPage', _0: a};
 };
@@ -9469,7 +9494,7 @@ var _user$project$PhotoFolders$view = function (model) {
 						}),
 					_1: {
 						ctor: '::',
-						_0: _user$project$PhotoFolders$viewFolder(model.root),
+						_0: A2(_user$project$PhotoFolders$viewFolder, _user$project$PhotoFolders$End, model.root),
 						_1: {ctor: '[]'}
 					}
 				}),

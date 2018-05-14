@@ -66,16 +66,10 @@ initialModel =
 
 modelDecoder : Decoder Model
 modelDecoder =
-    Json.Decode.succeed
-        { selectedPhotoUrl = Just "coli"
-        , photos =
-            Dict.fromList
-                [ ( "trevi", { title = "Trevi", related = [ "coli", "fresco" ], size = 34, url = "trevi" } )
-                , ( "fresco", { title = "Fresco", related = [ "trevi" ], size = 46, url = "fresco" } )
-                , ( "coli", { title = "Coliseum", related = [ "trevi", "fresco" ], size = 36, url = "coli" } )
-                ]
-        , root = initialRoot
-        }
+    Json.Decode.map2
+        (\photos root -> { photos = photos, root = root, selectedPhotoUrl = Nothing })
+        Folder.photosDecoder
+        Folder.folderDecoder
 
 
 view : Model -> Html Msg
@@ -98,7 +92,7 @@ view model =
         [ class "content" ]
         [ div [ class "folders" ]
             [ h1 [] [ text "Folders" ]
-            , viewFolder model.root
+            , viewFolder End model.root
             ]
         , div [ class "selected-photo" ] [ selectedPhoto ]
         ]
@@ -107,6 +101,12 @@ view model =
 main : Program Never Model Msg
 main =
     Html.program { init = init, view = view, update = update, subscriptions = \_ -> Sub.none }
+
+
+viewPhoto : PhotoUrl -> Html Msg
+viewPhoto url =
+    div [ class "photo", onClick (SelectPhoto url) ]
+        [ text url ]
 
 
 viewSelectedPhoto : Photo -> List Photo -> Html Msg
@@ -133,14 +133,24 @@ viewRelatedPhoto photo =
         ]
 
 
-viewFolder : Folder -> Html Msg
-viewFolder (Folder folder) =
+viewFolder : FolderPath -> Folder -> Html Msg
+viewFolder path (Folder folder) =
     let
-        subfolders =
-            List.map viewFolder folder.subfolders
+        viewSubfolder index subfolder =
+            viewFolder (Descend index path) subfolder
+
+        folderLabel =
+            label [ onClick (ToggleExpanded path) ] [ text folder.name ]
     in
-    div [ class "folder" ]
-        (label [] [ text folder.name ] :: subfolders)
+    if folder.expanded then
+        let
+            contents =
+                List.indexedMap viewSubfolder folder.subfolders
+        in
+        div [ class "folder expanded" ] (folderLabel :: contents)
+
+    else
+        div [ class "folder collapsed" ] [ folderLabel ]
 
 
 initialRoot : Folder
