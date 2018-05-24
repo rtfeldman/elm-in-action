@@ -9033,16 +9033,7 @@ var _elm_lang$http$Http$StringPart = F2(
 	});
 var _elm_lang$http$Http$stringPart = _elm_lang$http$Http$StringPart;
 
-var _user$project$PhotoFolders$view = function (model) {
-	return A2(
-		_elm_lang$html$Html$h1,
-		{ctor: '[]'},
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html$text('The Grooviest Folders the world has ever seen'),
-			_1: {ctor: '[]'}
-		});
-};
+var _user$project$PhotoFolders$urlPrefix = 'http://elm-in-action.com/';
 var _user$project$PhotoFolders$update = F2(
 	function (msg, model) {
 		var _p0 = msg;
@@ -9064,11 +9055,80 @@ var _user$project$PhotoFolders$update = F2(
 			}
 		}
 	});
-var _user$project$PhotoFolders$initialModel = {selectedPhotoUrl: _elm_lang$core$Maybe$Nothing};
-var _user$project$PhotoFolders$modelDecoder = _elm_lang$core$Json_Decode$succeed(_user$project$PhotoFolders$initialModel);
-var _user$project$PhotoFolders$Model = function (a) {
-	return {selectedPhotoUrl: a};
-};
+var _user$project$PhotoFolders$modelDecoder = _elm_lang$core$Json_Decode$succeed(
+	{
+		selectedPhotoUrl: _elm_lang$core$Maybe$Just('trevi'),
+		photos: _elm_lang$core$Dict$fromList(
+			{
+				ctor: '::',
+				_0: {
+					ctor: '_Tuple2',
+					_0: 'trevi',
+					_1: {
+						title: 'Trevi',
+						relatedUrls: {
+							ctor: '::',
+							_0: 'coli',
+							_1: {
+								ctor: '::',
+								_0: 'fresco',
+								_1: {ctor: '[]'}
+							}
+						},
+						size: 34,
+						url: 'trevi'
+					}
+				},
+				_1: {
+					ctor: '::',
+					_0: {
+						ctor: '_Tuple2',
+						_0: 'fresco',
+						_1: {
+							title: 'Fresco',
+							relatedUrls: {
+								ctor: '::',
+								_0: 'trevi',
+								_1: {ctor: '[]'}
+							},
+							size: 46,
+							url: 'fresco'
+						}
+					},
+					_1: {
+						ctor: '::',
+						_0: {
+							ctor: '_Tuple2',
+							_0: 'coli',
+							_1: {
+								title: 'Coliseum',
+								relatedUrls: {
+									ctor: '::',
+									_0: 'trevi',
+									_1: {
+										ctor: '::',
+										_0: 'fresco',
+										_1: {ctor: '[]'}
+									}
+								},
+								size: 36,
+								url: 'coli'
+							}
+						},
+						_1: {ctor: '[]'}
+					}
+				}
+			})
+	});
+var _user$project$PhotoFolders$initialModel = {selectedPhotoUrl: _elm_lang$core$Maybe$Nothing, photos: _elm_lang$core$Dict$empty};
+var _user$project$PhotoFolders$Model = F2(
+	function (a, b) {
+		return {selectedPhotoUrl: a, photos: b};
+	});
+var _user$project$PhotoFolders$Photo = F4(
+	function (a, b, c, d) {
+		return {title: a, size: b, relatedUrls: c, url: d};
+	});
 var _user$project$PhotoFolders$LoadPage = function (a) {
 	return {ctor: 'LoadPage', _0: a};
 };
@@ -9080,18 +9140,156 @@ var _user$project$PhotoFolders$init = {
 		_user$project$PhotoFolders$LoadPage,
 		A2(_elm_lang$http$Http$get, 'http://elm-in-action.com/folders/list', _user$project$PhotoFolders$modelDecoder))
 };
+var _user$project$PhotoFolders$SelectPhotoUrl = function (a) {
+	return {ctor: 'SelectPhotoUrl', _0: a};
+};
+var _user$project$PhotoFolders$viewRelatedPhoto = function (url) {
+	return A2(
+		_elm_lang$html$Html$img,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('related-photo'),
+			_1: {
+				ctor: '::',
+				_0: _elm_lang$html$Html_Events$onClick(
+					_user$project$PhotoFolders$SelectPhotoUrl(url)),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$src(
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							_user$project$PhotoFolders$urlPrefix,
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								'photos/',
+								A2(_elm_lang$core$Basics_ops['++'], url, '/thumb')))),
+					_1: {ctor: '[]'}
+				}
+			}
+		},
+		{ctor: '[]'});
+};
+var _user$project$PhotoFolders$viewSelectedPhoto = function (photo) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('selected-photo'),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$h2,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text(photo.title),
+					_1: {ctor: '[]'}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$img,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$src(
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								_user$project$PhotoFolders$urlPrefix,
+								A2(
+									_elm_lang$core$Basics_ops['++'],
+									'photos/',
+									A2(_elm_lang$core$Basics_ops['++'], photo.url, '/full')))),
+						_1: {ctor: '[]'}
+					},
+					{ctor: '[]'}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$span,
+						{ctor: '[]'},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text(
+								A2(
+									_elm_lang$core$Basics_ops['++'],
+									_elm_lang$core$Basics$toString(photo.size),
+									'KB')),
+							_1: {ctor: '[]'}
+						}),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$h3,
+							{ctor: '[]'},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text('Related'),
+								_1: {ctor: '[]'}
+							}),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$div,
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$class('related-photos'),
+									_1: {ctor: '[]'}
+								},
+								A2(_elm_lang$core$List$map, _user$project$PhotoFolders$viewRelatedPhoto, photo.relatedUrls)),
+							_1: {ctor: '[]'}
+						}
+					}
+				}
+			}
+		});
+};
+var _user$project$PhotoFolders$view = function (model) {
+	var photoByUrl = function (url) {
+		return A2(_elm_lang$core$Dict$get, url, model.photos);
+	};
+	var selectedPhoto = function () {
+		var _p1 = A2(_elm_lang$core$Maybe$andThen, photoByUrl, model.selectedPhotoUrl);
+		if (_p1.ctor === 'Just') {
+			return _user$project$PhotoFolders$viewSelectedPhoto(_p1._0);
+		} else {
+			return _elm_lang$html$Html$text('');
+		}
+	}();
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('content'),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$div,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('selected-photo'),
+					_1: {ctor: '[]'}
+				},
+				{
+					ctor: '::',
+					_0: selectedPhoto,
+					_1: {ctor: '[]'}
+				}),
+			_1: {ctor: '[]'}
+		});
+};
 var _user$project$PhotoFolders$main = _elm_lang$html$Html$program(
 	{
 		init: _user$project$PhotoFolders$init,
 		view: _user$project$PhotoFolders$view,
 		update: _user$project$PhotoFolders$update,
-		subscriptions: function (_p1) {
+		subscriptions: function (_p2) {
 			return _elm_lang$core$Platform_Sub$none;
 		}
 	})();
-var _user$project$PhotoFolders$SelectPhotoUrl = function (a) {
-	return {ctor: 'SelectPhotoUrl', _0: a};
-};
 
 var Elm = {};
 Elm['PhotoFolders'] = Elm['PhotoFolders'] || {};
