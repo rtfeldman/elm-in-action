@@ -14,6 +14,7 @@ type Folder
         { name : String
         , photoUrls : List String
         , subfolders : List Folder
+        , expanded : Bool
         }
 
 
@@ -28,7 +29,7 @@ initialModel : Model
 initialModel =
     { selectedPhotoUrl = Nothing
     , photos = Dict.empty
-    , root = Folder { name = "Loading...", photoUrls = [], subfolders = [] }
+    , root = Folder { name = "Loading...", expanded = True, photoUrls = [], subfolders = [] }
     }
 
 
@@ -54,22 +55,25 @@ modelDecoder =
         , root =
             Folder
                 { name = "Photos"
+                , expanded = True
                 , photoUrls = []
                 , subfolders =
                     [ Folder
                         { name = "2016"
+                        , expanded = True
                         , photoUrls = [ "trevi", "coli" ]
                         , subfolders =
-                            [ Folder { name = "outdoors", photoUrls = [], subfolders = [] }
-                            , Folder { name = "indoors", photoUrls = [ "fresco" ], subfolders = [] }
+                            [ Folder { name = "outdoors", expanded = True, photoUrls = [], subfolders = [] }
+                            , Folder { name = "indoors", expanded = True, photoUrls = [ "fresco" ], subfolders = [] }
                             ]
                         }
                     , Folder
                         { name = "2017"
+                        , expanded = True
                         , photoUrls = []
                         , subfolders =
-                            [ Folder { name = "outdoors", photoUrls = [], subfolders = [] }
-                            , Folder { name = "indoors", photoUrls = [], subfolders = [] }
+                            [ Folder { name = "outdoors", expanded = True, photoUrls = [], subfolders = [] }
+                            , Folder { name = "indoors", expanded = True, photoUrls = [], subfolders = [] }
                             ]
                         }
                     ]
@@ -80,11 +84,15 @@ modelDecoder =
 type Msg
     = SelectPhotoUrl String
     | LoadPage (Result Http.Error Model)
+    | ToggleExpanded FolderPath
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        ToggleExpanded path ->
+            ( { model | root = toggleExpanded path model.root }, Cmd.none )
+
         SelectPhotoUrl url ->
             ( { model | selectedPhotoUrl = Just url }, Cmd.none )
 
@@ -171,3 +179,31 @@ viewFolder (Folder folder) =
 urlPrefix : String
 urlPrefix =
     "http://elm-in-action.com/"
+
+
+type FolderPath
+    = Root
+    | Subfolder Int FolderPath
+
+
+toggleExpanded : FolderPath -> Folder -> Folder
+toggleExpanded path (Folder root) =
+    case path of
+        Root ->
+            Folder { root | expanded = not root.expanded }
+
+        Subfolder targetIndex remainingPath ->
+            let
+                subfolders : List Folder
+                subfolders =
+                    List.indexedMap transform root.subfolders
+
+                transform : Int -> Folder -> Folder
+                transform currentIndex currentSubfolder =
+                    if currentIndex == targetIndex then
+                        toggleExpanded remainingPath currentSubfolder
+
+                    else
+                        currentSubfolder
+            in
+            Folder { root | subfolders = subfolders }

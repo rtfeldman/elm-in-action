@@ -9149,27 +9149,6 @@ var _user$project$PhotoFolders$viewFolder = function (_p0) {
 			}
 		});
 };
-var _user$project$PhotoFolders$update = F2(
-	function (msg, model) {
-		var _p3 = msg;
-		if (_p3.ctor === 'SelectPhotoUrl') {
-			return {
-				ctor: '_Tuple2',
-				_0: _elm_lang$core$Native_Utils.update(
-					model,
-					{
-						selectedPhotoUrl: _elm_lang$core$Maybe$Just(_p3._0)
-					}),
-				_1: _elm_lang$core$Platform_Cmd$none
-			};
-		} else {
-			if (_p3._0.ctor === 'Ok') {
-				return {ctor: '_Tuple2', _0: _p3._0._0, _1: _elm_lang$core$Platform_Cmd$none};
-			} else {
-				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
-			}
-		}
-	});
 var _user$project$PhotoFolders$Model = F3(
 	function (a, b, c) {
 		return {selectedPhotoUrl: a, photos: b, root: c};
@@ -9187,6 +9166,7 @@ var _user$project$PhotoFolders$initialModel = {
 	root: _user$project$PhotoFolders$Folder(
 		{
 			name: 'Loading...',
+			expanded: true,
 			photoUrls: {ctor: '[]'},
 			subfolders: {ctor: '[]'}
 		})
@@ -9258,12 +9238,14 @@ var _user$project$PhotoFolders$modelDecoder = _elm_lang$core$Json_Decode$succeed
 		root: _user$project$PhotoFolders$Folder(
 			{
 				name: 'Photos',
+				expanded: true,
 				photoUrls: {ctor: '[]'},
 				subfolders: {
 					ctor: '::',
 					_0: _user$project$PhotoFolders$Folder(
 						{
 							name: '2016',
+							expanded: true,
 							photoUrls: {
 								ctor: '::',
 								_0: 'trevi',
@@ -9278,6 +9260,7 @@ var _user$project$PhotoFolders$modelDecoder = _elm_lang$core$Json_Decode$succeed
 								_0: _user$project$PhotoFolders$Folder(
 									{
 										name: 'outdoors',
+										expanded: true,
 										photoUrls: {ctor: '[]'},
 										subfolders: {ctor: '[]'}
 									}),
@@ -9286,6 +9269,7 @@ var _user$project$PhotoFolders$modelDecoder = _elm_lang$core$Json_Decode$succeed
 									_0: _user$project$PhotoFolders$Folder(
 										{
 											name: 'indoors',
+											expanded: true,
 											photoUrls: {
 												ctor: '::',
 												_0: 'fresco',
@@ -9302,12 +9286,14 @@ var _user$project$PhotoFolders$modelDecoder = _elm_lang$core$Json_Decode$succeed
 						_0: _user$project$PhotoFolders$Folder(
 							{
 								name: '2017',
+								expanded: true,
 								photoUrls: {ctor: '[]'},
 								subfolders: {
 									ctor: '::',
 									_0: _user$project$PhotoFolders$Folder(
 										{
 											name: 'outdoors',
+											expanded: true,
 											photoUrls: {ctor: '[]'},
 											subfolders: {ctor: '[]'}
 										}),
@@ -9316,6 +9302,7 @@ var _user$project$PhotoFolders$modelDecoder = _elm_lang$core$Json_Decode$succeed
 										_0: _user$project$PhotoFolders$Folder(
 											{
 												name: 'indoors',
+												expanded: true,
 												photoUrls: {ctor: '[]'},
 												subfolders: {ctor: '[]'}
 											}),
@@ -9328,6 +9315,63 @@ var _user$project$PhotoFolders$modelDecoder = _elm_lang$core$Json_Decode$succeed
 				}
 			})
 	});
+var _user$project$PhotoFolders$toggleExpanded = F2(
+	function (path, _p3) {
+		var _p4 = _p3;
+		var _p6 = _p4._0;
+		var _p5 = path;
+		if (_p5.ctor === 'Root') {
+			return _user$project$PhotoFolders$Folder(
+				_elm_lang$core$Native_Utils.update(
+					_p6,
+					{expanded: !_p6.expanded}));
+		} else {
+			var transform = F2(
+				function (currentIndex, currentSubfolder) {
+					return _elm_lang$core$Native_Utils.eq(currentIndex, _p5._0) ? A2(_user$project$PhotoFolders$toggleExpanded, _p5._1, currentSubfolder) : currentSubfolder;
+				});
+			var subfolders = A2(_elm_lang$core$List$indexedMap, transform, _p6.subfolders);
+			return _user$project$PhotoFolders$Folder(
+				_elm_lang$core$Native_Utils.update(
+					_p6,
+					{subfolders: subfolders}));
+		}
+	});
+var _user$project$PhotoFolders$update = F2(
+	function (msg, model) {
+		var _p7 = msg;
+		switch (_p7.ctor) {
+			case 'ToggleExpanded':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							root: A2(_user$project$PhotoFolders$toggleExpanded, _p7._0, model.root)
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'SelectPhotoUrl':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							selectedPhotoUrl: _elm_lang$core$Maybe$Just(_p7._0)
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			default:
+				if (_p7._0.ctor === 'Ok') {
+					return {ctor: '_Tuple2', _0: _p7._0._0, _1: _elm_lang$core$Platform_Cmd$none};
+				} else {
+					return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+				}
+		}
+	});
+var _user$project$PhotoFolders$ToggleExpanded = function (a) {
+	return {ctor: 'ToggleExpanded', _0: a};
+};
 var _user$project$PhotoFolders$LoadPage = function (a) {
 	return {ctor: 'LoadPage', _0: a};
 };
@@ -9449,9 +9493,9 @@ var _user$project$PhotoFolders$view = function (model) {
 		return A2(_elm_lang$core$Dict$get, url, model.photos);
 	};
 	var selectedPhoto = function () {
-		var _p4 = A2(_elm_lang$core$Maybe$andThen, photoByUrl, model.selectedPhotoUrl);
-		if (_p4.ctor === 'Just') {
-			return _user$project$PhotoFolders$viewSelectedPhoto(_p4._0);
+		var _p8 = A2(_elm_lang$core$Maybe$andThen, photoByUrl, model.selectedPhotoUrl);
+		if (_p8.ctor === 'Just') {
+			return _user$project$PhotoFolders$viewSelectedPhoto(_p8._0);
 		} else {
 			return _elm_lang$html$Html$text('');
 		}
@@ -9511,10 +9555,15 @@ var _user$project$PhotoFolders$main = _elm_lang$html$Html$program(
 		init: _user$project$PhotoFolders$init,
 		view: _user$project$PhotoFolders$view,
 		update: _user$project$PhotoFolders$update,
-		subscriptions: function (_p5) {
+		subscriptions: function (_p9) {
 			return _elm_lang$core$Platform_Sub$none;
 		}
 	})();
+var _user$project$PhotoFolders$Subfolder = F2(
+	function (a, b) {
+		return {ctor: 'Subfolder', _0: a, _1: b};
+	});
+var _user$project$PhotoFolders$Root = {ctor: 'Root'};
 
 var Elm = {};
 Elm['PhotoFolders'] = Elm['PhotoFolders'] || {};
