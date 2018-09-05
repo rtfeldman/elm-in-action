@@ -20,6 +20,9 @@ view : Model -> Html Msg
 view model =
     div [ class "content" ]
         [ h1 [] [ text "Photo Groove" ]
+        , button
+            [ onClick { description = "ClickedSurpriseMe", data = "" } ]
+            [ text "Surprise Me!" ]
         , div [ id "thumbnails" ]
             (List.map (viewThumbnail model.selectedUrl) model.photos)
         , img
@@ -66,12 +69,17 @@ photoArray =
     Array.fromList initialModel.photos
 
 
+update : Msg -> Model -> Model
 update msg model =
-    if msg.description == "ClickedPhoto" then
-        { model | selectedUrl = msg.data }
+    case msg.description of
+        "ClickedPhoto" ->
+            { model | selectedUrl = msg.data }
 
-    else
-        model
+        "ClickedSurpriseMe" ->
+            { model | selectedUrl = "2.jpeg" }
+
+        _ ->
+            model
 
 
 main =

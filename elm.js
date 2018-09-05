@@ -4374,15 +4374,25 @@ var author$project$PhotoGroove$initialModel = {
 		]),
 	selectedUrl: '1.jpeg'
 };
-var elm$core$Basics$eq = _Utils_equal;
 var author$project$PhotoGroove$update = F2(
 	function (msg, model) {
-		return (msg.description === 'ClickedPhoto') ? _Utils_update(
-			model,
-			{selectedUrl: msg.data}) : model;
+		var _n0 = msg.description;
+		switch (_n0) {
+			case 'ClickedPhoto':
+				return _Utils_update(
+					model,
+					{selectedUrl: msg.data});
+			case 'ClickedSurpriseMe':
+				return _Utils_update(
+					model,
+					{selectedUrl: '2.jpeg'});
+			default:
+				return model;
+		}
 	});
 var author$project$PhotoGroove$urlPrefix = 'http://elm-in-action.com/';
 var elm$core$Basics$append = _Utils_append;
+var elm$core$Basics$eq = _Utils_equal;
 var elm$core$Basics$identity = function (x) {
 	return x;
 };
@@ -4941,6 +4951,7 @@ var author$project$PhotoGroove$viewThumbnail = F2(
 				]),
 			_List_Nil);
 	});
+var elm$html$Html$button = _VirtualDom_node('button');
 var elm$html$Html$div = _VirtualDom_node('div');
 var elm$html$Html$h1 = _VirtualDom_node('h1');
 var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
@@ -4961,6 +4972,17 @@ var author$project$PhotoGroove$view = function (model) {
 				_List_fromArray(
 					[
 						elm$html$Html$text('Photo Groove')
+					])),
+				A2(
+				elm$html$Html$button,
+				_List_fromArray(
+					[
+						elm$html$Html$Events$onClick(
+						{data: '', description: 'ClickedSurpriseMe'})
+					]),
+				_List_fromArray(
+					[
+						elm$html$Html$text('Surprise Me!')
 					])),
 				A2(
 				elm$html$Html$div,
