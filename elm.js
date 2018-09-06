@@ -4378,20 +4378,24 @@ var author$project$PhotoGroove$initialModel = {
 };
 var author$project$PhotoGroove$update = F2(
 	function (msg, model) {
-		var _n0 = msg.description;
-		switch (_n0) {
+		switch (msg.$) {
 			case 'ClickedPhoto':
+				var url = msg.a;
 				return _Utils_update(
 					model,
-					{selectedUrl: msg.data});
-			case 'ClickedSurpriseMe':
+					{selectedUrl: url});
+			case 'ClickedSize':
+				var size = msg.a;
+				return _Utils_update(
+					model,
+					{chosenSize: size});
+			default:
 				return _Utils_update(
 					model,
 					{selectedUrl: '2.jpeg'});
-			default:
-				return model;
 		}
 	});
+var author$project$PhotoGroove$ClickedSurpriseMe = {$: 'ClickedSurpriseMe'};
 var author$project$PhotoGroove$Large = {$: 'Large'};
 var author$project$PhotoGroove$Small = {$: 'Small'};
 var author$project$PhotoGroove$sizeToString = function (size) {
@@ -4405,6 +4409,9 @@ var author$project$PhotoGroove$sizeToString = function (size) {
 	}
 };
 var author$project$PhotoGroove$urlPrefix = 'http://elm-in-action.com/';
+var author$project$PhotoGroove$ClickedSize = function (a) {
+	return {$: 'ClickedSize', a: a};
+};
 var elm$core$Basics$identity = function (x) {
 	return x;
 };
@@ -4832,6 +4839,23 @@ var elm$html$Html$Attributes$stringProperty = F2(
 	});
 var elm$html$Html$Attributes$name = elm$html$Html$Attributes$stringProperty('name');
 var elm$html$Html$Attributes$type_ = elm$html$Html$Attributes$stringProperty('type');
+var elm$virtual_dom$VirtualDom$Normal = function (a) {
+	return {$: 'Normal', a: a};
+};
+var elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
+var elm$html$Html$Events$on = F2(
+	function (event, decoder) {
+		return A2(
+			elm$virtual_dom$VirtualDom$on,
+			event,
+			elm$virtual_dom$VirtualDom$Normal(decoder));
+	});
+var elm$html$Html$Events$onClick = function (msg) {
+	return A2(
+		elm$html$Html$Events$on,
+		'click',
+		elm$json$Json$Decode$succeed(msg));
+};
 var author$project$PhotoGroove$viewSizeChooser = function (size) {
 	return A2(
 		elm$html$Html$label,
@@ -4843,12 +4867,17 @@ var author$project$PhotoGroove$viewSizeChooser = function (size) {
 				_List_fromArray(
 					[
 						elm$html$Html$Attributes$type_('radio'),
-						elm$html$Html$Attributes$name('size')
+						elm$html$Html$Attributes$name('size'),
+						elm$html$Html$Events$onClick(
+						author$project$PhotoGroove$ClickedSize(size))
 					]),
 				_List_Nil),
 				elm$html$Html$text(
 				author$project$PhotoGroove$sizeToString(size))
 			]));
+};
+var author$project$PhotoGroove$ClickedPhoto = function (a) {
+	return {$: 'ClickedPhoto', a: a};
 };
 var elm$html$Html$img = _VirtualDom_node('img');
 var elm$core$List$foldrHelper = F4(
@@ -4952,23 +4981,6 @@ var elm$html$Html$Attributes$src = function (url) {
 		'src',
 		_VirtualDom_noJavaScriptOrHtmlUri(url));
 };
-var elm$virtual_dom$VirtualDom$Normal = function (a) {
-	return {$: 'Normal', a: a};
-};
-var elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
-var elm$html$Html$Events$on = F2(
-	function (event, decoder) {
-		return A2(
-			elm$virtual_dom$VirtualDom$on,
-			event,
-			elm$virtual_dom$VirtualDom$Normal(decoder));
-	});
-var elm$html$Html$Events$onClick = function (msg) {
-	return A2(
-		elm$html$Html$Events$on,
-		'click',
-		elm$json$Json$Decode$succeed(msg));
-};
 var author$project$PhotoGroove$viewThumbnail = F2(
 	function (selectedUrl, thumb) {
 		return A2(
@@ -4985,7 +4997,7 @@ var author$project$PhotoGroove$viewThumbnail = F2(
 							_Utils_eq(selectedUrl, thumb.url))
 						])),
 					elm$html$Html$Events$onClick(
-					{data: thumb.url, description: 'ClickedPhoto'})
+					author$project$PhotoGroove$ClickedPhoto(thumb.url))
 				]),
 			_List_Nil);
 	});
@@ -5014,8 +5026,7 @@ var author$project$PhotoGroove$view = function (model) {
 				elm$html$Html$button,
 				_List_fromArray(
 					[
-						elm$html$Html$Events$onClick(
-						{data: '', description: 'ClickedSurpriseMe'})
+						elm$html$Html$Events$onClick(author$project$PhotoGroove$ClickedSurpriseMe)
 					]),
 				_List_fromArray(
 					[
