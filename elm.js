@@ -4285,6 +4285,7 @@ function _Browser_load(url)
 		}
 	}));
 }
+var author$project$PhotoGroove$Medium = {$: 'Medium'};
 var elm$core$Basics$EQ = {$: 'EQ'};
 var elm$core$Basics$LT = {$: 'LT'};
 var elm$core$Elm$JsArray$foldr = _JsArray_foldr;
@@ -4366,6 +4367,7 @@ var elm$core$Set$toList = function (_n0) {
 	return elm$core$Dict$keys(dict);
 };
 var author$project$PhotoGroove$initialModel = {
+	chosenSize: author$project$PhotoGroove$Medium,
 	photos: _List_fromArray(
 		[
 			{url: '1.jpeg'},
@@ -4390,9 +4392,19 @@ var author$project$PhotoGroove$update = F2(
 				return model;
 		}
 	});
+var author$project$PhotoGroove$Large = {$: 'Large'};
+var author$project$PhotoGroove$Small = {$: 'Small'};
+var author$project$PhotoGroove$sizeToString = function (size) {
+	switch (size.$) {
+		case 'Small':
+			return 'small';
+		case 'Medium':
+			return 'med';
+		default:
+			return 'large';
+	}
+};
 var author$project$PhotoGroove$urlPrefix = 'http://elm-in-action.com/';
-var elm$core$Basics$append = _Utils_append;
-var elm$core$Basics$eq = _Utils_equal;
 var elm$core$Basics$identity = function (x) {
 	return x;
 };
@@ -4476,6 +4488,7 @@ var elm$core$Basics$apR = F2(
 	function (x, f) {
 		return f(x);
 	});
+var elm$core$Basics$eq = _Utils_equal;
 var elm$core$Tuple$first = function (_n0) {
 	var x = _n0.a;
 	return x;
@@ -4601,6 +4614,7 @@ var elm$json$Json$Decode$OneOf = function (a) {
 	return {$: 'OneOf', a: a};
 };
 var elm$core$Basics$and = _Basics_and;
+var elm$core$Basics$append = _Utils_append;
 var elm$core$Basics$or = _Basics_or;
 var elm$core$Char$toCode = _Char_toCode;
 var elm$core$Char$isLower = function (_char) {
@@ -4804,6 +4818,38 @@ var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
 			return 3;
 	}
 };
+var elm$html$Html$input = _VirtualDom_node('input');
+var elm$html$Html$label = _VirtualDom_node('label');
+var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
+var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
+var elm$json$Json$Encode$string = _Json_wrap;
+var elm$html$Html$Attributes$stringProperty = F2(
+	function (key, string) {
+		return A2(
+			_VirtualDom_property,
+			key,
+			elm$json$Json$Encode$string(string));
+	});
+var elm$html$Html$Attributes$name = elm$html$Html$Attributes$stringProperty('name');
+var elm$html$Html$Attributes$type_ = elm$html$Html$Attributes$stringProperty('type');
+var author$project$PhotoGroove$viewSizeChooser = function (size) {
+	return A2(
+		elm$html$Html$label,
+		_List_Nil,
+		_List_fromArray(
+			[
+				A2(
+				elm$html$Html$input,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$type_('radio'),
+						elm$html$Html$Attributes$name('size')
+					]),
+				_List_Nil),
+				elm$html$Html$text(
+				author$project$PhotoGroove$sizeToString(size))
+			]));
+};
 var elm$html$Html$img = _VirtualDom_node('img');
 var elm$core$List$foldrHelper = F4(
 	function (fn, acc, ctr, ls) {
@@ -4889,14 +4935,6 @@ var elm$core$Tuple$second = function (_n0) {
 	var y = _n0.b;
 	return y;
 };
-var elm$json$Json$Encode$string = _Json_wrap;
-var elm$html$Html$Attributes$stringProperty = F2(
-	function (key, string) {
-		return A2(
-			_VirtualDom_property,
-			key,
-			elm$json$Json$Encode$string(string));
-	});
 var elm$html$Html$Attributes$class = elm$html$Html$Attributes$stringProperty('className');
 var elm$html$Html$Attributes$classList = function (classes) {
 	return elm$html$Html$Attributes$class(
@@ -4954,8 +4992,7 @@ var author$project$PhotoGroove$viewThumbnail = F2(
 var elm$html$Html$button = _VirtualDom_node('button');
 var elm$html$Html$div = _VirtualDom_node('div');
 var elm$html$Html$h1 = _VirtualDom_node('h1');
-var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
-var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
+var elm$html$Html$h3 = _VirtualDom_node('h3');
 var elm$html$Html$Attributes$id = elm$html$Html$Attributes$stringProperty('id');
 var author$project$PhotoGroove$view = function (model) {
 	return A2(
@@ -4985,10 +5022,30 @@ var author$project$PhotoGroove$view = function (model) {
 						elm$html$Html$text('Surprise Me!')
 					])),
 				A2(
+				elm$html$Html$h3,
+				_List_Nil,
+				_List_fromArray(
+					[
+						elm$html$Html$text('Thumbnail Size:')
+					])),
+				A2(
 				elm$html$Html$div,
 				_List_fromArray(
 					[
-						elm$html$Html$Attributes$id('thumbnails')
+						elm$html$Html$Attributes$id('choose-size')
+					]),
+				A2(
+					elm$core$List$map,
+					author$project$PhotoGroove$viewSizeChooser,
+					_List_fromArray(
+						[author$project$PhotoGroove$Small, author$project$PhotoGroove$Medium, author$project$PhotoGroove$Large]))),
+				A2(
+				elm$html$Html$div,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$id('thumbnails'),
+						elm$html$Html$Attributes$class(
+						author$project$PhotoGroove$sizeToString(model.chosenSize))
 					]),
 				A2(
 					elm$core$List$map,
