@@ -172,6 +172,14 @@ selectUrl url status =
             status
 
 
+initialCmd : Cmd Msg
+initialCmd =
+    Http.get
+        { url = "http://elm-in-action.com/photos/list"
+        , expect = Http.expectString (\result -> GotPhotos result)
+        }
+
+
 main : Program () Model Msg
 main =
     Browser.element
