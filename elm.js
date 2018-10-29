@@ -6352,9 +6352,6 @@ var author$project$PhotoGroove$sizeToString = function (size) {
 	}
 };
 var author$project$PhotoGroove$urlPrefix = 'http://elm-in-action.com/';
-var author$project$PhotoGroove$ClickedSize = function (a) {
-	return {$: 'ClickedSize', a: a};
-};
 var elm$json$Json$Decode$map = _Json_map1;
 var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
 	switch (handler.$) {
@@ -6368,7 +6365,16 @@ var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
 			return 3;
 	}
 };
-var elm$html$Html$input = _VirtualDom_node('input');
+var elm$virtual_dom$VirtualDom$node = function (tag) {
+	return _VirtualDom_node(
+		_VirtualDom_noScript(tag));
+};
+var elm$html$Html$node = elm$virtual_dom$VirtualDom$node;
+var author$project$PhotoGroove$rangeSlider = F2(
+	function (attributes, children) {
+		return A3(elm$html$Html$node, 'range-slider', attributes, children);
+	});
+var elm$html$Html$div = _VirtualDom_node('div');
 var elm$html$Html$label = _VirtualDom_node('label');
 var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
@@ -6380,6 +6386,46 @@ var elm$html$Html$Attributes$stringProperty = F2(
 			key,
 			elm$json$Json$Encode$string(string));
 	});
+var elm$html$Html$Attributes$class = elm$html$Html$Attributes$stringProperty('className');
+var elm$html$Html$Attributes$max = elm$html$Html$Attributes$stringProperty('max');
+var author$project$PhotoGroove$viewFilter = F2(
+	function (name, magnitude) {
+		return A2(
+			elm$html$Html$div,
+			_List_fromArray(
+				[
+					elm$html$Html$Attributes$class('filter-slider')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					elm$html$Html$label,
+					_List_Nil,
+					_List_fromArray(
+						[
+							elm$html$Html$text(name)
+						])),
+					A2(
+					author$project$PhotoGroove$rangeSlider,
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$max('11')
+						]),
+					_List_Nil),
+					A2(
+					elm$html$Html$label,
+					_List_Nil,
+					_List_fromArray(
+						[
+							elm$html$Html$text(
+							elm$core$String$fromInt(magnitude))
+						]))
+				]));
+	});
+var author$project$PhotoGroove$ClickedSize = function (a) {
+	return {$: 'ClickedSize', a: a};
+};
+var elm$html$Html$input = _VirtualDom_node('input');
 var elm$html$Html$Attributes$name = elm$html$Html$Attributes$stringProperty('name');
 var elm$html$Html$Attributes$type_ = elm$html$Html$Attributes$stringProperty('type');
 var elm$virtual_dom$VirtualDom$Normal = function (a) {
@@ -6438,7 +6484,6 @@ var elm$core$Tuple$second = function (_n0) {
 	var y = _n0.b;
 	return y;
 };
-var elm$html$Html$Attributes$class = elm$html$Html$Attributes$stringProperty('className');
 var elm$html$Html$Attributes$classList = function (classes) {
 	return elm$html$Html$Attributes$class(
 		A2(
@@ -6479,7 +6524,6 @@ var author$project$PhotoGroove$viewThumbnail = F2(
 			_List_Nil);
 	});
 var elm$html$Html$button = _VirtualDom_node('button');
-var elm$html$Html$div = _VirtualDom_node('div');
 var elm$html$Html$h1 = _VirtualDom_node('h1');
 var elm$html$Html$h3 = _VirtualDom_node('h3');
 var elm$html$Html$Attributes$id = elm$html$Html$Attributes$stringProperty('id');
@@ -6503,6 +6547,18 @@ var author$project$PhotoGroove$viewLoaded = F3(
 				_List_fromArray(
 					[
 						elm$html$Html$text('Surprise Me!')
+					])),
+				A2(
+				elm$html$Html$div,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$class('filters')
+					]),
+				_List_fromArray(
+					[
+						A2(author$project$PhotoGroove$viewFilter, 'Hue', 0),
+						A2(author$project$PhotoGroove$viewFilter, 'Ripple', 0),
+						A2(author$project$PhotoGroove$viewFilter, 'Noise', 0)
 					])),
 				A2(
 				elm$html$Html$h3,
