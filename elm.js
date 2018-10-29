@@ -6029,7 +6029,7 @@ var author$project$PhotoGroove$Loaded = F2(
 	function (a, b) {
 		return {$: 'Loaded', a: a, b: b};
 	});
-var elm$json$Json$Encode$int = _Json_wrap;
+var elm$json$Json$Encode$float = _Json_wrap;
 var elm$json$Json$Encode$list = F2(
 	function (func, entries) {
 		return _Json_wrap(
@@ -6068,7 +6068,7 @@ var author$project$PhotoGroove$setFilters = _Platform_outgoingPort(
 									[
 										_Utils_Tuple2(
 										'amount',
-										elm$json$Json$Encode$int($.amount)),
+										elm$json$Json$Encode$float($.amount)),
 										_Utils_Tuple2(
 										'name',
 										elm$json$Json$Encode$string($.name))
@@ -6091,9 +6091,9 @@ var author$project$PhotoGroove$applyFilters = function (model) {
 			var url = author$project$PhotoGroove$urlPrefix + ('large/' + selectedUrl);
 			var filters = _List_fromArray(
 				[
-					{amount: model.hue, name: 'Hue'},
-					{amount: model.ripple, name: 'Ripple'},
-					{amount: model.noise, name: 'Noise'}
+					{amount: model.hue / 11, name: 'Hue'},
+					{amount: model.ripple / 11, name: 'Ripple'},
+					{amount: model.noise / 11, name: 'Noise'}
 				]);
 			return _Utils_Tuple2(
 				model,
@@ -6332,25 +6332,22 @@ var author$project$PhotoGroove$update = F2(
 		switch (msg.$) {
 			case 'SlidHue':
 				var hue = msg.a;
-				return _Utils_Tuple2(
+				return author$project$PhotoGroove$applyFilters(
 					_Utils_update(
 						model,
-						{hue: hue}),
-					elm$core$Platform$Cmd$none);
+						{hue: hue}));
 			case 'SlidRipple':
 				var ripple = msg.a;
-				return _Utils_Tuple2(
+				return author$project$PhotoGroove$applyFilters(
 					_Utils_update(
 						model,
-						{ripple: ripple}),
-					elm$core$Platform$Cmd$none);
+						{ripple: ripple}));
 			case 'SlidNoise':
 				var noise = msg.a;
-				return _Utils_Tuple2(
+				return author$project$PhotoGroove$applyFilters(
 					_Utils_update(
 						model,
-						{noise: noise}),
-					elm$core$Platform$Cmd$none);
+						{noise: noise}));
 			case 'GotRandomPhoto':
 				var photo = msg.a;
 				return author$project$PhotoGroove$applyFilters(
@@ -6525,6 +6522,7 @@ var elm$virtual_dom$VirtualDom$property = F2(
 			_VirtualDom_noJavaScriptOrHtmlUri(value));
 	});
 var elm$html$Html$Attributes$property = elm$virtual_dom$VirtualDom$property;
+var elm$json$Json$Encode$int = _Json_wrap;
 var author$project$PhotoGroove$viewFilter = F3(
 	function (toMsg, name, magnitude) {
 		return A2(
@@ -6655,6 +6653,7 @@ var author$project$PhotoGroove$viewThumbnail = F2(
 			_List_Nil);
 	});
 var elm$html$Html$button = _VirtualDom_node('button');
+var elm$html$Html$canvas = _VirtualDom_node('canvas');
 var elm$html$Html$h1 = _VirtualDom_node('h1');
 var elm$html$Html$h3 = _VirtualDom_node('h3');
 var elm$html$Html$Attributes$id = elm$html$Html$Attributes$stringProperty('id');
@@ -6722,11 +6721,11 @@ var author$project$PhotoGroove$viewLoaded = F3(
 					author$project$PhotoGroove$viewThumbnail(selectedUrl),
 					photos)),
 				A2(
-				elm$html$Html$img,
+				elm$html$Html$canvas,
 				_List_fromArray(
 					[
-						elm$html$Html$Attributes$class('large'),
-						elm$html$Html$Attributes$src(author$project$PhotoGroove$urlPrefix + ('large/' + selectedUrl))
+						elm$html$Html$Attributes$id('main-canvas'),
+						elm$html$Html$Attributes$class('large')
 					]),
 				_List_Nil)
 			]);
