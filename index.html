@@ -14,6 +14,16 @@
                         max: this.max,
                         sliders: 1, values: [5], grid: false
                     });
+
+                    var rangeSliderNode = this;
+
+                    jsr.addEventListener("update", function(elem, value) {
+                        var event = new CustomEvent("slide", {
+                            detail: {newValue: value}
+                        });
+
+                        rangeSliderNode.dispatchEvent(event);
+                    });
                 }
             }
 
