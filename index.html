@@ -12,14 +12,16 @@
 
                     var jsr = new JSR(input, {
                         max: this.max,
-                        sliders: 1, values: [5], grid: false
+                        values: [this.val],
+                        sliders: 1,
+                        grid: false
                     });
 
                     var rangeSliderNode = this;
 
                     jsr.addEventListener("update", function(elem, value) {
                         var event = new CustomEvent("slide", {
-                            detail: {newValue: value}
+                            detail: {userSlidTo: value}
                         });
 
                         rangeSliderNode.dispatchEvent(event);
