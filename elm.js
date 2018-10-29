@@ -6401,13 +6401,12 @@ var author$project$PhotoGroove$update = F2(
 					if (photos.b) {
 						var first = photos.a;
 						var rest = photos.b;
-						return _Utils_Tuple2(
+						return author$project$PhotoGroove$applyFilters(
 							_Utils_update(
 								model,
 								{
 									status: A2(author$project$PhotoGroove$Loaded, photos, first.url)
-								}),
-							elm$core$Platform$Cmd$none);
+								}));
 					} else {
 						return _Utils_Tuple2(
 							_Utils_update(
