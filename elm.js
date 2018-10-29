@@ -6029,6 +6029,83 @@ var author$project$PhotoGroove$Loaded = F2(
 	function (a, b) {
 		return {$: 'Loaded', a: a, b: b};
 	});
+var elm$json$Json$Encode$int = _Json_wrap;
+var elm$json$Json$Encode$list = F2(
+	function (func, entries) {
+		return _Json_wrap(
+			A3(
+				elm$core$List$foldl,
+				_Json_addEntry(func),
+				_Json_emptyArray(_Utils_Tuple0),
+				entries));
+	});
+var elm$json$Json$Encode$object = function (pairs) {
+	return _Json_wrap(
+		A3(
+			elm$core$List$foldl,
+			F2(
+				function (_n0, obj) {
+					var k = _n0.a;
+					var v = _n0.b;
+					return A3(_Json_addField, k, v, obj);
+				}),
+			_Json_emptyObject(_Utils_Tuple0),
+			pairs));
+};
+var elm$json$Json$Encode$string = _Json_wrap;
+var author$project$PhotoGroove$setFilters = _Platform_outgoingPort(
+	'setFilters',
+	function ($) {
+		return elm$json$Json$Encode$object(
+			_List_fromArray(
+				[
+					_Utils_Tuple2(
+					'filters',
+					elm$json$Json$Encode$list(
+						function ($) {
+							return elm$json$Json$Encode$object(
+								_List_fromArray(
+									[
+										_Utils_Tuple2(
+										'amount',
+										elm$json$Json$Encode$int($.amount)),
+										_Utils_Tuple2(
+										'name',
+										elm$json$Json$Encode$string($.name))
+									]));
+						})($.filters)),
+					_Utils_Tuple2(
+					'url',
+					elm$json$Json$Encode$string($.url))
+				]));
+	});
+var author$project$PhotoGroove$urlPrefix = 'http://elm-in-action.com/';
+var elm$core$Platform$Cmd$batch = _Platform_batch;
+var elm$core$Platform$Cmd$none = elm$core$Platform$Cmd$batch(_List_Nil);
+var author$project$PhotoGroove$applyFilters = function (model) {
+	var _n0 = model.status;
+	switch (_n0.$) {
+		case 'Loaded':
+			var photos = _n0.a;
+			var selectedUrl = _n0.b;
+			var url = author$project$PhotoGroove$urlPrefix + ('large/' + selectedUrl);
+			var filters = _List_fromArray(
+				[
+					{amount: model.hue, name: 'Hue'},
+					{amount: model.ripple, name: 'Ripple'},
+					{amount: model.noise, name: 'Noise'}
+				]);
+			return _Utils_Tuple2(
+				model,
+				author$project$PhotoGroove$setFilters(
+					{filters: filters, url: url}));
+		case 'Loading':
+			return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+		default:
+			var errorMessage = _n0.a;
+			return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+	}
+};
 var author$project$PhotoGroove$selectUrl = F2(
 	function (url, status) {
 		switch (status.$) {
@@ -6042,8 +6119,6 @@ var author$project$PhotoGroove$selectUrl = F2(
 				return status;
 		}
 	});
-var elm$core$Platform$Cmd$batch = _Platform_batch;
-var elm$core$Platform$Cmd$none = elm$core$Platform$Cmd$batch(_List_Nil);
 var elm$core$Tuple$pair = F2(
 	function (a, b) {
 		return _Utils_Tuple2(a, b);
@@ -6278,22 +6353,20 @@ var author$project$PhotoGroove$update = F2(
 					elm$core$Platform$Cmd$none);
 			case 'GotRandomPhoto':
 				var photo = msg.a;
-				return _Utils_Tuple2(
+				return author$project$PhotoGroove$applyFilters(
 					_Utils_update(
 						model,
 						{
 							status: A2(author$project$PhotoGroove$selectUrl, photo.url, model.status)
-						}),
-					elm$core$Platform$Cmd$none);
+						}));
 			case 'ClickedPhoto':
 				var url = msg.a;
-				return _Utils_Tuple2(
+				return author$project$PhotoGroove$applyFilters(
 					_Utils_update(
 						model,
 						{
 							status: A2(author$project$PhotoGroove$selectUrl, url, model.status)
-						}),
-					elm$core$Platform$Cmd$none);
+						}));
 			case 'ClickedSize':
 				var size = msg.a;
 				return _Utils_Tuple2(
@@ -6381,7 +6454,6 @@ var author$project$PhotoGroove$sizeToString = function (size) {
 			return 'large';
 	}
 };
-var author$project$PhotoGroove$urlPrefix = 'http://elm-in-action.com/';
 var elm$virtual_dom$VirtualDom$Normal = function (a) {
 	return {$: 'Normal', a: a};
 };
@@ -6436,7 +6508,6 @@ var elm$html$Html$div = _VirtualDom_node('div');
 var elm$html$Html$label = _VirtualDom_node('label');
 var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
-var elm$json$Json$Encode$string = _Json_wrap;
 var elm$html$Html$Attributes$stringProperty = F2(
 	function (key, string) {
 		return A2(
@@ -6454,7 +6525,6 @@ var elm$virtual_dom$VirtualDom$property = F2(
 			_VirtualDom_noJavaScriptOrHtmlUri(value));
 	});
 var elm$html$Html$Attributes$property = elm$virtual_dom$VirtualDom$property;
-var elm$json$Json$Encode$int = _Json_wrap;
 var author$project$PhotoGroove$viewFilter = F3(
 	function (toMsg, name, magnitude) {
 		return A2(
