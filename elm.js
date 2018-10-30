@@ -6023,6 +6023,15 @@ var author$project$PhotoGroove$initialCmd = elm$http$Http$get(
 var author$project$PhotoGroove$Loading = {$: 'Loading'};
 var author$project$PhotoGroove$Medium = {$: 'Medium'};
 var author$project$PhotoGroove$initialModel = {activity: '', chosenSize: author$project$PhotoGroove$Medium, hue: 0, noise: 0, ripple: 0, status: author$project$PhotoGroove$Loading};
+var elm$core$String$fromFloat = _String_fromNumber;
+var author$project$PhotoGroove$init = function (flags) {
+	var activity = 'Initializing Pasta v' + elm$core$String$fromFloat(flags);
+	return _Utils_Tuple2(
+		_Utils_update(
+			author$project$PhotoGroove$initialModel,
+			{activity: activity}),
+		author$project$PhotoGroove$initialCmd);
+};
 var author$project$PhotoGroove$Errored = function (a) {
 	return {$: 'Errored', a: a};
 };
@@ -6977,16 +6986,14 @@ var elm$url$Url$fromString = function (str) {
 		A2(elm$core$String$dropLeft, 8, str)) : elm$core$Maybe$Nothing);
 };
 var elm$browser$Browser$element = _Browser_element;
+var elm$json$Json$Decode$float = _Json_decodeFloat;
 var author$project$PhotoGroove$main = elm$browser$Browser$element(
 	{
-		init: function (flags) {
-			return _Utils_Tuple2(author$project$PhotoGroove$initialModel, author$project$PhotoGroove$initialCmd);
-		},
+		init: author$project$PhotoGroove$init,
 		subscriptions: function (_n0) {
 			return author$project$PhotoGroove$activityChanges(author$project$PhotoGroove$GotActivity);
 		},
 		update: author$project$PhotoGroove$update,
 		view: author$project$PhotoGroove$view
 	});
-_Platform_export({'PhotoGroove':{'init':author$project$PhotoGroove$main(
-	elm$json$Json$Decode$succeed(_Utils_Tuple0))(0)}});}(this));
+_Platform_export({'PhotoGroove':{'init':author$project$PhotoGroove$main(elm$json$Json$Decode$float)(0)}});}(this));
