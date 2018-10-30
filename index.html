@@ -46,6 +46,10 @@
                     Pasta.apply(document.getElementById("main-canvas"), options);
                 });
             });
+
+            Pasta.addActivityListener(function(activity) {
+                app.ports.activityChanges.send(activity);
+            });
         </script>
     </body>
 </html>
