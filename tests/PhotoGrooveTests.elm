@@ -5,7 +5,7 @@ import Fuzz exposing (Fuzzer, int, list, string)
 import Html.Attributes as Attr exposing (src)
 import Json.Decode as Decode exposing (decodeValue)
 import Json.Encode as Encode
-import PhotoGroove exposing (Model, Msg(..), Photo, initialModel, update)
+import PhotoGroove exposing (Model, Msg(..), Photo, Status(..), initialModel, update, urlPrefix, view)
 import Test exposing (..)
 import Test.Html.Query as Query
 import Test.Html.Selector exposing (attribute, tag, text)
@@ -44,12 +44,33 @@ testSlider description toMsg amountFromModel =
                 |> Expect.equal amount
 
 
-noPhotosNoThumbnails : Test
-noPhotosNoThumbnails =
-    test "No thumbnails render when there are no photos to render." <|
-        \_ ->
-            initialModel
-                |> PhotoGroove.view
+thumbnailsWork : Test
+thumbnailsWork =
+    fuzz (Fuzz.intRange 1 5) "URLs render as thumbnails" <|
+        \urlCount ->
+            let
+                urls : List String
+                urls =
+                    List.range 1 urlCount
+                        |> List.map (\num -> String.fromInt num ++ ".png")
+
+                thumbnailChecks : List (Query.Single msg -> Expectation)
+                thumbnailChecks =
+                    List.map thumbnailRendered urls
+            in
+            { initialModel | status = Loaded (List.map photoFromUrl urls) "" }
+                |> view
                 |> Query.fromHtml
-                |> Query.findAll [ tag "img" ]
-                |> Query.count (Expect.equal 0)
+                |> Expect.all thumbnailChecks
+
+
+thumbnailRendered : String -> Query.Single msg -> Expectation
+thumbnailRendered url query =
+    query
+        |> Query.findAll [ tag "img", attribute (Attr.src (urlPrefix ++ url)) ]
+        |> Query.count (Expect.atLeast 1)
+
+
+photoFromUrl : String -> Photo
+photoFromUrl url =
+    { url = url, size = 0, title = "" }
