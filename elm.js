@@ -4491,6 +4491,7 @@ var author$project$PhotoFolders$LoadPage = function (a) {
 var author$project$PhotoFolders$Folder = function (a) {
 	return {$: 'Folder', a: a};
 };
+var elm$core$Basics$True = {$: 'True'};
 var elm$core$Basics$identity = function (x) {
 	return x;
 };
@@ -4580,7 +4581,7 @@ var elm$core$Set$toList = function (_n0) {
 var author$project$PhotoFolders$initialModel = {
 	photos: elm$core$Dict$empty,
 	root: author$project$PhotoFolders$Folder(
-		{name: 'Loading...', photoUrls: _List_Nil, subfolders: _List_Nil}),
+		{expanded: true, name: 'Loading...', photoUrls: _List_Nil, subfolders: _List_Nil}),
 	selectedPhotoUrl: elm$core$Maybe$Nothing
 };
 var elm$core$Dict$Black = {$: 'Black'};
@@ -4885,7 +4886,6 @@ var elm$core$Result$Err = function (a) {
 var elm$core$Result$Ok = function (a) {
 	return {$: 'Ok', a: a};
 };
-var elm$core$Basics$True = {$: 'True'};
 var elm$core$Result$isOk = function (result) {
 	if (result.$ === 'Ok') {
 		return true;
@@ -5134,21 +5134,24 @@ var author$project$PhotoFolders$modelDecoder = elm$json$Json$Decode$succeed(
 				])),
 		root: author$project$PhotoFolders$Folder(
 			{
+				expanded: true,
 				name: 'Photos',
 				photoUrls: _List_Nil,
 				subfolders: _List_fromArray(
 					[
 						author$project$PhotoFolders$Folder(
 						{
+							expanded: true,
 							name: '2016',
 							photoUrls: _List_fromArray(
 								['trevi', 'coli']),
 							subfolders: _List_fromArray(
 								[
 									author$project$PhotoFolders$Folder(
-									{name: 'outdoors', photoUrls: _List_Nil, subfolders: _List_Nil}),
+									{expanded: true, name: 'outdoors', photoUrls: _List_Nil, subfolders: _List_Nil}),
 									author$project$PhotoFolders$Folder(
 									{
+										expanded: true,
 										name: 'indoors',
 										photoUrls: _List_fromArray(
 											['fresco']),
@@ -5158,14 +5161,15 @@ var author$project$PhotoFolders$modelDecoder = elm$json$Json$Decode$succeed(
 						}),
 						author$project$PhotoFolders$Folder(
 						{
+							expanded: true,
 							name: '2017',
 							photoUrls: _List_Nil,
 							subfolders: _List_fromArray(
 								[
 									author$project$PhotoFolders$Folder(
-									{name: 'outdoors', photoUrls: _List_Nil, subfolders: _List_Nil}),
+									{expanded: true, name: 'outdoors', photoUrls: _List_Nil, subfolders: _List_Nil}),
 									author$project$PhotoFolders$Folder(
-									{name: 'indoors', photoUrls: _List_Nil, subfolders: _List_Nil})
+									{expanded: true, name: 'indoors', photoUrls: _List_Nil, subfolders: _List_Nil})
 								])
 						})
 					])
@@ -5948,26 +5952,59 @@ var author$project$PhotoFolders$init = function (_n0) {
 				url: 'http://elm-in-action.com/folders/list'
 			}));
 };
+var elm$core$Basics$not = _Basics_not;
+var author$project$PhotoFolders$toggleExpanded = F2(
+	function (path, _n0) {
+		var folder = _n0.a;
+		if (path.$ === 'End') {
+			return author$project$PhotoFolders$Folder(
+				_Utils_update(
+					folder,
+					{expanded: !folder.expanded}));
+		} else {
+			var targetIndex = path.a;
+			var remainingPath = path.b;
+			var transform = F2(
+				function (currentIndex, currentSubfolder) {
+					return _Utils_eq(currentIndex, targetIndex) ? A2(author$project$PhotoFolders$toggleExpanded, remainingPath, currentSubfolder) : currentSubfolder;
+				});
+			var subfolders = A2(elm$core$List$indexedMap, transform, folder.subfolders);
+			return author$project$PhotoFolders$Folder(
+				_Utils_update(
+					folder,
+					{subfolders: subfolders}));
+		}
+	});
 var elm$core$Platform$Cmd$batch = _Platform_batch;
 var elm$core$Platform$Cmd$none = elm$core$Platform$Cmd$batch(_List_Nil);
 var author$project$PhotoFolders$update = F2(
 	function (msg, model) {
-		if (msg.$ === 'SelectPhotoUrl') {
-			var url = msg.a;
-			return _Utils_Tuple2(
-				_Utils_update(
-					model,
-					{
-						selectedPhotoUrl: elm$core$Maybe$Just(url)
-					}),
-				elm$core$Platform$Cmd$none);
-		} else {
-			if (msg.a.$ === 'Ok') {
-				var newModel = msg.a.a;
-				return _Utils_Tuple2(newModel, elm$core$Platform$Cmd$none);
-			} else {
-				return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
-			}
+		switch (msg.$) {
+			case 'ToggleExpanded':
+				var path = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							root: A2(author$project$PhotoFolders$toggleExpanded, path, model.root)
+						}),
+					elm$core$Platform$Cmd$none);
+			case 'SelectPhotoUrl':
+				var url = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							selectedPhotoUrl: elm$core$Maybe$Just(url)
+						}),
+					elm$core$Platform$Cmd$none);
+			default:
+				if (msg.a.$ === 'Ok') {
+					var newModel = msg.a.a;
+					return _Utils_Tuple2(newModel, elm$core$Platform$Cmd$none);
+				} else {
+					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+				}
 		}
 	});
 var elm$core$List$map = F2(
