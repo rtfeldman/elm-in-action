@@ -6007,20 +6007,30 @@ var author$project$PhotoFolders$update = F2(
 				}
 		}
 	});
-var elm$core$List$map = F2(
-	function (f, xs) {
-		return A3(
-			elm$core$List$foldr,
-			F2(
-				function (x, acc) {
-					return A2(
-						elm$core$List$cons,
-						f(x),
-						acc);
-				}),
-			_List_Nil,
-			xs);
+var author$project$PhotoFolders$End = {$: 'End'};
+var author$project$PhotoFolders$ToggleExpanded = function (a) {
+	return {$: 'ToggleExpanded', a: a};
+};
+var author$project$PhotoFolders$Subfolder = F2(
+	function (a, b) {
+		return {$: 'Subfolder', a: a, b: b};
 	});
+var author$project$PhotoFolders$appendIndex = F2(
+	function (index, path) {
+		if (path.$ === 'End') {
+			return A2(author$project$PhotoFolders$Subfolder, index, author$project$PhotoFolders$End);
+		} else {
+			var subfolderIndex = path.a;
+			var remainingPath = path.b;
+			return A2(
+				author$project$PhotoFolders$Subfolder,
+				subfolderIndex,
+				A2(author$project$PhotoFolders$appendIndex, index, remainingPath));
+		}
+	});
+var author$project$PhotoFolders$SelectPhotoUrl = function (a) {
+	return {$: 'SelectPhotoUrl', a: a};
+};
 var elm$json$Json$Decode$map = _Json_map1;
 var elm$json$Json$Decode$map2 = _Json_map2;
 var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
@@ -6036,7 +6046,6 @@ var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
 	}
 };
 var elm$html$Html$div = _VirtualDom_node('div');
-var elm$html$Html$label = _VirtualDom_node('label');
 var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
 var elm$json$Json$Encode$string = _Json_wrap;
@@ -6048,44 +6057,6 @@ var elm$html$Html$Attributes$stringProperty = F2(
 			elm$json$Json$Encode$string(string));
 	});
 var elm$html$Html$Attributes$class = elm$html$Html$Attributes$stringProperty('className');
-var author$project$PhotoFolders$viewFolder = function (_n0) {
-	var folder = _n0.a;
-	var subfolders = A2(elm$core$List$map, author$project$PhotoFolders$viewFolder, folder.subfolders);
-	return A2(
-		elm$html$Html$div,
-		_List_fromArray(
-			[
-				elm$html$Html$Attributes$class('folder')
-			]),
-		_List_fromArray(
-			[
-				A2(
-				elm$html$Html$label,
-				_List_Nil,
-				_List_fromArray(
-					[
-						elm$html$Html$text(folder.name)
-					])),
-				A2(
-				elm$html$Html$div,
-				_List_fromArray(
-					[
-						elm$html$Html$Attributes$class('subfolders')
-					]),
-				subfolders)
-			]));
-};
-var author$project$PhotoFolders$urlPrefix = 'http://elm-in-action.com/';
-var author$project$PhotoFolders$SelectPhotoUrl = function (a) {
-	return {$: 'SelectPhotoUrl', a: a};
-};
-var elm$html$Html$img = _VirtualDom_node('img');
-var elm$html$Html$Attributes$src = function (url) {
-	return A2(
-		elm$html$Html$Attributes$stringProperty,
-		'src',
-		_VirtualDom_noJavaScriptOrHtmlUri(url));
-};
 var elm$virtual_dom$VirtualDom$Normal = function (a) {
 	return {$: 'Normal', a: a};
 };
@@ -6102,6 +6073,105 @@ var elm$html$Html$Events$onClick = function (msg) {
 		elm$html$Html$Events$on,
 		'click',
 		elm$json$Json$Decode$succeed(msg));
+};
+var author$project$PhotoFolders$viewPhoto = function (url) {
+	return A2(
+		elm$html$Html$div,
+		_List_fromArray(
+			[
+				elm$html$Html$Attributes$class('photo'),
+				elm$html$Html$Events$onClick(
+				author$project$PhotoFolders$SelectPhotoUrl(url))
+			]),
+		_List_fromArray(
+			[
+				elm$html$Html$text(url)
+			]));
+};
+var elm$core$List$append = F2(
+	function (xs, ys) {
+		if (!ys.b) {
+			return xs;
+		} else {
+			return A3(elm$core$List$foldr, elm$core$List$cons, ys, xs);
+		}
+	});
+var elm$core$List$map = F2(
+	function (f, xs) {
+		return A3(
+			elm$core$List$foldr,
+			F2(
+				function (x, acc) {
+					return A2(
+						elm$core$List$cons,
+						f(x),
+						acc);
+				}),
+			_List_Nil,
+			xs);
+	});
+var elm$html$Html$label = _VirtualDom_node('label');
+var author$project$PhotoFolders$viewFolder = F2(
+	function (path, _n0) {
+		var folder = _n0.a;
+		var viewSubfolder = F2(
+			function (index, subfolder) {
+				return A2(
+					author$project$PhotoFolders$viewFolder,
+					A2(author$project$PhotoFolders$appendIndex, index, path),
+					subfolder);
+			});
+		var folderLabel = A2(
+			elm$html$Html$label,
+			_List_fromArray(
+				[
+					elm$html$Html$Events$onClick(
+					author$project$PhotoFolders$ToggleExpanded(path))
+				]),
+			_List_fromArray(
+				[
+					elm$html$Html$text(folder.name)
+				]));
+		if (folder.expanded) {
+			var contents = A2(
+				elm$core$List$append,
+				A2(elm$core$List$indexedMap, viewSubfolder, folder.subfolders),
+				A2(elm$core$List$map, author$project$PhotoFolders$viewPhoto, folder.photoUrls));
+			return A2(
+				elm$html$Html$div,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$class('folder expanded')
+					]),
+				_List_fromArray(
+					[
+						folderLabel,
+						A2(
+						elm$html$Html$div,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$class('contents')
+							]),
+						contents)
+					]));
+		} else {
+			return A2(
+				elm$html$Html$div,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$class('folder collapsed')
+					]),
+				_List_fromArray(
+					[folderLabel]));
+		}
+	});
+var author$project$PhotoFolders$urlPrefix = 'http://elm-in-action.com/';
+var elm$html$Html$img = _VirtualDom_node('img');
+var elm$html$Html$Attributes$src = function (url) {
+	return A2(
+		elm$html$Html$Attributes$stringProperty,
+		'src',
+		_VirtualDom_noJavaScriptOrHtmlUri(url));
 };
 var author$project$PhotoFolders$viewRelatedPhoto = function (url) {
 	return A2(
@@ -6211,7 +6281,7 @@ var author$project$PhotoFolders$view = function (model) {
 							[
 								elm$html$Html$text('Folders')
 							])),
-						author$project$PhotoFolders$viewFolder(model.root)
+						A2(author$project$PhotoFolders$viewFolder, author$project$PhotoFolders$End, model.root)
 					])),
 				A2(
 				elm$html$Html$div,
