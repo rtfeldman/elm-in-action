@@ -4327,6 +4327,12 @@ function _Browser_load(url)
 		}
 	}));
 }
+var author$project$Main$ChangedUrl = function (a) {
+	return {$: 'ChangedUrl', a: a};
+};
+var author$project$Main$ClickedLink = function (a) {
+	return {$: 'ClickedLink', a: a};
+};
 var author$project$Main$NotFound = {$: 'NotFound'};
 var author$project$Main$Folders = {$: 'Folders'};
 var author$project$Main$Gallery = {$: 'Gallery'};
@@ -5691,156 +5697,11 @@ var author$project$Main$init = F3(
 	function (flags, url, key) {
 		return _Utils_Tuple2(
 			{
+				key: key,
 				page: author$project$Main$urlToPage(url)
 			},
 			elm$core$Platform$Cmd$none);
 	});
-var author$project$Main$update = F2(
-	function (msg, model) {
-		return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
-	});
-var elm$json$Json$Decode$map = _Json_map1;
-var elm$json$Json$Decode$map2 = _Json_map2;
-var elm$json$Json$Decode$succeed = _Json_succeed;
-var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
-	switch (handler.$) {
-		case 'Normal':
-			return 0;
-		case 'MayStopPropagation':
-			return 1;
-		case 'MayPreventDefault':
-			return 2;
-		default:
-			return 3;
-	}
-};
-var elm$html$Html$footer = _VirtualDom_node('footer');
-var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
-var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
-var author$project$Main$viewFooter = A2(
-	elm$html$Html$footer,
-	_List_Nil,
-	_List_fromArray(
-		[
-			elm$html$Html$text('One is never alone with a rubber duck. -Douglas Adams')
-		]));
-var elm$html$Html$a = _VirtualDom_node('a');
-var elm$html$Html$h1 = _VirtualDom_node('h1');
-var elm$html$Html$li = _VirtualDom_node('li');
-var elm$html$Html$nav = _VirtualDom_node('nav');
-var elm$html$Html$ul = _VirtualDom_node('ul');
-var elm$core$List$filter = F2(
-	function (isGood, list) {
-		return A3(
-			elm$core$List$foldr,
-			F2(
-				function (x, xs) {
-					return isGood(x) ? A2(elm$core$List$cons, x, xs) : xs;
-				}),
-			_List_Nil,
-			list);
-	});
-var elm$core$Tuple$second = function (_n0) {
-	var y = _n0.b;
-	return y;
-};
-var elm$json$Json$Encode$string = _Json_wrap;
-var elm$html$Html$Attributes$stringProperty = F2(
-	function (key, string) {
-		return A2(
-			_VirtualDom_property,
-			key,
-			elm$json$Json$Encode$string(string));
-	});
-var elm$html$Html$Attributes$class = elm$html$Html$Attributes$stringProperty('className');
-var elm$html$Html$Attributes$classList = function (classes) {
-	return elm$html$Html$Attributes$class(
-		A2(
-			elm$core$String$join,
-			' ',
-			A2(
-				elm$core$List$map,
-				elm$core$Tuple$first,
-				A2(elm$core$List$filter, elm$core$Tuple$second, classes))));
-};
-var elm$html$Html$Attributes$href = function (url) {
-	return A2(
-		elm$html$Html$Attributes$stringProperty,
-		'href',
-		_VirtualDom_noJavaScriptUri(url));
-};
-var author$project$Main$viewHeader = function (page) {
-	var navLink = F2(
-		function (targetPage, _n0) {
-			var url = _n0.url;
-			var caption = _n0.caption;
-			return A2(
-				elm$html$Html$li,
-				_List_fromArray(
-					[
-						elm$html$Html$Attributes$classList(
-						_List_fromArray(
-							[
-								_Utils_Tuple2(
-								'active',
-								_Utils_eq(page, targetPage))
-							]))
-					]),
-				_List_fromArray(
-					[
-						A2(
-						elm$html$Html$a,
-						_List_fromArray(
-							[
-								elm$html$Html$Attributes$href(url)
-							]),
-						_List_fromArray(
-							[
-								elm$html$Html$text(caption)
-							]))
-					]));
-		});
-	var logo = A2(
-		elm$html$Html$h1,
-		_List_Nil,
-		_List_fromArray(
-			[
-				elm$html$Html$text('Photo Groove')
-			]));
-	var links = A2(
-		elm$html$Html$ul,
-		_List_Nil,
-		_List_fromArray(
-			[
-				A2(
-				navLink,
-				author$project$Main$Folders,
-				{caption: 'Folders', url: '/'}),
-				A2(
-				navLink,
-				author$project$Main$Gallery,
-				{caption: 'Gallery', url: '/gallery'})
-			]));
-	return A2(
-		elm$html$Html$nav,
-		_List_Nil,
-		_List_fromArray(
-			[logo, links]));
-};
-var elm$virtual_dom$VirtualDom$lazy = _VirtualDom_lazy;
-var elm$html$Html$Lazy$lazy = elm$virtual_dom$VirtualDom$lazy;
-var author$project$Main$view = function (model) {
-	var content = elm$html$Html$text('This isn\'t even my final form!');
-	return {
-		body: _List_fromArray(
-			[
-				A2(elm$html$Html$Lazy$lazy, author$project$Main$viewHeader, model.page),
-				content,
-				author$project$Main$viewFooter
-			]),
-		title: 'Photo Groove, SPA Style'
-	};
-};
 var elm$browser$Browser$External = function (a) {
 	return {$: 'External', a: a};
 };
@@ -5938,6 +5799,21 @@ var elm$core$Task$perform = F2(
 			elm$core$Task$Perform(
 				A2(elm$core$Task$map, toMessage, task)));
 	});
+var elm$json$Json$Decode$map = _Json_map1;
+var elm$json$Json$Decode$map2 = _Json_map2;
+var elm$json$Json$Decode$succeed = _Json_succeed;
+var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
+	switch (handler.$) {
+		case 'Normal':
+			return 0;
+		case 'MayStopPropagation':
+			return 1;
+		case 'MayPreventDefault':
+			return 2;
+		default:
+			return 3;
+	}
+};
 var elm$core$String$length = _String_length;
 var elm$core$String$slice = _String_slice;
 var elm$core$String$dropLeft = F2(
@@ -6067,30 +5943,217 @@ var elm$url$Url$fromString = function (str) {
 		elm$url$Url$Https,
 		A2(elm$core$String$dropLeft, 8, str)) : elm$core$Maybe$Nothing);
 };
+var elm$browser$Browser$Navigation$load = _Browser_load;
+var elm$browser$Browser$Navigation$pushUrl = _Browser_pushUrl;
+var elm$url$Url$addPort = F2(
+	function (maybePort, starter) {
+		if (maybePort.$ === 'Nothing') {
+			return starter;
+		} else {
+			var port_ = maybePort.a;
+			return starter + (':' + elm$core$String$fromInt(port_));
+		}
+	});
+var elm$url$Url$addPrefixed = F3(
+	function (prefix, maybeSegment, starter) {
+		if (maybeSegment.$ === 'Nothing') {
+			return starter;
+		} else {
+			var segment = maybeSegment.a;
+			return _Utils_ap(
+				starter,
+				_Utils_ap(prefix, segment));
+		}
+	});
+var elm$url$Url$toString = function (url) {
+	var http = function () {
+		var _n0 = url.protocol;
+		if (_n0.$ === 'Http') {
+			return 'http://';
+		} else {
+			return 'https://';
+		}
+	}();
+	return A3(
+		elm$url$Url$addPrefixed,
+		'#',
+		url.fragment,
+		A3(
+			elm$url$Url$addPrefixed,
+			'?',
+			url.query,
+			_Utils_ap(
+				A2(
+					elm$url$Url$addPort,
+					url.port_,
+					_Utils_ap(http, url.host)),
+				url.path)));
+};
+var author$project$Main$update = F2(
+	function (msg, model) {
+		if (msg.$ === 'ClickedLink') {
+			var urlRequest = msg.a;
+			if (urlRequest.$ === 'External') {
+				var href = urlRequest.a;
+				return _Utils_Tuple2(
+					model,
+					elm$browser$Browser$Navigation$load(href));
+			} else {
+				var url = urlRequest.a;
+				return _Utils_Tuple2(
+					model,
+					A2(
+						elm$browser$Browser$Navigation$pushUrl,
+						model.key,
+						elm$url$Url$toString(url)));
+			}
+		} else {
+			var url = msg.a;
+			return _Utils_Tuple2(
+				_Utils_update(
+					model,
+					{
+						page: author$project$Main$urlToPage(url)
+					}),
+				elm$core$Platform$Cmd$none);
+		}
+	});
+var elm$html$Html$footer = _VirtualDom_node('footer');
+var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
+var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
+var author$project$Main$viewFooter = A2(
+	elm$html$Html$footer,
+	_List_Nil,
+	_List_fromArray(
+		[
+			elm$html$Html$text('One is never alone with a rubber duck. -Douglas Adams')
+		]));
+var elm$html$Html$a = _VirtualDom_node('a');
+var elm$html$Html$h1 = _VirtualDom_node('h1');
+var elm$html$Html$li = _VirtualDom_node('li');
+var elm$html$Html$nav = _VirtualDom_node('nav');
+var elm$html$Html$ul = _VirtualDom_node('ul');
+var elm$core$List$filter = F2(
+	function (isGood, list) {
+		return A3(
+			elm$core$List$foldr,
+			F2(
+				function (x, xs) {
+					return isGood(x) ? A2(elm$core$List$cons, x, xs) : xs;
+				}),
+			_List_Nil,
+			list);
+	});
+var elm$core$Tuple$second = function (_n0) {
+	var y = _n0.b;
+	return y;
+};
+var elm$json$Json$Encode$string = _Json_wrap;
+var elm$html$Html$Attributes$stringProperty = F2(
+	function (key, string) {
+		return A2(
+			_VirtualDom_property,
+			key,
+			elm$json$Json$Encode$string(string));
+	});
+var elm$html$Html$Attributes$class = elm$html$Html$Attributes$stringProperty('className');
+var elm$html$Html$Attributes$classList = function (classes) {
+	return elm$html$Html$Attributes$class(
+		A2(
+			elm$core$String$join,
+			' ',
+			A2(
+				elm$core$List$map,
+				elm$core$Tuple$first,
+				A2(elm$core$List$filter, elm$core$Tuple$second, classes))));
+};
+var elm$html$Html$Attributes$href = function (url) {
+	return A2(
+		elm$html$Html$Attributes$stringProperty,
+		'href',
+		_VirtualDom_noJavaScriptUri(url));
+};
+var author$project$Main$viewHeader = function (page) {
+	var navLink = F2(
+		function (targetPage, _n0) {
+			var url = _n0.url;
+			var caption = _n0.caption;
+			return A2(
+				elm$html$Html$li,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$classList(
+						_List_fromArray(
+							[
+								_Utils_Tuple2(
+								'active',
+								_Utils_eq(page, targetPage))
+							]))
+					]),
+				_List_fromArray(
+					[
+						A2(
+						elm$html$Html$a,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$href(url)
+							]),
+						_List_fromArray(
+							[
+								elm$html$Html$text(caption)
+							]))
+					]));
+		});
+	var logo = A2(
+		elm$html$Html$h1,
+		_List_Nil,
+		_List_fromArray(
+			[
+				elm$html$Html$text('Photo Groove')
+			]));
+	var links = A2(
+		elm$html$Html$ul,
+		_List_Nil,
+		_List_fromArray(
+			[
+				A2(
+				navLink,
+				author$project$Main$Folders,
+				{caption: 'Folders', url: '/'}),
+				A2(
+				navLink,
+				author$project$Main$Gallery,
+				{caption: 'Gallery', url: '/gallery'})
+			]));
+	return A2(
+		elm$html$Html$nav,
+		_List_Nil,
+		_List_fromArray(
+			[logo, links]));
+};
+var elm$virtual_dom$VirtualDom$lazy = _VirtualDom_lazy;
+var elm$html$Html$Lazy$lazy = elm$virtual_dom$VirtualDom$lazy;
+var author$project$Main$view = function (model) {
+	var content = elm$html$Html$text('This isn\'t even my final form!');
+	return {
+		body: _List_fromArray(
+			[
+				A2(elm$html$Html$Lazy$lazy, author$project$Main$viewHeader, model.page),
+				content,
+				author$project$Main$viewFooter
+			]),
+		title: 'Photo Groove, SPA Style'
+	};
+};
 var elm$browser$Browser$application = _Browser_application;
-var elm$core$Debug$todo = _Debug_todo;
 var elm$core$Platform$Sub$batch = _Platform_batch;
 var elm$core$Platform$Sub$none = elm$core$Platform$Sub$batch(_List_Nil);
 var author$project$Main$main = elm$browser$Browser$application(
 	{
 		init: author$project$Main$init,
-		onUrlChange: function (_n0) {
-			return _Debug_todo(
-				'Main',
-				{
-					start: {line: 128, column: 31},
-					end: {line: 128, column: 41}
-				})('handle URL changes');
-		},
-		onUrlRequest: function (_n1) {
-			return _Debug_todo(
-				'Main',
-				{
-					start: {line: 127, column: 32},
-					end: {line: 127, column: 42}
-				})('handle URL requests');
-		},
-		subscriptions: function (_n2) {
+		onUrlChange: author$project$Main$ChangedUrl,
+		onUrlRequest: author$project$Main$ClickedLink,
+		subscriptions: function (_n0) {
 			return elm$core$Platform$Sub$none;
 		},
 		update: author$project$Main$update,
