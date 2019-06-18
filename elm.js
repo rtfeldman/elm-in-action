@@ -4311,6 +4311,8 @@ function _Browser_load(url)
 	}));
 }
 var author$project$Main$Folders = {$: 'Folders'};
+var author$project$Main$Gallery = {$: 'Gallery'};
+var author$project$Main$NotFound = {$: 'NotFound'};
 var elm$core$Basics$False = {$: 'False'};
 var elm$core$Basics$True = {$: 'True'};
 var elm$core$Result$isOk = function (result) {
@@ -4786,13 +4788,26 @@ var elm$json$Json$Decode$errorToStringHelp = F2(
 			}
 		}
 	});
-var elm$core$Platform$Sub$batch = _Platform_batch;
-var elm$core$Platform$Sub$none = elm$core$Platform$Sub$batch(_List_Nil);
-var author$project$Main$subscriptions = function (model) {
-	return elm$core$Platform$Sub$none;
-};
 var elm$core$Platform$Cmd$batch = _Platform_batch;
 var elm$core$Platform$Cmd$none = elm$core$Platform$Cmd$batch(_List_Nil);
+var author$project$Main$init = F3(
+	function (flags, url, key) {
+		var _n0 = url.path;
+		switch (_n0) {
+			case '/gallery':
+				return _Utils_Tuple2(
+					{page: author$project$Main$Gallery},
+					elm$core$Platform$Cmd$none);
+			case '/':
+				return _Utils_Tuple2(
+					{page: author$project$Main$Folders},
+					elm$core$Platform$Cmd$none);
+			default:
+				return _Utils_Tuple2(
+					{page: author$project$Main$NotFound},
+					elm$core$Platform$Cmd$none);
+		}
+	});
 var author$project$Main$update = F2(
 	function (msg, model) {
 		return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
@@ -4825,7 +4840,6 @@ var author$project$Main$viewFooter = A2(
 		[
 			elm$html$Html$text('One is never alone with a rubber duck. -Douglas Adams')
 		]));
-var author$project$Main$Gallery = {$: 'Gallery'};
 var elm$html$Html$a = _VirtualDom_node('a');
 var elm$html$Html$h1 = _VirtualDom_node('h1');
 var elm$html$Html$li = _VirtualDom_node('li');
@@ -5238,15 +5252,32 @@ var elm$url$Url$fromString = function (str) {
 		elm$url$Url$Https,
 		A2(elm$core$String$dropLeft, 8, str)) : elm$core$Maybe$Nothing);
 };
-var elm$browser$Browser$document = _Browser_document;
-var author$project$Main$main = elm$browser$Browser$document(
+var elm$browser$Browser$application = _Browser_application;
+var elm$core$Debug$todo = _Debug_todo;
+var elm$core$Platform$Sub$batch = _Platform_batch;
+var elm$core$Platform$Sub$none = elm$core$Platform$Sub$batch(_List_Nil);
+var author$project$Main$main = elm$browser$Browser$application(
 	{
-		init: function (_n0) {
-			return _Utils_Tuple2(
-				{page: author$project$Main$Folders},
-				elm$core$Platform$Cmd$none);
+		init: author$project$Main$init,
+		onUrlChange: function (_n0) {
+			return _Debug_todo(
+				'Main',
+				{
+					start: {line: 93, column: 31},
+					end: {line: 93, column: 41}
+				})('handle URL changes');
 		},
-		subscriptions: author$project$Main$subscriptions,
+		onUrlRequest: function (_n1) {
+			return _Debug_todo(
+				'Main',
+				{
+					start: {line: 92, column: 32},
+					end: {line: 92, column: 42}
+				})('handle URL requests');
+		},
+		subscriptions: function (_n2) {
+			return elm$core$Platform$Sub$none;
+		},
 		update: author$project$Main$update,
 		view: author$project$Main$view
 	});
