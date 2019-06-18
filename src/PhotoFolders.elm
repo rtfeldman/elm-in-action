@@ -1,4 +1,4 @@
-module PhotoFolders exposing (main)
+module PhotoFolders exposing (Model, Msg, init, update, view)
 
 import Browser
 import Dict exposing (Dict)

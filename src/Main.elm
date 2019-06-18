@@ -5,6 +5,8 @@ import Browser.Navigation as Nav
 import Html exposing (Html, a, footer, h1, li, nav, text, ul)
 import Html.Attributes exposing (classList, href)
 import Html.Lazy exposing (lazy)
+import PhotoFolders as Folders
+import PhotoGallery as Gallery
 import Url exposing (Url)
 import Url.Parser as Parser exposing ((</>), Parser, s, string)
 
@@ -14,10 +16,15 @@ type alias Model =
 
 
 type Page
-    = SelectedPhoto String
-    | Gallery
-    | Folders
+    = GalleryPage Gallery.Model
+    | FoldersPage Folders.Model
     | NotFound
+
+
+type Route
+    = Gallery
+    | Folders
+    | SelectedPhoto String
 
 
 view : Model -> Document Msg
