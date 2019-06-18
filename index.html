@@ -39,7 +39,10 @@
         <script src="http://elm-in-action.com/pasta.js"></script>
         <script src="/elm.js"></script>
         <script>
-            var app = Elm.Main.init({node: document.getElementById("app")});
+            var app = Elm.Main.init({
+                node: document.getElementById("app"),
+                flags: Pasta.version
+            });
         </script>
     </body>
 </html>
