@@ -265,10 +265,10 @@ initialCmd =
         }
 
 
-main : Program () Model Msg
+main : Program Float Model Msg
 main =
     Browser.element
-        { init = \flags -> ( initialModel, initialCmd )
+        { init = init
         , view = view
         , update = update
         , subscriptions = subscriptions
@@ -278,6 +278,15 @@ main =
 subscriptions : Model -> Sub Msg
 subscriptions model =
     activityChanges GotActivity
+
+
+init : Float -> ( Model, Cmd Msg )
+init flags =
+    let
+        activity =
+            "Initializing Pasta v" ++ String.fromFloat flags
+    in
+    ( { initialModel | activity = activity }, initialCmd )
 
 
 rangeSlider : List (Attribute msg) -> List (Html msg) -> Html msg
