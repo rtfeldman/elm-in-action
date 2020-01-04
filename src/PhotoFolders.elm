@@ -130,7 +130,7 @@ viewRelatedPhoto : String -> Html Msg
 viewRelatedPhoto url =
     img
         [ class "related-photo"
-        , onClick (SelectPhotoUrl url)
+        , onClick (ClickedPhoto url)
         , src (urlPrefix ++ "photos/" ++ url ++ "/thumb")
         ]
         []
@@ -144,7 +144,7 @@ viewFolder path (Folder folder) =
             viewFolder (appendIndex index path) subfolder
 
         folderLabel =
-            label [ onClick (ToggleExpanded path) ] [ text folder.name ]
+            label [ onClick (ClickedFolder path) ] [ text folder.name ]
     in
     if folder.expanded then
         let
