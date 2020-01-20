@@ -5178,20 +5178,24 @@ var $elm$browser$Browser$sandbox = function (impl) {
 };
 var $author$project$PhotoGroove$update = F2(
 	function (msg, model) {
-		var _v0 = msg.description;
-		switch (_v0) {
+		switch (msg.$) {
 			case 'ClickedPhoto':
+				var url = msg.a;
 				return _Utils_update(
 					model,
-					{selectedUrl: msg.data});
-			case 'ClickedSurpriseMe':
+					{selectedUrl: url});
+			case 'ClickedSize':
+				var size = msg.a;
+				return _Utils_update(
+					model,
+					{chosenSize: size});
+			default:
 				return _Utils_update(
 					model,
 					{selectedUrl: '2.jpeg'});
-			default:
-				return model;
 		}
 	});
+var $author$project$PhotoGroove$ClickedSurpriseMe = {$: 'ClickedSurpriseMe'};
 var $author$project$PhotoGroove$Large = {$: 'Large'};
 var $author$project$PhotoGroove$Small = {$: 'Small'};
 var $elm$html$Html$button = _VirtualDom_node('button');
@@ -5267,6 +5271,9 @@ var $author$project$PhotoGroove$viewSizeChooser = function (size) {
 				$author$project$PhotoGroove$sizeToString(size))
 			]));
 };
+var $author$project$PhotoGroove$ClickedPhoto = function (a) {
+	return {$: 'ClickedPhoto', a: a};
+};
 var $elm$core$List$filter = F2(
 	function (isGood, list) {
 		return A3(
@@ -5308,7 +5315,7 @@ var $author$project$PhotoGroove$viewThumbnail = F2(
 							_Utils_eq(selectedUrl, thumb.url))
 						])),
 					$elm$html$Html$Events$onClick(
-					{data: thumb.url, description: 'ClickedPhoto'})
+					$author$project$PhotoGroove$ClickedPhoto(thumb.url))
 				]),
 			_List_Nil);
 	});
@@ -5332,8 +5339,7 @@ var $author$project$PhotoGroove$view = function (model) {
 				$elm$html$Html$button,
 				_List_fromArray(
 					[
-						$elm$html$Html$Events$onClick(
-						{data: '', description: 'ClickedSurpriseMe'})
+						$elm$html$Html$Events$onClick($author$project$PhotoGroove$ClickedSurpriseMe)
 					]),
 				_List_fromArray(
 					[
