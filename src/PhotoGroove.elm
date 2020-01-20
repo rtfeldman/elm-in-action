@@ -5,6 +5,7 @@ import Browser
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
+import Random
 
 
 urlPrefix : String
@@ -109,6 +110,11 @@ getPhotoUrl index =
 
         Nothing ->
             ""
+
+
+randomPhotoPicker : Random.Generator Int
+randomPhotoPicker =
+    Random.int 0 (Array.length photoArray - 1)
 
 
 update : Msg -> Model -> Model
