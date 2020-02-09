@@ -45,6 +45,11 @@
                     Pasta.apply(document.getElementById("main-canvas"), options);
                 });
             });
+
+            Pasta.addActivityListener(function(activity) {
+                console.log("Got some activity to send to Elm:", activity);
+                app.ports.activityChanges.send(activity);
+            });
         </script>
     </body>
 </html>

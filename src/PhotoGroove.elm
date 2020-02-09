@@ -22,6 +22,7 @@ type Msg
     | ClickedSize ThumbnailSize
     | ClickedSurpriseMe
     | GotRandomPhoto Photo
+    | GotActivity String
     | GotPhotos (Result Http.Error (List Photo))
     | SlidHue Int
     | SlidRipple Int
@@ -59,9 +60,8 @@ viewFilter toMsg name magnitude =
 viewLoaded : List Photo -> String -> Model -> List (Html Msg)
 viewLoaded photos selectedUrl model =
     [ h1 [] [ text "Photo Groove" ]
-    , button
-        [ onClick ClickedSurpriseMe ]
-        [ text "Surprise Me!" ]
+    , button [ onClick ClickedSurpriseMe ] [ text "Surprise Me!" ]
+    , div [ class "activity" ] [ text model.activity ]
     , div [ class "filters" ]
         [ viewFilter SlidHue "Hue" model.hue
         , viewFilter SlidRipple "Ripple" model.ripple
@@ -111,6 +111,9 @@ sizeToString size =
 port setFilters : FilterOptions -> Cmd msg
 
 
+port activityChanges : (String -> msg) -> Sub msg
+
+
 type alias FilterOptions =
     { url : String
     , filters : List { name : String, amount : Float }
@@ -140,6 +143,7 @@ type Status
 
 type alias Model =
     { status : Status
+    , activity : String
     , chosenSize : ThumbnailSize
     , hue : Int
     , ripple : Int
@@ -150,6 +154,7 @@ type alias Model =
 initialModel : Model
 initialModel =
     { status = Loading
+    , activity = ""
     , chosenSize = Medium
     , hue = 5
     , ripple = 5
@@ -166,6 +171,9 @@ type ThumbnailSize
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        GotActivity activity ->
+            ( { model | activity = activity }, Cmd.none )
+
         GotRandomPhoto photo ->
             applyFilters { model | status = selectUrl photo.url model.status }
 
@@ -271,8 +279,13 @@ main =
         { init = \_ -> ( initialModel, initialCmd )
         , view = view
         , update = update
-        , subscriptions = \_ -> Sub.none
+        , subscriptions = subscriptions
         }
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    activityChanges GotActivity
 
 
 rangeSlider : List (Attribute msg) -> List (Html msg) -> Html msg
