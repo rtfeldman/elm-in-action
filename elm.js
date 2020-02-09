@@ -6643,11 +6643,68 @@ var $elm$html$Html$Attributes$src = function (url) {
 		_VirtualDom_noJavaScriptOrHtmlUri(url));
 };
 var $author$project$PhotoGroove$urlPrefix = 'http://elm-in-action.com/';
+var $elm$json$Json$Encode$int = _Json_wrap;
+var $elm$html$Html$label = _VirtualDom_node('label');
+var $elm$html$Html$Attributes$max = $elm$html$Html$Attributes$stringProperty('max');
+var $elm$virtual_dom$VirtualDom$property = F2(
+	function (key, value) {
+		return A2(
+			_VirtualDom_property,
+			_VirtualDom_noInnerHtmlOrFormAction(key),
+			_VirtualDom_noJavaScriptOrHtmlUri(value));
+	});
+var $elm$html$Html$Attributes$property = $elm$virtual_dom$VirtualDom$property;
+var $elm$virtual_dom$VirtualDom$node = function (tag) {
+	return _VirtualDom_node(
+		_VirtualDom_noScript(tag));
+};
+var $elm$html$Html$node = $elm$virtual_dom$VirtualDom$node;
+var $author$project$PhotoGroove$rangeSlider = F2(
+	function (attributes, children) {
+		return A3($elm$html$Html$node, 'range-slider', attributes, children);
+	});
+var $author$project$PhotoGroove$viewFilter = F2(
+	function (name, magnitude) {
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('filter-slider')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$label,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$elm$html$Html$text(name)
+						])),
+					A2(
+					$author$project$PhotoGroove$rangeSlider,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$max('11'),
+							A2(
+							$elm$html$Html$Attributes$property,
+							'val',
+							$elm$json$Json$Encode$int(magnitude))
+						]),
+					_List_Nil),
+					A2(
+					$elm$html$Html$label,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$elm$html$Html$text(
+							$elm$core$String$fromInt(magnitude))
+						]))
+				]));
+	});
 var $author$project$PhotoGroove$ClickedSize = function (a) {
 	return {$: 'ClickedSize', a: a};
 };
 var $elm$html$Html$input = _VirtualDom_node('input');
-var $elm$html$Html$label = _VirtualDom_node('label');
 var $elm$html$Html$Attributes$name = $elm$html$Html$Attributes$stringProperty('name');
 var $elm$html$Html$Attributes$type_ = $elm$html$Html$Attributes$stringProperty('type');
 var $author$project$PhotoGroove$viewSizeChooser = function (size) {
@@ -6741,6 +6798,18 @@ var $author$project$PhotoGroove$viewLoaded = F3(
 				_List_fromArray(
 					[
 						$elm$html$Html$text('Surprise Me!')
+					])),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('filters')
+					]),
+				_List_fromArray(
+					[
+						A2($author$project$PhotoGroove$viewFilter, 'Hue', 0),
+						A2($author$project$PhotoGroove$viewFilter, 'Ripple', 0),
+						A2($author$project$PhotoGroove$viewFilter, 'Noise', 0)
 					])),
 				A2(
 				$elm$html$Html$h3,
