@@ -6109,7 +6109,15 @@ var $elm$http$Http$get = function (r) {
 	return $elm$http$Http$request(
 		{body: $elm$http$Http$emptyBody, expect: r.expect, headers: _List_Nil, method: 'GET', timeout: $elm$core$Maybe$Nothing, tracker: $elm$core$Maybe$Nothing, url: r.url});
 };
-var $author$project$PhotoFolders$initialModel = {photos: $elm$core$Dict$empty, selectedPhotoUrl: $elm$core$Maybe$Nothing};
+var $author$project$PhotoFolders$Folder = function (a) {
+	return {$: 'Folder', a: a};
+};
+var $author$project$PhotoFolders$initialModel = {
+	photos: $elm$core$Dict$empty,
+	root: $author$project$PhotoFolders$Folder(
+		{name: 'Loading...', photoUrls: _List_Nil, subfolders: _List_Nil}),
+	selectedPhotoUrl: $elm$core$Maybe$Nothing
+};
 var $elm$core$Dict$fromList = function (assocs) {
 	return A3(
 		$elm$core$List$foldl,
@@ -6155,6 +6163,44 @@ var $author$project$PhotoFolders$modelDecoder = $elm$json$Json$Decode$succeed(
 						url: 'coli'
 					})
 				])),
+		root: $author$project$PhotoFolders$Folder(
+			{
+				name: 'Photos',
+				photoUrls: _List_Nil,
+				subfolders: _List_fromArray(
+					[
+						$author$project$PhotoFolders$Folder(
+						{
+							name: '2016',
+							photoUrls: _List_fromArray(
+								['trevi', 'coli']),
+							subfolders: _List_fromArray(
+								[
+									$author$project$PhotoFolders$Folder(
+									{name: 'outdoors', photoUrls: _List_Nil, subfolders: _List_Nil}),
+									$author$project$PhotoFolders$Folder(
+									{
+										name: 'indoors',
+										photoUrls: _List_fromArray(
+											['fresco']),
+										subfolders: _List_Nil
+									})
+								])
+						}),
+						$author$project$PhotoFolders$Folder(
+						{
+							name: '2017',
+							photoUrls: _List_Nil,
+							subfolders: _List_fromArray(
+								[
+									$author$project$PhotoFolders$Folder(
+									{name: 'outdoors', photoUrls: _List_Nil, subfolders: _List_Nil}),
+									$author$project$PhotoFolders$Folder(
+									{name: 'indoors', photoUrls: _List_Nil, subfolders: _List_Nil})
+								])
+						})
+					])
+			}),
 		selectedPhotoUrl: $elm$core$Maybe$Just('trevi')
 	});
 var $author$project$PhotoFolders$init = function (_v0) {
@@ -6209,8 +6255,37 @@ var $elm$html$Html$Attributes$stringProperty = F2(
 	});
 var $elm$html$Html$Attributes$class = $elm$html$Html$Attributes$stringProperty('className');
 var $elm$html$Html$div = _VirtualDom_node('div');
+var $elm$html$Html$h1 = _VirtualDom_node('h1');
 var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
+var $elm$html$Html$label = _VirtualDom_node('label');
+var $author$project$PhotoFolders$viewFolder = function (_v0) {
+	var folder = _v0.a;
+	var subfolders = A2($elm$core$List$map, $author$project$PhotoFolders$viewFolder, folder.subfolders);
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('folder')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$label,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text(folder.name)
+					])),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('subfolders')
+					]),
+				subfolders)
+			]));
+};
 var $elm$html$Html$h2 = _VirtualDom_node('h2');
 var $elm$html$Html$h3 = _VirtualDom_node('h3');
 var $elm$html$Html$img = _VirtualDom_node('img');
@@ -6322,6 +6397,23 @@ var $author$project$PhotoFolders$view = function (model) {
 			]),
 		_List_fromArray(
 			[
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('folders')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$h1,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Folders')
+							])),
+						$author$project$PhotoFolders$viewFolder(model.root)
+					])),
 				A2(
 				$elm$html$Html$div,
 				_List_fromArray(
