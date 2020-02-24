@@ -6118,6 +6118,31 @@ var $author$project$PhotoFolders$initialModel = {
 		{expanded: true, name: 'Loading...', photoUrls: _List_Nil, subfolders: _List_Nil}),
 	selectedPhotoUrl: $elm$core$Maybe$Nothing
 };
+var $author$project$PhotoFolders$folderFromJson = F3(
+	function (name, photos, subfolders) {
+		return $author$project$PhotoFolders$Folder(
+			{
+				expanded: true,
+				name: name,
+				photoUrls: $elm$core$Dict$keys(photos),
+				subfolders: subfolders
+			});
+	});
+var $elm$json$Json$Decode$andThen = _Json_andThen;
+var $elm$json$Json$Decode$lazy = function (thunk) {
+	return A2(
+		$elm$json$Json$Decode$andThen,
+		thunk,
+		$elm$json$Json$Decode$succeed(_Utils_Tuple0));
+};
+var $elm$json$Json$Decode$list = _Json_decodeList;
+var $author$project$PhotoFolders$finishPhoto = function (_v0) {
+	var url = _v0.a;
+	var json = _v0.b;
+	return _Utils_Tuple2(
+		url,
+		{relatedUrls: json.relatedUrls, size: json.size, title: json.title, url: url});
+};
 var $elm$core$Dict$fromList = function (assocs) {
 	return A3(
 		$elm$core$List$foldl,
@@ -6130,83 +6155,132 @@ var $elm$core$Dict$fromList = function (assocs) {
 		$elm$core$Dict$empty,
 		assocs);
 };
-var $author$project$PhotoFolders$modelDecoder = $elm$json$Json$Decode$succeed(
-	{
-		photos: $elm$core$Dict$fromList(
-			_List_fromArray(
-				[
-					_Utils_Tuple2(
-					'trevi',
-					{
-						relatedUrls: _List_fromArray(
-							['coli', 'fresco']),
-						size: 34,
-						title: 'Trevi',
-						url: 'trevi'
-					}),
-					_Utils_Tuple2(
-					'fresco',
-					{
-						relatedUrls: _List_fromArray(
-							['trevi']),
-						size: 46,
-						title: 'Fresco',
-						url: 'fresco'
-					}),
-					_Utils_Tuple2(
-					'coli',
-					{
-						relatedUrls: _List_fromArray(
-							['trevi', 'fresco']),
-						size: 36,
-						title: 'Coliseum',
-						url: 'coli'
-					})
-				])),
-		root: $author$project$PhotoFolders$Folder(
-			{
-				expanded: true,
-				name: 'Photos',
-				photoUrls: _List_Nil,
-				subfolders: _List_fromArray(
-					[
-						$author$project$PhotoFolders$Folder(
-						{
-							expanded: true,
-							name: '2016',
-							photoUrls: _List_fromArray(
-								['trevi', 'coli']),
-							subfolders: _List_fromArray(
-								[
-									$author$project$PhotoFolders$Folder(
-									{expanded: true, name: 'outdoors', photoUrls: _List_Nil, subfolders: _List_Nil}),
-									$author$project$PhotoFolders$Folder(
-									{
-										expanded: true,
-										name: 'indoors',
-										photoUrls: _List_fromArray(
-											['fresco']),
-										subfolders: _List_Nil
-									})
-								])
-						}),
-						$author$project$PhotoFolders$Folder(
-						{
-							expanded: true,
-							name: '2017',
-							photoUrls: _List_Nil,
-							subfolders: _List_fromArray(
-								[
-									$author$project$PhotoFolders$Folder(
-									{expanded: true, name: 'outdoors', photoUrls: _List_Nil, subfolders: _List_Nil}),
-									$author$project$PhotoFolders$Folder(
-									{expanded: true, name: 'indoors', photoUrls: _List_Nil, subfolders: _List_Nil})
-								])
-						})
-					])
-			}),
-		selectedPhotoUrl: $elm$core$Maybe$Just('trevi')
+var $author$project$PhotoFolders$fromPairs = function (pairs) {
+	return $elm$core$Dict$fromList(
+		A2($elm$core$List$map, $author$project$PhotoFolders$finishPhoto, pairs));
+};
+var $author$project$PhotoFolders$JsonPhoto = F3(
+	function (title, size, relatedUrls) {
+		return {relatedUrls: relatedUrls, size: size, title: title};
 	});
+var $elm$json$Json$Decode$int = _Json_decodeInt;
+var $NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$custom = $elm$json$Json$Decode$map2($elm$core$Basics$apR);
+var $elm$json$Json$Decode$field = _Json_decodeField;
+var $NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required = F3(
+	function (key, valDecoder, decoder) {
+		return A2(
+			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$custom,
+			A2($elm$json$Json$Decode$field, key, valDecoder),
+			decoder);
+	});
+var $elm$json$Json$Decode$string = _Json_decodeString;
+var $author$project$PhotoFolders$jsonPhotoDecoder = A3(
+	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+	'related_photos',
+	$elm$json$Json$Decode$list($elm$json$Json$Decode$string),
+	A3(
+		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+		'size',
+		$elm$json$Json$Decode$int,
+		A3(
+			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+			'title',
+			$elm$json$Json$Decode$string,
+			$elm$json$Json$Decode$succeed($author$project$PhotoFolders$JsonPhoto))));
+var $elm$json$Json$Decode$keyValuePairs = _Json_decodeKeyValuePairs;
+var $author$project$PhotoFolders$photosDecoder = A2(
+	$elm$json$Json$Decode$map,
+	$author$project$PhotoFolders$fromPairs,
+	$elm$json$Json$Decode$keyValuePairs($author$project$PhotoFolders$jsonPhotoDecoder));
+function $author$project$PhotoFolders$cyclic$folderDecoder() {
+	return A3(
+		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+		'subfolders',
+		$elm$json$Json$Decode$lazy(
+			function (_v0) {
+				return $elm$json$Json$Decode$list(
+					$author$project$PhotoFolders$cyclic$folderDecoder());
+			}),
+		A3(
+			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+			'photos',
+			$author$project$PhotoFolders$photosDecoder,
+			A3(
+				$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+				'name',
+				$elm$json$Json$Decode$string,
+				$elm$json$Json$Decode$succeed($author$project$PhotoFolders$folderFromJson))));
+}
+try {
+	var $author$project$PhotoFolders$folderDecoder = $author$project$PhotoFolders$cyclic$folderDecoder();
+	$author$project$PhotoFolders$cyclic$folderDecoder = function () {
+		return $author$project$PhotoFolders$folderDecoder;
+	};
+} catch ($) {
+	throw 'Some top-level definitions from `PhotoFolders` are causing infinite recursion:\n\n  ┌─────┐\n  │    folderDecoder\n  └─────┘\n\nThese errors are very tricky, so read https://elm-lang.org/0.19.1/bad-recursion to learn how to fix it!';}
+var $elm$core$Dict$foldl = F3(
+	function (func, acc, dict) {
+		foldl:
+		while (true) {
+			if (dict.$ === 'RBEmpty_elm_builtin') {
+				return acc;
+			} else {
+				var key = dict.b;
+				var value = dict.c;
+				var left = dict.d;
+				var right = dict.e;
+				var $temp$func = func,
+					$temp$acc = A3(
+					func,
+					key,
+					value,
+					A3($elm$core$Dict$foldl, func, acc, left)),
+					$temp$dict = right;
+				func = $temp$func;
+				acc = $temp$acc;
+				dict = $temp$dict;
+				continue foldl;
+			}
+		}
+	});
+var $elm$core$Dict$union = F2(
+	function (t1, t2) {
+		return A3($elm$core$Dict$foldl, $elm$core$Dict$insert, t2, t1);
+	});
+var $author$project$PhotoFolders$modelPhotosFromJson = F2(
+	function (folderPhotos, subfolderPhotos) {
+		return A3($elm$core$List$foldl, $elm$core$Dict$union, folderPhotos, subfolderPhotos);
+	});
+function $author$project$PhotoFolders$cyclic$modelPhotosDecoder() {
+	return A3(
+		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+		'subfolders',
+		$elm$json$Json$Decode$lazy(
+			function (_v0) {
+				return $elm$json$Json$Decode$list(
+					$author$project$PhotoFolders$cyclic$modelPhotosDecoder());
+			}),
+		A3(
+			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+			'photos',
+			$author$project$PhotoFolders$photosDecoder,
+			$elm$json$Json$Decode$succeed($author$project$PhotoFolders$modelPhotosFromJson)));
+}
+try {
+	var $author$project$PhotoFolders$modelPhotosDecoder = $author$project$PhotoFolders$cyclic$modelPhotosDecoder();
+	$author$project$PhotoFolders$cyclic$modelPhotosDecoder = function () {
+		return $author$project$PhotoFolders$modelPhotosDecoder;
+	};
+} catch ($) {
+	throw 'Some top-level definitions from `PhotoFolders` are causing infinite recursion:\n\n  ┌─────┐\n  │    modelPhotosDecoder\n  └─────┘\n\nThese errors are very tricky, so read https://elm-lang.org/0.19.1/bad-recursion to learn how to fix it!';}
+var $author$project$PhotoFolders$modelDecoder = A3(
+	$elm$json$Json$Decode$map2,
+	F2(
+		function (photos, root) {
+			return {photos: photos, root: root, selectedPhotoUrl: $elm$core$Maybe$Nothing};
+		}),
+	$author$project$PhotoFolders$modelPhotosDecoder,
+	$author$project$PhotoFolders$folderDecoder);
 var $author$project$PhotoFolders$init = function (_v0) {
 	return _Utils_Tuple2(
 		$author$project$PhotoFolders$initialModel,
