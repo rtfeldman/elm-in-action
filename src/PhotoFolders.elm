@@ -307,3 +307,21 @@ fromPairs pairs =
 photosDecoder : Decoder (Dict String Photo)
 photosDecoder =
     Decode.keyValuePairs jsonPhotoDecoder |> Decode.map fromPairs
+
+
+folderDecoder : Decoder Folder
+folderDecoder =
+    Decode.succeed folderFromJson
+        |> required "name" string
+        |> required "photos" photosDecoder
+        |> required "subfolders" (Decode.lazy (\_ -> list folderDecoder))
+
+
+folderFromJson : String -> Dict String Photo -> List Folder -> Folder
+folderFromJson name photos subfolders =
+    Folder
+        { name = name
+        , expanded = True
+        , subfolders = subfolders
+        , photoUrls = Dict.keys photos
+        }
