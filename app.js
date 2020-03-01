@@ -4435,6 +4435,7 @@ var $elm$core$Set$toList = function (_v0) {
 	return $elm$core$Dict$keys(dict);
 };
 var $elm$core$Basics$GT = {$: 'GT'};
+var $author$project$Main$Folders = {$: 'Folders'};
 var $elm$core$Result$Err = function (a) {
 	return {$: 'Err', a: a};
 };
@@ -5157,11 +5158,126 @@ var $author$project$Main$update = F2(
 	});
 var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
+var $elm$html$Html$footer = _VirtualDom_node('footer');
+var $author$project$Main$viewFooter = A2(
+	$elm$html$Html$footer,
+	_List_Nil,
+	_List_fromArray(
+		[
+			$elm$html$Html$text('One is never alone with a rubber duck. -Douglas Adams')
+		]));
+var $author$project$Main$Gallery = {$: 'Gallery'};
+var $elm$html$Html$a = _VirtualDom_node('a');
+var $elm$json$Json$Encode$string = _Json_wrap;
+var $elm$html$Html$Attributes$stringProperty = F2(
+	function (key, string) {
+		return A2(
+			_VirtualDom_property,
+			key,
+			$elm$json$Json$Encode$string(string));
+	});
+var $elm$html$Html$Attributes$class = $elm$html$Html$Attributes$stringProperty('className');
+var $elm$core$List$filter = F2(
+	function (isGood, list) {
+		return A3(
+			$elm$core$List$foldr,
+			F2(
+				function (x, xs) {
+					return isGood(x) ? A2($elm$core$List$cons, x, xs) : xs;
+				}),
+			_List_Nil,
+			list);
+	});
+var $elm$core$Tuple$second = function (_v0) {
+	var y = _v0.b;
+	return y;
+};
+var $elm$html$Html$Attributes$classList = function (classes) {
+	return $elm$html$Html$Attributes$class(
+		A2(
+			$elm$core$String$join,
+			' ',
+			A2(
+				$elm$core$List$map,
+				$elm$core$Tuple$first,
+				A2($elm$core$List$filter, $elm$core$Tuple$second, classes))));
+};
+var $elm$html$Html$h1 = _VirtualDom_node('h1');
+var $elm$html$Html$Attributes$href = function (url) {
+	return A2(
+		$elm$html$Html$Attributes$stringProperty,
+		'href',
+		_VirtualDom_noJavaScriptUri(url));
+};
+var $elm$html$Html$li = _VirtualDom_node('li');
+var $elm$html$Html$nav = _VirtualDom_node('nav');
+var $elm$html$Html$ul = _VirtualDom_node('ul');
+var $author$project$Main$viewHeader = function (page) {
+	var navLink = F2(
+		function (targetPage, _v0) {
+			var url = _v0.url;
+			var caption = _v0.caption;
+			return A2(
+				$elm$html$Html$li,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$classList(
+						_List_fromArray(
+							[
+								_Utils_Tuple2(
+								'active',
+								_Utils_eq(page, targetPage))
+							]))
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$a,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$href(url)
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text(caption)
+							]))
+					]));
+		});
+	var logo = A2(
+		$elm$html$Html$h1,
+		_List_Nil,
+		_List_fromArray(
+			[
+				$elm$html$Html$text('Photo Groove')
+			]));
+	var links = A2(
+		$elm$html$Html$ul,
+		_List_Nil,
+		_List_fromArray(
+			[
+				A2(
+				navLink,
+				$author$project$Main$Folders,
+				{caption: 'Folders', url: '/'}),
+				A2(
+				navLink,
+				$author$project$Main$Gallery,
+				{caption: 'Gallery', url: '/gallery'})
+			]));
+	return A2(
+		$elm$html$Html$nav,
+		_List_Nil,
+		_List_fromArray(
+			[logo, links]));
+};
 var $author$project$Main$view = function (model) {
+	var content = $elm$html$Html$text('This isn\'t even my final form!');
 	return {
 		body: _List_fromArray(
 			[
-				$elm$html$Html$text('This isn\'t even my final form!')
+				$author$project$Main$viewHeader(model.page),
+				content,
+				$author$project$Main$viewFooter
 			]),
 		title: 'Photo Groove, SPA Style'
 	};
@@ -5170,7 +5286,7 @@ var $author$project$Main$main = $elm$browser$Browser$document(
 	{
 		init: function (_v0) {
 			return _Utils_Tuple2(
-				{},
+				{page: $author$project$Main$Folders},
 				$elm$core$Platform$Cmd$none);
 		},
 		subscriptions: $author$project$Main$subscriptions,
