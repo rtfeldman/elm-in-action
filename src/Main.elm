@@ -64,7 +64,8 @@ viewHeader page =
 
         navLink : Route -> { url : String, caption : String } -> Html msg
         navLink route { url, caption } =
-            li [ classList [ ( "active", isActive { link = route, page = page } ) ] ] [ a [ href url ] [ text caption ] ]
+            li [ classList [ ( "active", isActive { link = route, page = page } ) ] ]
+                [ a [ href url ] [ text caption ] ]
     in
     nav [] [ logo, links ]
 
