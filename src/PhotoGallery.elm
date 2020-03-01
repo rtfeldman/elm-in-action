@@ -1,4 +1,4 @@
-port module PhotoGallery exposing (Model, Msg(..), Photo, Status(..), init, initialModel, main, photoDecoder, update, urlPrefix, view)
+port module PhotoGallery exposing (Model, Msg(..), Photo, Status(..), init, initialModel, main, photoDecoder, subscriptions, update, urlPrefix, view)
 
 import Array exposing (Array)
 import Browser
@@ -59,8 +59,7 @@ viewFilter toMsg name magnitude =
 
 viewLoaded : List Photo -> String -> Model -> List (Html Msg)
 viewLoaded photos selectedUrl model =
-    [ h1 [] [ text "Photo Groove" ]
-    , button [ onClick ClickedSurpriseMe ] [ text "Surprise Me!" ]
+    [ button [ onClick ClickedSurpriseMe ] [ text "Surprise Me!" ]
     , div [ class "activity" ] [ text model.activity ]
     , div [ class "filters" ]
         [ viewFilter SlidHue "Hue" model.hue
