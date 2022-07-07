@@ -215,7 +215,7 @@ main =
         { init = init
         , onUrlRequest = ClickedLink
         , onUrlChange = ChangedUrl
-        , subscriptions = \_ -> Sub.none
+        , subscriptions = subscriptions
         , update = update
         , view = view
         }

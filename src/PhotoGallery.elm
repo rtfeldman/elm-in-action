@@ -1,4 +1,4 @@
-port module PhotoGallery exposing (Model, Msg, init, subscriptions, update, view)
+port module PhotoGallery exposing (Model, Msg(..), Photo, Status(..), init, initialModel, photoDecoder, subscriptions, update, urlPrefix, view)
 
 import Browser
 import Html exposing (..)
@@ -136,8 +136,8 @@ type alias Photo =
 photoDecoder : Decoder Photo
 photoDecoder =
     succeed Photo
-        |> required "url" string
-        |> required "size" int
+        |> Json.Decode.Pipeline.required "url" string
+        |> Json.Decode.Pipeline.required "size" int
         |> optional "title" string "(untitled)"
 
 
@@ -260,7 +260,7 @@ initialCmd : Cmd Msg
 initialCmd =
     Http.get
         { url = "http://elm-in-action.com/photos/list.json"
-        , expect = Http.expectJson GotPhotos (list photoDecoder)
+        , expect = Http.expectJson GotPhotos (Json.Decode.list photoDecoder)
         }
 
 
